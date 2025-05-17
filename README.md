@@ -35,7 +35,7 @@ Diseño del prototipo en Figma:
 
 1. Clona este repositorio:
 ```bash
-git clone https://github.com/IcyHavit/chambafacil.git
+git clone https://github.com/IcyHavit/ChambaFacil
 cd chambafacil
 ```
 
