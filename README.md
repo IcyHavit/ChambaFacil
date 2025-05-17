@@ -1,6 +1,6 @@
 # 💼 ChambaFacil
 
-**ChambaFacil** es una plataforma web inspirada en LinkedIn, pero orientada a trabajos informales. El objetivo es conectar a personas que ofrecen servicios (como electricistas, jardineros, niñeras, etc.) con quienes los necesitan, de forma rápida, accesible y confiable.
+**ChambaFacil** es una plataforma web inspirada en aplicaciones dedicadas a la busquede de trabajos, pero orientada a trabajos informales. El objetivo es conectar a personas que ofrecen servicios (como electricistas, jardineros, niñeras, etc.) con quienes los necesitan, de forma rápida, accesible y confiable.
 
 ---
 
@@ -26,7 +26,7 @@
 
 ## 🎨 Diseño
 
-Puedes consultar el diseño del prototipo en Figma aquí:  
+Diseño del prototipo en Figma:  
 [🔗 Ver diseño en Figma](https://www.figma.com/design/vELfmZ3l5rZVe5SH7R0g3e/Software_Chambas?node-id=0-1&t=vac9JgWlZ0uRNAfX-1)
 
 ---
