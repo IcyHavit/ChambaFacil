@@ -47,7 +47,7 @@ export default function Home() {
             fontWeight: 'bold',
           }}
         >
-          Tu plataforma para encontrar y ofrecer servicios fácilmente.
+          Tu plataforma para encontrar y ofrecer servicios fácilmente xd.
         </Typography>
         <Button
           variant="contained"
