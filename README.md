@@ -2,6 +2,8 @@
 
 **ChambaFacil** es una plataforma web inspirada en aplicaciones dedicadas a la busquede de trabajos, pero orientada a trabajos informales. El objetivo es conectar a personas que ofrecen servicios (como electricistas, jardineros, niñeras, etc.) con quienes los necesitan, de forma rápida, accesible y confiable.
 
+Este repositorio se limita al FrontEnd
+
 ---
 
 ## ✨ Funcionalidades principales
@@ -46,8 +48,6 @@ npm install
 
 3. Ejecuta el servidor en modo desarrollo:
 ```bash
-Copiar
-Editar
-npm start
+npm start dev
 ```
-Nota: Actualmente no se requieren variables de entorno o configuración adicional para comenzar.
+4. Ingresar al link
