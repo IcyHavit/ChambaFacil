@@ -48,6 +48,6 @@ npm install
 
 3. Ejecuta el servidor en modo desarrollo:
 ```bash
-npm start dev
+npm run dev
 ```
 4. Ingresar al link
