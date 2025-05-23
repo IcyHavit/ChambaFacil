@@ -37,7 +37,7 @@ export default function Home() {
             mb: 2,
           }}
         >
-          Bienvenido a ChambaFacil
+          Bienvenido a ChambaFacil2
         </Typography>
         <Typography
           sx={{
