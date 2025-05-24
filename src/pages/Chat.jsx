@@ -25,13 +25,6 @@ return (
                 placeholder="Buscar"
                 size="small"
                 variant="outlined"
-                InputProps={{
-                    startAdornment: (
-                        <InputAdornment position="start">
-                            <SearchIcon color="action" />
-                        </InputAdornment>
-                    ),
-                }}
             />
         </Box>
         <Divider />
