@@ -1,8 +1,8 @@
 import React from 'react';
 import { Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import Hero from 'src/components/Home/Hero';
-import Categorias from 'src/components/Home/Categorias';
+import Hero from '../components/Home/hero';
+import Categorias from '../components/Home/categorias';
 
 export default function Home() {
   const theme = useTheme();
