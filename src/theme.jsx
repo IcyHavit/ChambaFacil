@@ -28,7 +28,7 @@ const theme = createTheme({
     bodySmall,
   },
   shape: {
-    borderRadius: 8
+    borderRadius: 3
   }
 });
 
