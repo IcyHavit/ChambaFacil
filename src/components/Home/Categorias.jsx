@@ -11,10 +11,10 @@ export default function Categorias() {
   const theme = useTheme();
 
   const categories = [
-    { id: 1, name: 'Plomería', offers: 4, Icon: PlumbingIcon, color: 'warning.main' },
-    { id: 2, name: 'Ama de casa', offers: 6, Icon: CleaningServicesIcon, color: 'warning.main' },
-    { id: 3, name: 'Carpintería', offers: 5, Icon: CarpenterIcon, color: 'warning.main' },
-    { id: 4, name: 'Electricista', offers: 3, Icon: ElectricalServicesIcon, color: 'warning.main' },
+    { id: 1, name: 'Plomería', offers: 4, Icon: PlumbingIcon, color: theme.palette.secondary.dark },
+    { id: 2, name: 'Ama de casa', offers: 6, Icon: CleaningServicesIcon, color: theme.palette.secondary.dark },
+    { id: 3, name: 'Carpintería', offers: 5, Icon: CarpenterIcon, color: theme.palette.secondary.dark },
+    { id: 4, name: 'Electricista', offers: 3, Icon: ElectricalServicesIcon, color: theme.palette.secondary.dark },
   ];
 
   return (
@@ -24,7 +24,7 @@ export default function Categorias() {
         justifyContent: 'space-between',
         alignItems: 'flex-start',
         px: { xs: 2, md: 10 },
-        py: 6,
+        py: 9,
         bgcolor: theme.palette.background.default,
         flexWrap: 'wrap',
         gap: 4,
@@ -38,7 +38,7 @@ export default function Categorias() {
         <Typography color="text.secondary" mb={4}>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, duis ut labore et dolore magna aliqua.
         </Typography>
-        <Button variant="contained" color="warning" sx={{ fontWeight: 'bold' }}>
+        <Button variant="contained" bgcolor= {theme.palette.secondary.dark}  sx={{ fontWeight: 'bold' }}>
           Ver más
         </Button>
       </Box>
@@ -89,9 +89,9 @@ export default function Categorias() {
           justifyContent: 'center',
         }}
       >
-        <Box sx={{ width: 10, height: 10, bgcolor: 'grey.400', borderRadius: '50%' }} />
-        <Box sx={{ width: 10, height: 10, bgcolor: 'warning.main', borderRadius: '50%' }} />
-        <Box sx={{ width: 10, height: 10, bgcolor: 'grey.400', borderRadius: '50%' }} />
+        <Box sx={{ width: 10, height: 10, bgcolor: theme.palette.background.paper, borderRadius: '50%' }} />
+        <Box sx={{ width: 10, height: 10, bgcolor: theme.palette.secondary.dark, borderRadius: '50%' }} />
+        <Box sx={{ width: 10, height: 10, bgcolor: theme.palette.background.paper, borderRadius: '50%' }} />
       </Box>
     </Box>
   );
