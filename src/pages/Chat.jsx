@@ -1,18 +1,118 @@
-import { Link as RouterLink } from 'react-router-dom';
 import { Box, Typography, Button,TextField,InputAdornment,Divider,List,IconButton } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
-import CloseIcon from '@mui/icons-material/Close';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import React from 'react';
+import ChatBubble from '../components/Chat/Chats';
+import ProfilePanel from '../components/Chat/Informacion';
+import PerfilImg from '../assets/images/Perfil.png';
 
 export default function Home() {
-  const theme = useTheme();
 
 const [openProfile, setOpenProfile] = React.useState(false);
+const [searchOpen, setSearchOpen] = React.useState(false);
 
-const handleProfileClose = () => setOpenProfile(false);
+const currentUser = {
+  name: 'Wrandon Segura',
+  job:  'Electricista y plomería',
+  phone1: '+52 56-5346-53',
+  phone2: '+52 56-5346-53',
+  rating: 4.6,
+  avatar: PerfilImg,
+};
+
+const sharedFiles = [
+  
+    {
+        id: 1,
+        src: PerfilImg,
+    },
+    {
+        id: 1,
+        src: PerfilImg,
+    },
+    {
+        id: 1,
+        src: PerfilImg,
+    },
+    {
+        id: 1,
+        src: PerfilImg,
+    },
+    {
+        id: 1,
+        src: PerfilImg,
+    },
+    {
+        id: 1,
+        src: PerfilImg,
+    }
+    
+]
+
+const chatsData = [
+  {
+    id: 1,
+    name: 'Juan Perez',
+    avatar: '',
+    lastMessage: '¿Nos vemos mañana en la obra?',
+    time: '13:45',
+  },
+  {
+    id: 2,
+    name: 'María López',
+    avatar: '',
+    lastMessage: 'Perfecto, gracias por avisar.',
+    time: '12:30',
+  },
+  {
+    id: 3,
+    name: 'María López',
+    avatar: '',
+    lastMessage: 'Perfecto, gracias por avisar.',
+    time: '12:30',
+  },
+  {
+    id: 4,
+    name: 'María López',
+    avatar: '',
+    lastMessage: 'Perfecto, gracias por avisar.',
+    time: '12:30',
+  },
+  {
+    id: 5,
+    name: 'María López',
+    avatar: '',
+    lastMessage: 'Perfecto, gracias por avisar.',
+    time: '12:30',
+  },
+  {
+    id: 6,
+    name: 'María López',
+    avatar: '',
+    lastMessage: 'Perfecto, gracias por avisar.',
+    time: '12:30',
+  },
+  {
+    id: 7,
+    name: 'María López',
+    avatar: '',
+    lastMessage: 'Perfecto, gracias por avisar.',
+    time: '12:30',
+  },
+  // agrega más chats si quieres...
+];
+
+const handleSearchChange = (event) => {
+    const searchValue = event.target.value;
+    // Aquí puedes actualizar estado, filtrar mensajes, etc.
+    console.log("Buscando mensajes con:", searchValue);
+  };
+
+
+
 return (
  <Box sx={{ height: '100vh', display: 'flex', bgcolor: 'background.default', p: 2, gap: 2 }}>
     {/* 1. Lista de Chats */}
@@ -28,8 +128,32 @@ return (
             />
         </Box>
         <Divider />
-        <List sx={{ overflowY: 'auto', flexGrow: 1 }}>
-            {/* lista de chats */}
+        <List sx={{
+                    overflowY: 'auto',
+                    flexGrow: 1,
+                    '&::-webkit-scrollbar': {
+                    width: '8px',
+                    },
+                    '&::-webkit-scrollbar-track': {
+                    background: '#f0f0f0',
+                    borderRadius: '4px',
+                    },
+                    '&::-webkit-scrollbar-thumb': {
+                    backgroundColor: '#4c9b82', // tu color verde del proyecto
+                    borderRadius: '4px',
+                    border: '2px solid #f0f0f0',
+                    },
+                }}
+                >
+            {chatsData.map(chat => (
+                <ChatBubble
+                key={chat.id}
+                name={chat.name}
+                avatar={chat.avatar}
+                lastMessage={chat.lastMessage}
+                time={chat.time}
+                />
+            ))}
         </List>
     </Box>
 
@@ -46,9 +170,23 @@ return (
                 <Typography variant="body2" color="text.secondary">Electricista y plomería</Typography>
                 </Box>
                 <Box sx={{ display: 'flex', gap: 2, bgcolor: 'primary.main', borderRadius: 1, boxShadow: 2, p: 1 }}>
-                <IconButton><SearchIcon sx={{ color: 'common.white' }} /></IconButton>
-                <IconButton><AttachFileIcon sx={{ color: 'common.white' }} /></IconButton>
+                {searchOpen && (
+                    <TextField
+                    size="small"
+                    placeholder="Buscar mensajes..."
+                    variant="outlined"
+                    sx={{ ml: 2, bgcolor: 'background.paper', borderRadius: 1 }}
+                    autoFocus
+                    onChange={handleSearchChange} // define esta función para manejar la búsqueda
+                    />
+                )}
+
+                <IconButton onClick={() => setSearchOpen(prev => !prev)}>
+                <SearchIcon sx={{ color: 'common.white' }} />
+                </IconButton>
+                <IconButton><InsertDriveFileIcon sx={{ color: 'common.white' }} /></IconButton>
                 <IconButton><InsertPhotoIcon sx={{ color: 'common.white' }} /></IconButton>
+                
                 </Box>
             </Box>
             <Divider />
@@ -79,44 +217,36 @@ return (
                 </Box>
 
                 {/* Input mensaje */}
-        <Box sx={{ mt: 2, display: 'flex', gap: 1 }}>
-            <TextField fullWidth placeholder="Escribe un mensaje..." size="small" variant="outlined" />
-            <Button variant="contained" color="primary">Enviar</Button>
+        <Box sx={{ mt: 2, display: 'flex', gap: 1, alignItems: 'center' }}>
+        <TextField fullWidth placeholder="Escribe un mensaje..." size="small" variant="outlined" />
+        
+        {/* Botón para adjuntar archivo */}
+        <IconButton color="primary" component="label">
+            <AttachFileIcon />
+            <input
+            type="file"
+            hidden
+            onChange={(e) => {
+                const file = e.target.files[0];
+                if (file) {
+                console.log("Archivo seleccionado:", file);
+                // Aquí agregas lógica para subir o manejar el archivo
+                }
+            }}
+            />
+        </IconButton>
+        
+        <Button variant="contained" color="primary">Enviar</Button>
         </Box>
     </Box>
 
     {/* 3. Panel de Perfil como barra lateral */}
     {openProfile && (
-        <Box
-            sx={{
-                width: 340,
-                bgcolor: 'background.paper',
-                borderRadius: 2,
-                boxShadow: 1,
-                display: 'flex',
-                flexDirection: 'column',
-                p: 3,
-                zIndex: 1300,
-                position: 'relative',
-            }}
-        >
-            <Box sx={{ alignSelf: 'flex-end' }}>
-                <IconButton onClick={handleProfileClose}><CloseIcon color="action" /></IconButton>
-            </Box>
-            <Box sx={{ textAlign: 'center' }}>
-                <Typography variant="h6" fontWeight="bold" color="text.primary" mt={1}>
-                    Wrandon Segura
-                </Typography>
-                <Typography variant="body2" color="text.secondary" mb={2}>
-                    Electricista y plomería
-                </Typography>
-                <Typography variant="body2" color="text.primary" sx={{ mb: 1 }}>
-                    <strong>Tel 1:</strong> +52 56-5346-53<br />
-                    <strong>Tel 2:</strong> +52 56-5346-53
-                </Typography>
-                <Typography variant="body2" fontWeight="bold" color="text.primary" mb={1}>4.6 Rating</Typography>
-            </Box>
-        </Box>
+    <ProfilePanel
+        user={currentUser}
+        files={sharedFiles}
+        onClose={() => setOpenProfile(false)}
+    />
     )}
 </Box>
 );
