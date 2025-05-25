@@ -1,5 +1,4 @@
-import { Box, Typography, Button,TextField,InputAdornment,Divider,List,IconButton } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
+import { Box, Typography, Button,TextField,Divider,List,IconButton } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
@@ -7,50 +6,19 @@ import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import React from 'react';
 import ChatBubble from '../components/Chat/Chats';
 import ProfilePanel from '../components/Chat/Informacion';
+import MessageBubble from '../components/Chat/ChatPrincipal';
 import PerfilImg from '../assets/images/Perfil.png';
 
 export default function Home() {
 
 const [openProfile, setOpenProfile] = React.useState(false);
 const [searchOpen, setSearchOpen] = React.useState(false);
+const [selectedChat, setSelectedChat] = React.useState(null);
 
-const currentUser = {
-  name: 'Wrandon Segura',
-  job:  'Electricista y plomería',
-  phone1: '+52 56-5346-53',
-  phone2: '+52 56-5346-53',
-  rating: 4.6,
-  avatar: PerfilImg,
+const handleChatSelect = (chatId) => {
+  const chatObj = chatsData.find((c) => c.id === chatId);
+  setSelectedChat(chatObj || null);
 };
-
-const sharedFiles = [
-  
-    {
-        id: 1,
-        src: PerfilImg,
-    },
-    {
-        id: 1,
-        src: PerfilImg,
-    },
-    {
-        id: 1,
-        src: PerfilImg,
-    },
-    {
-        id: 1,
-        src: PerfilImg,
-    },
-    {
-        id: 1,
-        src: PerfilImg,
-    },
-    {
-        id: 1,
-        src: PerfilImg,
-    }
-    
-]
 
 const chatsData = [
   {
@@ -59,50 +27,72 @@ const chatsData = [
     avatar: '',
     lastMessage: '¿Nos vemos mañana en la obra?',
     time: '13:45',
+    job: 'Albañil',        
+    phone1: '+52 55-1234-5678',
+    phone2: '',
+    rating: 4.3,
+    files: [
+      { id: 1, src: PerfilImg }
+    ],
+    messages: [
+      { id: 1, from: 'them', text: '¿Nos vemos mañana en la obra?', time: '13:45' },
+      { id: 2, from: 'me',   text: 'Claro, 5 pm en el sitio.',      time: '13:46' },
+    ]
   },
-  {
+    {
     id: 2,
-    name: 'María López',
+    name: 'Maria Lopez',
     avatar: '',
-    lastMessage: 'Perfecto, gracias por avisar.',
+    lastMessage: 'Hola, ¿cómo estás?',
     time: '12:30',
-  },
-  {
+    job: 'Arquitecta',     
+    phone1: '+52 55-9876-5432',
+    phone2: '+52 55-8765-4321',
+    rating: 4.8,
+    files: [],
+    messages: [
+      { id: 1, from: 'them', text: 'Perfecto, gracias por confirmar.', time: '12:30' },
+    ]
+    },
+    {
     id: 3,
-    name: 'María López',
+    name: 'Carlos Gomez',
     avatar: '',
-    lastMessage: 'Perfecto, gracias por avisar.',
-    time: '12:30',
-  },
-  {
+    lastMessage: 'El proyecto está en marcha.',
+    time: '11:15',
+    job: 'Ingeniero',      
+    phone1: '+52 55-2345-6789',
+    phone2: '',
+    rating: 4.5,
+    files: [],
+    messages: []
+    },
+    {
     id: 4,
-    name: 'María López',
+    name: 'Ana Torres',
     avatar: '',
-    lastMessage: 'Perfecto, gracias por avisar.',
-    time: '12:30',
-  },
-  {
+    lastMessage: '¿Puedes enviarme los planos?',
+    time: '10:00',
+    job: 'Diseñadora',    
+    phone1: '+52 55-3456-7890',
+    phone2: '+52 55-6543-2109',
+    rating: 4.7,
+    files: [],
+    messages: []
+    },
+    {
     id: 5,
-    name: 'María López',
+    name: 'Luis Martinez',
     avatar: '',
-    lastMessage: 'Perfecto, gracias por avisar.',
-    time: '12:30',
-  },
-  {
-    id: 6,
-    name: 'María López',
-    avatar: '',
-    lastMessage: 'Perfecto, gracias por avisar.',
-    time: '12:30',
-  },
-  {
-    id: 7,
-    name: 'María López',
-    avatar: '',
-    lastMessage: 'Perfecto, gracias por avisar.',
-    time: '12:30',
-  },
-  // agrega más chats si quieres...
+    lastMessage: 'Revisé el informe, está bien.',
+    time: '09:45',
+    job: 'Gerente',       // NUEVO
+    phone1: '+52 55-4567-8901',
+    phone2: '',
+    rating: 4.6,
+    files: [],
+    messages: []
+    },
 ];
 
 const handleSearchChange = (event) => {
@@ -110,6 +100,12 @@ const handleSearchChange = (event) => {
     // Aquí puedes actualizar estado, filtrar mensajes, etc.
     console.log("Buscando mensajes con:", searchValue);
   };
+
+const bottomRef = React.useRef(null);
+
+React.useEffect(() => {
+  bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+}, [selectedChat]);
 
 
 
@@ -139,7 +135,7 @@ return (
                     borderRadius: '4px',
                     },
                     '&::-webkit-scrollbar-thumb': {
-                    backgroundColor: '#4c9b82', // tu color verde del proyecto
+                    backgroundColor: 'secondary.main', // tu color verde del proyecto
                     borderRadius: '4px',
                     border: '2px solid #f0f0f0',
                     },
@@ -152,6 +148,8 @@ return (
                 avatar={chat.avatar}
                 lastMessage={chat.lastMessage}
                 time={chat.time}
+                isActive={selectedChat?.id === chat.id}
+                onSelect={() => handleChatSelect(chat.id)}
                 />
             ))}
         </List>
@@ -162,14 +160,21 @@ return (
         {/* Header */}
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                 <Box sx={{ flexGrow: 1 }}>
-                <Box sx={{ display: 'inline-block', cursor: 'pointer' }} onClick={() => setOpenProfile((prev) => !prev)}>
-                    <Typography variant="h6" color="text.primary">
-                    Wrandon Segura
-                    </Typography>
-                </Box>
-                <Typography variant="body2" color="text.secondary">Electricista y plomería</Typography>
-                </Box>
-                <Box sx={{ display: 'flex', gap: 2, bgcolor: 'primary.main', borderRadius: 1, boxShadow: 2, p: 1 }}>
+                    <Box
+                        sx={{ display: 'inline-block', cursor: selectedChat ? 'pointer' : 'default' }}
+                        onClick={() => selectedChat && setOpenProfile((p) => !p)}
+                    >
+                        <Typography variant="h6" color="text.primary">
+                        {selectedChat ? selectedChat.name : 'Selecciona un chat'}
+                        </Typography>
+                    </Box>
+                    {selectedChat && (
+                        <Typography variant="body2" color="text.secondary">
+                        {selectedChat.job || 'Ocupación no disponible'}
+                        </Typography>
+                    )}
+                    </Box>
+                <Box sx={{ display: 'flex', gap: 2, bgcolor: 'secondary.main', borderRadius: 1, boxShadow: 2, p: 1 }}>
                 {searchOpen && (
                     <TextField
                     size="small"
@@ -193,30 +198,12 @@ return (
 
             {/* Mensajes */}
                 <Box sx={{ flexGrow: 1, overflowY: 'auto', mt: 2, px: 1 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 1 }}>
-                    <Box sx={{ maxWidth: '60%', bgcolor: 'grey.300', borderRadius: 1, p: 1 }}>
-                        <Typography variant="body2" color="text.primary">
-                        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque.
-                        </Typography>
-                        <Typography variant="caption" sx={{ display: 'block', textAlign: 'right', color: 'text.secondary' }}>6:12 pm</Typography>
-                    </Box>
-                    </Box>
-
-                    <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 1 }}>
-                    <Box sx={{ maxWidth: '60%', bgcolor: 'primary.main', borderRadius: 1, p: 1, ml: 'auto' }}>
-                        <Typography variant="body2" color="tertiary.main">
-                        Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia.
-                        </Typography>
-                        <Typography variant="caption" sx={{ display: 'block', textAlign: 'right', color: 'tertiary.main' }}>6:12 pm</Typography>
-                    </Box>
-                    </Box>
-
-                    <Box sx={{ textAlign: 'center', my: 2, color: 'text.secondary', fontWeight: 'bold' }}>
-                    Hoy
-                    </Box>
+                {selectedChat?.messages.map((m) => (
+                    <MessageBubble key={m.id} {...m} />
+                ))}
+                <div ref={bottomRef} />
                 </Box>
-
-                {/* Input mensaje */}
+        {/* Input mensaje */}
         <Box sx={{ mt: 2, display: 'flex', gap: 1, alignItems: 'center' }}>
         <TextField fullWidth placeholder="Escribe un mensaje..." size="small" variant="outlined" />
         
@@ -241,13 +228,21 @@ return (
     </Box>
 
     {/* 3. Panel de Perfil como barra lateral */}
-    {openProfile && (
-    <ProfilePanel
-        user={currentUser}
-        files={sharedFiles}
+    {openProfile && selectedChat && (
+        <ProfilePanel
+        user={{
+        name: selectedChat.name,
+        job:  selectedChat.job,
+        phone1: selectedChat.phone1,
+        phone2: selectedChat.phone2,
+        rating: selectedChat.rating,
+        avatar: selectedChat.avatar,
+        }}
+        files={selectedChat.files}
         onClose={() => setOpenProfile(false)}
     />
     )}
+
 </Box>
 );
 
