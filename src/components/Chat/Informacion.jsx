@@ -1,5 +1,6 @@
 // src/components/Chat/Informacion.jsx   (o ProfilePanel.jsx)
 import React from 'react';
+import PerfilImg from '../../assets/images/Perfil.png';
 import {
   Avatar,
   Box,
@@ -46,7 +47,7 @@ export default function ProfilePanel({ user, files, onClose }) {
 
         {/* avatar */}
         <Avatar
-          src={user.avatar}
+          src={user.avatar || PerfilImg}
           alt={user.name}
           sx={{ width: 140, height: 140, mx: 'auto', mb: 2 }}
         />

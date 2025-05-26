@@ -1,52 +1,48 @@
 import React from 'react';
-import { Box, Typography, Avatar } from '@mui/material';
+import { Box, Avatar, Typography } from '@mui/material';
+import PersonIcon from '@mui/icons-material/Person';
 import PerfilImg from '../../assets/images/Perfil.png';
 
-export default function ChatBubble({ name, avatar, lastMessage, time }) {
+export default function ChatBubble({
+  name,
+  avatar,
+  lastMessage,
+  time,
+  onSelect,          // <–– nuevo
+  isActive = false,  // <–– nuevo
+}) {
   return (
     <Box
+      onClick={onSelect}                     /* ← dispara la selección */
       sx={{
         display: 'flex',
         alignItems: 'center',
         gap: 2,
         p: 1.5,
+        mb: 1.5,
         borderRadius: 2,
         cursor: 'pointer',
-        bgcolor: 'background.paper',
-        boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)', // sombra solo abajo
-        mb: 0.5,
-        '&:hover': {
-          boxShadow: '0px 6px 8px rgba(76, 155, 130, 0.6)', // sombra verde suave solo abajo
-          bgcolor: 'grey.100',
-        },
+        bgcolor: isActive ? 'primary.main' : 'background.paper',
+        color: isActive ? 'white' : 'text.primary',
+        boxShadow: 1,
+        '&:hover': { boxShadow: '0 0 8px 2px #4c9b82AA' },
       }}
     >
-      {/* Avatar */}
-      <Avatar src={avatar || PerfilImg} alt={name} sx={{ width: 56, height: 56 }} />
-      {/* Textual info */}
+      {/* avatar */}
+      <Avatar src={avatar || PerfilImg} sx={{ width: 48, height: 48 }}>
+      </Avatar>
+
+      {/* texto */}
       <Box sx={{ flexGrow: 1, minWidth: 0 }}>
-        <Typography
-          variant="subtitle1"
-          noWrap
-          sx={{ fontWeight: 'bold', mb: 0.3 }}
-        >
+        <Typography variant="subtitle1" noWrap fontWeight="bold">
           {name}
         </Typography>
-        <Typography
-          variant="body2"
-          color="text.secondary"
-          noWrap
-        >
+        <Typography variant="body2" noWrap>
           {lastMessage}
         </Typography>
       </Box>
 
-      {/* Time */}
-      <Typography
-        variant="caption"
-        color="text.secondary"
-        sx={{ minWidth: '45px', textAlign: 'right' }}
-      >
+      <Typography variant="caption">
         {time}
       </Typography>
     </Box>
