@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Chat from './pages/Chat';
 import Solicitudes from './pages/Solicitudes';
+import Register from './pages/Register';
 
 
 function App() {
@@ -14,6 +15,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/chat" element={<Chat />} />
         <Route path="/solicitudes" element={<Solicitudes />} />
+        <Route path="/register" element={<Register />} />
+        {/* Add more routes as needed */}
       </Routes>
     </BrowserRouter>
   );
