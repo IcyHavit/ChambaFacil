@@ -86,7 +86,7 @@ const chatsData = [
     avatar: '',
     lastMessage: 'Revisé el informe, está bien.',
     time: '09:45',
-    job: 'Gerente',       // NUEVO
+    job: 'Gerente',
     phone1: '+52 55-4567-8901',
     phone2: '',
     rating: 4.6,
@@ -97,14 +97,14 @@ const chatsData = [
 
 const handleSearchChange = (event) => {
     const searchValue = event.target.value;
-    // Aquí puedes actualizar estado, filtrar mensajes, etc.
     console.log("Buscando mensajes con:", searchValue);
   };
 
 const bottomRef = React.useRef(null);
 
 React.useEffect(() => {
-  bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+
 }, [selectedChat]);
 
 
