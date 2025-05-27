@@ -61,6 +61,14 @@ const solicitudes = [
     tipo: 'Full time',
     inicio: '15 de Septiembre de 2025 a las 7:00 AM',
   },
+  {
+    id: 7,
+    estado: 'aceptadas',
+    puesto: 'Conductor privado',
+    ubicacion: 'Álvaro Obregón, CDMX',
+    tipo: 'Part time',
+    inicio: '10 de Octubre de 2025 a las 6:00 PM',
+  },
 ];
 
 export default function Solicitudes() {
