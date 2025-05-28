@@ -18,7 +18,7 @@ export default function Hero() {
         flexDirection: { xs: 'column', md: 'row' },
         justifyContent: 'space-between',
         alignItems: 'center',
-        background: 'linear-gradient(135deg,rgb(99, 208, 192),rgb(47, 179, 159),rgb(36, 123, 107))',
+        background: 'linear-gradient(150deg,#4c9b82,#495a72)',
         px: { xs: 2, md: 10 },
         py: { xs: 10, md: 16 },
       }}
@@ -42,7 +42,7 @@ export default function Hero() {
               color: theme.palette.tertiary.main,
             }}
           >
-            La manera <span style={{ color: theme.palette.secondary.main }}>más fácil</span><br />
+            La manera <span style={{ color: theme.palette.background.paper }}>más fácil</span><br />
             de encontrar tu próximo trabajo
           </Typography>
           <Typography
@@ -53,8 +53,8 @@ export default function Hero() {
               fontWeight: 300,
             }}
           >
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, <br />
-            duis ut labore et dolore magna aliqua.
+            Conecta con empleadores cerca de ti, postúlate sin necesidad de título universitario
+            y descubre oportunidades que se adaptan a tus habilidades y disponibilidad.
           </Typography>
         </Box>
 

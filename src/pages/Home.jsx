@@ -3,10 +3,13 @@ import { Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import Hero from '../components/Home/hero';
 import Categorias from '../components/Home/categorias';
+import Trabajos from '../components/Home/Trabajos';
 import Navbar from '../components/Navbar';
+import NavbarLogin from '../components/NavbarLogin';
 
 export default function Home() {
   const theme = useTheme();
+  
 
   return (
     <>
@@ -17,6 +20,7 @@ export default function Home() {
         <Hero />
         {/* Categorias */}
         <Categorias />
+        <Trabajos />
       </Box>
     </>
   );
