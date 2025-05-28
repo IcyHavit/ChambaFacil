@@ -18,7 +18,7 @@ export default function Hero() {
         flexDirection: { xs: 'column', md: 'row' },
         justifyContent: 'space-between',
         alignItems: 'center',
-        bgcolor: theme.palette.primary.main,
+        background: 'linear-gradient(135deg,rgb(99, 208, 192),rgb(47, 179, 159),rgb(36, 123, 107))',
         px: { xs: 2, md: 10 },
         py: { xs: 10, md: 16 },
       }}

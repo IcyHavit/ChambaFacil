@@ -4,9 +4,13 @@ import HomeIcon from '@mui/icons-material/Home';
 import WorkIcon from '@mui/icons-material/Work';
 import { Button } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
+import ButtonMod from '../components/ButtonMod';
+import { useNavigate } from 'react-router-dom';
 
 export default function Navbar() {
   const theme = useTheme();
+  const navigate = useNavigate();
+
 
   return (
     <AppBar position="static" sx={{ bgcolor: theme.palette.secondary.dark, boxShadow: 'none' }}>
@@ -16,6 +20,7 @@ export default function Navbar() {
                 variant="button"
                 sx={{
                     fontWeight: 'bold',
+                    fontFamily: theme.typography.bodySmall,
                     bgcolor: theme.palette.background.paper,
                     color: theme.palette.secondary.dark,
                     borderRadius: 1,
@@ -52,7 +57,6 @@ export default function Navbar() {
                 Login
             </Button>
 
-            {/* Botón Únete ahora */}
             <Button
                 variant="contained"
                 sx={{

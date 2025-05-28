@@ -13,10 +13,9 @@ export default function Home() {
     <Navbar />
 
     <Box sx={{ bgcolor: theme.palette.background.default }}>
-        {/* Espacio superior adicional */}
-      <Box sx={{ height: '15px', bgcolor: theme.palette.background.default }} />
-        {/* Secciones de la página */}
+        {/* HERO */}
         <Hero />
+        {/* Categorias */}
         <Categorias />
       </Box>
     </>
