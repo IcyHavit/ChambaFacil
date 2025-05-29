@@ -4,6 +4,7 @@ import { useTheme } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import { Typography } from '@mui/material';
 
+
 // variant: principal-->Rosa, secundario-->Blanco
 // textCont: texto del boton
 // clickEvent: funcion que se ejecuta al hacer click (ej: () => alert('Boton presionado'))

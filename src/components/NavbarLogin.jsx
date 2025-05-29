@@ -13,7 +13,7 @@ export default function NavbarLogin() {
   return (
     <AppBar position="static" sx={{ bgcolor: theme.palette.secondary.dark, boxShadow: 'none' }}>
         <Toolbar sx={{ justifyContent: 'space-between', px: 2 }}>
-            {/* Logo / Título */}
+            {/* Logo */}
             <Typography
             variant="button"
             sx={{
