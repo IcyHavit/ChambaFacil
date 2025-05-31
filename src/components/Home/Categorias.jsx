@@ -5,6 +5,7 @@ import PlumbingIcon from '@mui/icons-material/Plumbing';
 import CleaningServicesIcon from '@mui/icons-material/CleaningServices';
 import CarpenterIcon from '@mui/icons-material/Carpenter';
 import ElectricalServicesIcon from '@mui/icons-material/ElectricalServices';
+import ButtonMod from '../../components/ButtonMod';
 import { useTheme } from '@mui/material/styles';
 
 export default function Categorias() {
@@ -31,16 +32,20 @@ export default function Categorias() {
       }}
     >
       {/* Texto y botón lado izquierdo */}
-      <Box sx={{ maxWidth: 400 }}>
-        <Typography variant="h5" fontWeight="bold" mb={2}>
-          Explora nuestras categorías
+      <Box sx={{ maxWidth: 800 }}>
+        <Typography color= {theme.palette.primary.main} variant="h5" fontWeight="bold" mb={2}>
+          Explora las categorías donde puedes ofrecer tus servicios.
         </Typography>
-        <Typography color="text.secondary" mb={4}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, duis ut labore et dolore magna aliqua.
+        <Typography color= {theme.palette.secondary.dark} mb={4}>
+          Regístrate en áreas como plomería, carpintería, limpieza del hogar o electricidad, postúlate fácilmente y conecta con personas que necesitan tu ayuda. Tú decides cuándo y dónde trabajar.
         </Typography>
-        <Button variant="contained" bgcolor= {theme.palette.secondary.dark}  sx={{ fontWeight: 'bold' }}>
-          Ver más
-        </Button>
+        <ButtonMod
+          variant='principal'
+          textCont='Ver más'
+          width='auto'
+          height='2.5rem'
+          type='submit'
+        />
       </Box>
 
       {/* Tarjetas lado derecho */}
@@ -90,7 +95,7 @@ export default function Categorias() {
         }}
       >
         <Box sx={{ width: 10, height: 10, bgcolor: theme.palette.background.paper, borderRadius: '50%' }} />
-        <Box sx={{ width: 10, height: 10, bgcolor: theme.palette.secondary.dark, borderRadius: '50%' }} />
+        <Box sx={{ width: 10, height: 10, bgcolor: theme.palette.primary.main, borderRadius: '50%' }} />
         <Box sx={{ width: 10, height: 10, bgcolor: theme.palette.background.paper, borderRadius: '50%' }} />
       </Box>
     </Box>

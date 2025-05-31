@@ -67,7 +67,7 @@ export default function Trabajos() {
   const theme = useTheme();
   const [activeCat, setActiveCat] = useState('ama');          // categoría activa
 
-  
+
   const filteredJobs =
     activeCat === 'all'
       ? JOBS
@@ -77,7 +77,7 @@ export default function Trabajos() {
             j.categoryLabel.toLowerCase().includes(activeCat)
         );
 
-  
+
   return (
     <Box sx={{ pt: 1, pb: 6, textAlign: 'center' }}>
       {/* Encabezado */}
@@ -133,7 +133,7 @@ export default function Trabajos() {
                 sx={{
                   maxWidth: 360,
                   mx: 'auto',
-                  bgcolor: 'common.white',      // ← cambia aquí el color de fondo
+                  bgcolor: 'common.white',     
                   borderRadius: 3,
                   height: '100%',
                   display: 'flex',
