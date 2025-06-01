@@ -42,8 +42,8 @@ export default function Hero() {
               color: theme.palette.tertiary.main,
             }}
           >
-            La manera <span style={{ color: theme.palette.background.paper }}>más fácil</span><br />
-            de encontrar tu próximo trabajo
+            Soluciona lo que necesitas, <span style={{ color: theme.palette.secondary.dark }}>sin</span><br />
+            complicaciones
           </Typography>
           <Typography
             sx={{
@@ -53,16 +53,18 @@ export default function Hero() {
               fontWeight: 300,
             }}
           >
-            Conecta con empleadores cerca de ti, postúlate sin necesidad de título universitario
-            y descubre oportunidades que se adaptan a tus habilidades y disponibilidad.
+            ¿Una fuga, una instalación eléctrica o un arreglo de carpintería? <br />
+            Aquí encuentras personas confiables cerca de ti, listas para ayudarte cuando lo necesites.
           </Typography>
         </Box>
-        <SearchBar />
+        <Box sx={{ width: '100%', maxWidth: 750, alignSelf: 'auto' }}>
+          <SearchBar />
+        </Box>
       </Box>
 
       <Box
         component="img"
-        img src={IMG_HERO} alt="Ilustración principal"
+        src={IMG_HERO} alt="Ilustración principal"
         sx={{
           maxWidth: '420px',
           width: '90%',

@@ -41,6 +41,22 @@ export default function Navbar({ isLoggedIn = true }) {
                     <WorkIcon sx={{ fontSize: 24 }} />
                 </IconButton>
 
+            <Typography
+                variant="button"
+                sx={{
+                    fontWeight: 'bold',
+                    fontFamily: theme.typography.bodySmall,
+                    bgcolor: theme.palette.background.paper,
+                    color: theme.palette.secondary.dark,
+                    borderRadius: 1,
+                    px: 1.5,
+                    py: 0.5,
+                }}
+                onClick={() => navigate('/search')}
+                >
+                Trabajos
+            </Typography>
+
             {isLoggedIn ? (
             <>
               <IconButton sx={{ color: theme.palette.secondary.dark }} onClick={() => navigate('/chat')}>
