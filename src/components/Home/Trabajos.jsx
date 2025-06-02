@@ -12,53 +12,74 @@ import {
   Typography,
 } from '@mui/material';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
+import ElectricalServicesIcon from '@mui/icons-material/ElectricalServices';
 import PlumbingIcon from '@mui/icons-material/Plumbing';
 import HouseIcon from '@mui/icons-material/House';
-import HandymanIcon from '@mui/icons-material/Handyman';
-import PetsIcon from '@mui/icons-material/Pets';
 import { useTheme } from '@mui/material/styles';
 
 
 const CATEGORY_LIST = [
-  { id: 'plomero',    label: 'Plomero',       icon: <PlumbingIcon /> },
-  { id: 'ama',        label: 'Ama de casa',   icon: <HouseIcon   /> },
-  { id: 'carpinteria',label: 'Carpintería',   icon: <HandymanIcon/> },
+  { id: 'plomeria',    label: 'Plomería',       icon: <PlumbingIcon color="inherit" /> },
+  { id: 'electricidad',        label: 'Electricidad',   icon: <ElectricalServicesIcon   color="inherit" /> },
+  { id: 'Hogar',label: 'Limpieza y cuidados',   icon: <HouseIcon color="inherit" /> },
 ];
 
 const JOBS = [
   {
     id: 1,
-    category: 'ama',
-    categoryLabel: 'Ama de casa',
+    category: 'Hogar',
+    categoryLabel: 'Niñera',
     title: 'Niñera de tiempo completo',
     location: 'Condesa, CDMX',
     type: 'Full time',
-    postedAgo: 'Hace 2 días',
+    postedAgo: 'Hoy',
     description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor ut labore et dolore magna aliqua...',
+      'Soy una niñera con experiencia en el cuidado de bebés y niños pequeños. Ofrezco atención personalizada, actividades didácticas y apoyo básico en casa. Comprometida, responsable y con referencias disponibles....',
   },
   {
     id: 2,
-    category: 'paseador',
-    categoryLabel: 'Paseador de perros',
-    title: 'Paseador de perros',
-    location: 'Condesa, CDMX',
-    type: 'Part time',
+    category: 'electricidad',
+    categoryLabel: 'Electricidad',
+    title: 'Electricista',
+    location: 'Gustavo A. Madero, CDMX',
+    type: 'Medio tiempo',
     postedAgo: 'Hace 1 día',
     description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor ut labore et dolore magna aliqua...',
-    icon: <PetsIcon />,            // icono específico distinto a la lista
+      'Electricista con experiencia en instalaciones, reparaciones, mantenimiento de contactos, apagadores, luminarias y más. Trabajo limpio, seguro y con atención a los detalles. Ideal para casas, departamentos y negocios....',
+    icon: <ElectricalServicesIcon />,
   },
   {
     id: 3,
-    category: 'carpinteria',
-    categoryLabel: 'Carpintería',
-    title: 'Carpintero fines de semana',
-    location: 'Condesa, CDMX',
-    type: 'Full time',
+    category: 'plomeria',
+    categoryLabel: 'Plomería',
+    title: 'Plomero fines de semana',
+    location: 'Coyoacán, CDMX',
+    type: 'Fines de semana',
+    postedAgo: 'Hace 1 día',
+    description:
+      'Plomero con más de 20 años de experiencia, ...',
+  },
+  {
+    id: 4,
+    category: 'Hogar',
+    categoryLabel: 'Mascotas',
+    title: 'Cuidador de mascotas',
+    location: 'Benito Juárez, CDMX',
+    type: 'Tiempo completo',
+    postedAgo: 'Hace 1 día',
+    description:
+      'Ofrezco servicios de cuidado para perros y gatos: paseos, alimentación, juego y compañía. Atención amorosa, responsable y con experiencia en diferentes razas. También disponible para visitas a domicilio durante ausencias.....',
+  },
+  {
+    id: 5,
+    category: 'Hogar',
+    categoryLabel: 'Jardinería',
+    title: 'Jardinero',
+    location: 'Iztapalapa, CDMX',
+    type: 'Medio tiempo',
     postedAgo: 'Hace 2 días',
     description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor ut labore et dolore magna aliqua...',
+      'Ofrezco servicios de jardinería como corte de pasto, poda de arbustos, plantado de flores, limpieza de áreas verdes y mantenimiento general. Trabajo con responsabilidad y atención al detalle para que tu jardín luzca siempre bien cuidado......',
   },
 ];
 
@@ -67,7 +88,7 @@ export default function Trabajos() {
   const theme = useTheme();
   const [activeCat, setActiveCat] = useState('ama');          // categoría activa
 
-  
+
   const filteredJobs =
     activeCat === 'all'
       ? JOBS
@@ -77,16 +98,16 @@ export default function Trabajos() {
             j.categoryLabel.toLowerCase().includes(activeCat)
         );
 
-  
+
   return (
-    <Box sx={{ pt: 1, pb: 6, textAlign: 'center' }}>
+    <Box sx={{ pt: 0.5, pb: 6, textAlign: 'center' }}>
       {/* Encabezado */}
       <Typography variant="h4" fontWeight={700}>
-        Trabajos del día
+        Trabajos nuevos todos los días, soluciones al instante.
       </Typography>
       <Typography variant="body1" sx={{ maxWidth: 600, mx: 'auto', mt: 1 }}>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, dunt ut labore
-        et dolore magna aliqua.
+        Estas son las oportunidades que se han publicado hoy.
+        Encuentra personas listas para ayudarte y soluciona lo que necesitas de forma rápida y confiable.
       </Typography>
 
       {/* Filtros de categoría */}
@@ -133,7 +154,7 @@ export default function Trabajos() {
                 sx={{
                   maxWidth: 360,
                   mx: 'auto',
-                  bgcolor: 'common.white',      // ← cambia aquí el color de fondo
+                  bgcolor: 'common.white',
                   borderRadius: 3,
                   height: '100%',
                   display: 'flex',
@@ -143,15 +164,17 @@ export default function Trabajos() {
                 {/* Badge de categoría */}
                 <CardContent sx={{ flexGrow: 1 }}>
                   <Chip
-                    icon={
-                      job.icon ??
-                      CATEGORY_LIST.find(c => c.id === job.category)?.icon
+                    icon={React.cloneElement(
+                    job.icon ?? CATEGORY_LIST.find(c => c.id === job.category)?.icon,
+                    {
+                      color: 'inherit',
                     }
+                  )}
                     label={job.categoryLabel}
                     size="small"
                     sx={{
                       bgcolor: theme.palette.primary.light,
-                      color: 'common.white',
+                      color: theme.palette.background.default,
                       mb: 2,
                       fontWeight: 600,
                     }}

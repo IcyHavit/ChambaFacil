@@ -1,11 +1,11 @@
 import React from 'react';
 import { AppBar, Toolbar, Typography, Box, IconButton } from '@mui/material';
 import {
-  Home as HomeIcon,
   Work as WorkIcon,
   Chat as ChatIcon,
   Description as DescriptionIcon,
   AccountCircle as AccountCircleIcon,
+  Tune,
 } from '@mui/icons-material';
 import { Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
@@ -17,7 +17,7 @@ export default function Navbar({ isLoggedIn = true }) {
 
 
   return (
-    <AppBar position="static" sx={{ bgcolor: theme.palette.secondary.dark, boxShadow: 'none' }}>
+    <AppBar position="static" sx={{ bgcolor: theme.palette.background.paper, boxShadow: 'none'}}>
         <Toolbar sx={{ justifyContent: 'space-between', px: 2 }}>
             {/* Logo */}
             <Typography
@@ -31,27 +31,41 @@ export default function Navbar({ isLoggedIn = true }) {
                     px: 1.5,
                     py: 0.5,
                 }}
+                onClick={() => navigate('/')}
                 >
                 ChambaFácil
             </Typography>
             {/* Íconos + Botones */}
             <Box sx={{ display: 'flex', gap: 4, alignItems: 'center' }}>
-                <IconButton sx={{ color: 'white' }}>
-                    <HomeIcon sx={{ fontSize: 24 }} />
-                </IconButton>
-                <IconButton sx={{ color: 'white' }} onClick={() => navigate('/publicar')}>
+                <IconButton sx={{ color: theme.palette.secondary.dark }} onClick={() => navigate('/search')}>
                     <WorkIcon sx={{ fontSize: 24 }} />
                 </IconButton>
 
+            <Typography
+                variant="button"
+                sx={{
+                    fontWeight: 'bold',
+                    fontFamily: theme.typography.bodySmall,
+                    bgcolor: theme.palette.background.paper,
+                    color: theme.palette.secondary.dark,
+                    borderRadius: 1,
+                    px: 1.5,
+                    py: 0.5,
+                }}
+                onClick={() => navigate('/search')}
+                >
+                Trabajos
+            </Typography>
+
             {isLoggedIn ? (
             <>
-              <IconButton sx={{ color: 'white' }} onClick={() => navigate('/chat')}>
+              <IconButton sx={{ color: theme.palette.secondary.dark }} onClick={() => navigate('/chat')}>
                 <ChatIcon sx={{ fontSize: 24 }} />
               </IconButton>
-              <IconButton sx={{ color: 'white' }} onClick={() => navigate('/solicitudes')}>
+              <IconButton sx={{ color: theme.palette.secondary.dark }} onClick={() => navigate('/solicitudes')}>
                 <DescriptionIcon sx={{ fontSize: 24 }} />
               </IconButton>
-              <IconButton sx={{ color: theme.palette.background.default }}>
+              <IconButton sx={{ color: theme.palette.secondary.dark }}>
                 <AccountCircleIcon sx={{ fontSize: 32 }} />
               </IconButton>
             </>
@@ -60,14 +74,14 @@ export default function Navbar({ isLoggedIn = true }) {
               <Button
                 variant="outlined"
                 sx={{
-                  color: 'white',
-                  borderColor: 'white',
+                  color: 'black',
+                  borderColor: 'black',
                   textTransform: 'none',
                   fontWeight: 'bold',
                   '&:hover': {
                     borderColor: 'white',
-                    bgcolor: theme.palette.background.paper,
-                    color: theme.palette.secondary.dark,
+                    bgcolor: theme.palette.secondary.dark,
+                    color: theme.palette.background.default,
                   },
                 }}
                 onClick={() => navigate('/login')}

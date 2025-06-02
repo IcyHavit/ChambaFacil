@@ -1,11 +1,11 @@
 // Hero.jsx
 import React from 'react';
 import { Box, Typography, TextField, Button, Stack } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import BusinessIcon from '@mui/icons-material/Business';
 import { useTheme } from '@mui/material/styles';
 import ImagenHero from '../../assets/images/Home/ImagenHero.png';
+import Trabajadores1 from '../../assets/images/Home/Trabajadores1.png';
+import IMG_HERO from '../../assets/images/Home/IMG_HERO.png';
+import SearchBar from '../SearchBar';
 
 
 export default function Hero() {
@@ -19,11 +19,11 @@ export default function Hero() {
         justifyContent: 'space-between',
         alignItems: 'center',
         background: 'linear-gradient(150deg,#4c9b82,#495a72)',
-        px: { xs: 2, md: 10 },
-        py: { xs: 10, md: 16 },
+        px: { xs: 2, md: 12 },
+        py: { xs: 10, md: 11 },
       }}
     >
-      {/* Left side - Text and search */}
+
       <Box
         sx={{
           flex: 1,
@@ -42,8 +42,8 @@ export default function Hero() {
               color: theme.palette.tertiary.main,
             }}
           >
-            La manera <span style={{ color: theme.palette.background.paper }}>más fácil</span><br />
-            de encontrar tu próximo trabajo
+            Soluciona lo que necesitas, <span style={{ color: theme.palette.secondary.dark }}>sin</span><br />
+            complicaciones
           </Typography>
           <Typography
             sx={{
@@ -53,59 +53,22 @@ export default function Hero() {
               fontWeight: 300,
             }}
           >
-            Conecta con empleadores cerca de ti, postúlate sin necesidad de título universitario
-            y descubre oportunidades que se adaptan a tus habilidades y disponibilidad.
+            ¿Una fuga, una instalación eléctrica o un arreglo de carpintería? <br />
+            Aquí encuentras personas confiables cerca de ti, listas para ayudarte cuando lo necesites.
           </Typography>
         </Box>
-
-        <Stack
-          direction={{ xs: 'column', sm: 'row' }}
-          spacing={2}
-          sx={{ bgcolor: theme.palette.tertiary.main, p: 1, borderRadius: 2 }}
-        >
-          <TextField
-            variant="standard"
-            placeholder="Industria"
-            InputProps={{ startAdornment: <BusinessIcon sx={{ mr: 1 }} /> }}
-            sx={{ flex: 0.7 }}
-          />
-          <TextField
-            variant="standard"
-            placeholder="Dirección"
-            InputProps={{ startAdornment: <LocationOnIcon sx={{ mr: 1 }} /> }}
-            sx={{ flex: 0.7}}
-          />
-          <TextField
-            variant="standard"
-            placeholder="Keywords"
-            sx={{ flex: 0.7 }}
-          />
-          <Button
-            variant="contained"
-            sx={{
-              bgcolor: theme.palette.secondary.main,
-              color: theme.palette.tertiary.main,
-              fontWeight: 'bold',
-              px: 2.5,
-              py: 1.5,
-              '&:hover': {
-                bgcolor: theme.palette.secondary.dark,
-              },
-            }}
-            startIcon={<SearchIcon />}
-          >
-            Buscar
-          </Button>
-        </Stack>
+        <Box sx={{ width: '100%', maxWidth: 750, alignSelf: 'auto' }}>
+          <SearchBar />
+        </Box>
       </Box>
 
-      {/* Right side - Illustration */}
       <Box
         component="img"
-        img src={ImagenHero} alt="Ilustración principal"
+        src={IMG_HERO} alt="Ilustración principal"
         sx={{
-          maxWidth: '250px',
-          width: '50%',
+          maxWidth: '420px',
+          width: '90%',
+          //filter: 'drop-shadow(0px 0px 3px rgba(255, 255, 255, 0.7))'
         }}
       />
     </Box>

@@ -5,11 +5,12 @@ import Hero from '../components/Home/hero';
 import Categorias from '../components/Home/categorias';
 import Trabajos from '../components/Home/Trabajos';
 import Navbar from '../components/Navbar';
-import NavbarLogin from '../components/NavbarLogin';
+import Ofrecer from '../components/Home/OfrecerServicios';
+import Footer from '../components/Footer';
 
 export default function Home() {
   const theme = useTheme();
-  
+
 
   return (
     <>
@@ -18,9 +19,11 @@ export default function Home() {
     <Box sx={{ bgcolor: theme.palette.background.default }}>
         {/* HERO */}
         <Hero />
-        {/* Categorias */}
+
         <Categorias />
         <Trabajos />
+        {/* <Ofrecer /> */}
+        <Footer showIncorporaLugar={true} />
       </Box>
     </>
   );
