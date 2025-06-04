@@ -1,4 +1,4 @@
-import { Box, Typography, Button,TextField,Divider,List,IconButton } from '@mui/material';
+import { Box, Typography, Button,TextField,Divider,List,IconButton,Stack } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
@@ -8,6 +8,8 @@ import ChatBubble from '../components/Chat/Chats';
 import ProfilePanel from '../components/Chat/Informacion';
 import MessageBubble from '../components/Chat/ChatPrincipal';
 import PerfilImg from '../assets/images/Perfil.png';
+import Footer from '../components/Footer';
+import Navbar from '../components/Navbar';
 
 export default function Home() {
 
@@ -93,6 +95,45 @@ const chatsData = [
     files: [],
     messages: []
     },
+    {
+    id: 6,
+    name: 'Luis Martinez',
+    avatar: '',
+    lastMessage: 'Revisé el informe, está bien.',
+    time: '09:45',
+    job: 'Gerente',
+    phone1: '+52 55-4567-8901',
+    phone2: '',
+    rating: 4.6,
+    files: [],
+    messages: []
+    },
+    {
+    id: 7,
+    name: 'Luis Martinez',
+    avatar: '',
+    lastMessage: 'Revisé el informe, está bien.',
+    time: '09:45',
+    job: 'Gerente',
+    phone1: '+52 55-4567-8901',
+    phone2: '',
+    rating: 4.6,
+    files: [],
+    messages: []
+    },
+    {
+    id: 8,
+    name: 'Luis Martinez',
+    avatar: '',
+    lastMessage: 'Revisé el informe, está bien.',
+    time: '09:45',
+    job: 'Gerente',
+    phone1: '+52 55-4567-8901',
+    phone2: '',
+    rating: 4.6,
+    files: [],
+    messages: []
+    } 
 ];
 
 const handleSearchChange = (event) => {
@@ -103,14 +144,18 @@ const handleSearchChange = (event) => {
 const bottomRef = React.useRef(null);
 
 React.useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
 
 }, [selectedChat]);
 
 
 
 return (
+
+<Stack sx={{ height: '100vh', width: '100%' }}>
+<Navbar />
+
  <Box sx={{ height: '100vh', display: 'flex', bgcolor: 'background.default', p: 2, gap: 2 }}>
+
     {/* 1. Lista de Chats */}
 
     <Box sx={{ width: 300, bgcolor: 'background.paper', borderRadius: 2, boxShadow: 1, display: 'flex', flexDirection: 'column' }}>
@@ -244,6 +289,8 @@ return (
     )}
 
 </Box>
+    <Footer />
+</Stack>
 );
 
 }

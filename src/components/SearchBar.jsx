@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
-import { Autocomplete, TextField, Stack, InputAdornment } from '@mui/material';
+import {
+  Autocomplete,
+  TextField,
+  Stack,
+  InputAdornment,
+  Box,
+  useTheme,
+} from '@mui/material';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import BusinessIcon from '@mui/icons-material/Business';
 import SearchIcon from '@mui/icons-material/Search';
 import ButtonMod from './ButtonMod';
-import { useTheme } from '@emotion/react';
-
 
 const trabajos = [
   { label: 'Desarrollador Frontend' },
@@ -15,7 +20,7 @@ const trabajos = [
   { label: 'Especialista en Marketing Digital' },
 ];
 
-const Alcaldías = [
+const alcaldias = [
   { label: 'Gustavo A. Madero' },
   { label: 'Iztapalapa' },
   { label: 'Coyoacán' },
@@ -24,79 +29,116 @@ const Alcaldías = [
 ];
 
 const SearchBar = ({ handleBuscar }) => {
+  const theme = useTheme();
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
-  const theme = useTheme();
+  const [value, setValue] = useState(null);
+  const [selectedAlcaldia, setSelectedAlcaldia] = useState(null);
+
   return (
-    <Stack
-      direction={{ xs: 'column', sm: 'row' }}
-      spacing={2}
-      sx={{ bgcolor: 'tertiary.main', p: 2, borderRadius: theme.shape.borderRadius}}
+    <Box
+      sx={{
+        width: '100%',
+        maxWidth: '1000px',
+        mt: { xs: 4, md: 0 },
+        px: { xs: 2, md: 0 },
+      }}
     >
-      <Autocomplete
-        options={trabajos}
-        getOptionLabel={(o) => o.label}
-        freeSolo
-        open={open}
-        onOpen={() => {
-          if (inputValue.length > 0) setOpen(true);
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        spacing={2}
+        sx={{
+          bgcolor: theme.palette.tertiary.main,
+          p: 2,
+          borderRadius: 2,
         }}
-        onClose={() => setOpen(false)}
-        inputValue={inputValue}
-        onInputChange={(e, newInputValue) => {
-          setInputValue(newInputValue);
-          setOpen(newInputValue.length > 0);
-        }}
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            label="Trabajo a buscar"
-            variant="standard"
-            size="small"
-            InputProps={{
-              ...params.InputProps,
-              startAdornment: (
-                <InputAdornment position="start">
-                  <BusinessIcon sx={{ color: 'text.secondary' }} />
-                </InputAdornment>
-              ),
-            }}
-          />
-        )}
-        sx={{ width: 300 }}
-      />
+      >
+        {/* Autocompletado para trabajos */}
+        <Autocomplete
+          options={trabajos}
+          getOptionLabel={(option) => option.label || ''}
+          freeSolo
+          disableClearable
+          open={open}
+          onOpen={() => setOpen(inputValue.length > 0)}
+          onClose={() => setOpen(false)}
+          inputValue={inputValue}
+          onInputChange={(event, newInputValue) => {
+            setInputValue(newInputValue);
+            setOpen(newInputValue.length > 0);
+          }}
+          value={value}
+          onChange={(event, newValue) => {
+            if (typeof newValue === 'string') {
+              setValue({ label: newValue });
+            } else if (newValue && newValue.inputValue) {
+              setValue({ label: newValue.inputValue });
+            } else {
+              setValue(newValue);
+            }
+          }}
+          sx={{ flex: 0.7 }}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Trabajo a buscar"
+              variant="standard"
+              size="small"
+              slotProps={{
+                input: {
+                  ...params.InputProps,
+                  type: 'search',
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <BusinessIcon sx={{ color: 'text.secondary' }} />
+                    </InputAdornment>
+                  ),
+                },
+              }}
+            />
+          )}
+        />
 
-      <Autocomplete
-        disablePortal
-        options={Alcaldías}
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            label="Selecciona una alcaldía"
-            variant="standard"
-            size="small"
-            InputProps={{
-              ...params.InputProps,
-              startAdornment: (
-                <InputAdornment position="start">
-                  <LocationOnIcon sx={{ color: 'text.secondary' }} />
-                </InputAdornment>
-              ),
-            }}
-          />
-        )}
-        sx={{ width: 300 }}
-      />
+        {/* Autocompletado para alcaldías */}
+        <Autocomplete
+          disablePortal
+          options={alcaldias}
+          disableClearable
+          getOptionLabel={(option) => option.label || ''}
+          value={selectedAlcaldia}
+          onChange={(event, newValue) => setSelectedAlcaldia(newValue)}
+          sx={{ flex: 0.7 }}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Selecciona una alcaldía"
+              variant="standard"
+              size="small"
+              slotProps={{
+                input: {
+                  ...params.InputProps,
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <LocationOnIcon sx={{ color: 'text.secondary' }} />
+                    </InputAdornment>
+                  ),
+                },
+              }}
+            />
+          )}
+        />
 
-      <ButtonMod
-        variant="secondary"
-        textCont="Buscar"
-        width="auto"
-        height="2.4rem"
-        clickEvent={handleBuscar}
-        startIcon={<SearchIcon />}
-      />
-    </Stack>
+        {/* Botón para buscar */}
+        <ButtonMod
+          variant="secondary"
+          textCont="Buscar"
+          width="auto"
+          height="2.4rem"
+          clickEvent={() => handleBuscar(value?.label || '', selectedAlcaldia?.label || '')}
+          startIcon={<SearchIcon />}
+        />
+      </Stack>
+    </Box>
   );
 };
 
