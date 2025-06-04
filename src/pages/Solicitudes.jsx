@@ -10,6 +10,8 @@ import {
 } from '@mui/material';
 import Mascota from '../assets/images/Mascota.png';
 import SolicitudCard from '../components/Solicitudes/Tarjetas'; // la tarjeta aislada
+import Footer from '../components/Footer';
+import Navbar from '../components/Navbar';
 
 /* ---------- datos mock ---------- */
 const solicitudes = [
@@ -92,22 +94,23 @@ export default function Solicitudes() {
   ];
 
   return (
+    
     <Box
       sx={{
         minHeight: '100vh',
         display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'flex-start',
+        flexDirection: 'column',
         bgcolor: 'background.default',
-        p: 4,
       }}
     >
+      <Navbar />
       <Box
         sx={{
-          width: { xs: '100%', md: '60vw' }, // 60 % en desktop
-          maxWidth: 900,
+          width: '100%',
+          maxWidth: 1100,
           display: 'flex',
           gap: 3,
+          mx: 'auto',
         }}
       >
         {/* --------- Sidebar --------- */}
@@ -169,6 +172,7 @@ export default function Solicitudes() {
             p: 4,
             display: 'flex',
             flexDirection: 'column',
+            
           }}
         >
           <Typography variant="h5" fontWeight="bold" mb={3}>
@@ -200,6 +204,10 @@ export default function Solicitudes() {
           )}
         </Box>
       </Box>
+
+      <Footer showIncorporaLugar={true} />
+
     </Box>
+    
   );
 }
