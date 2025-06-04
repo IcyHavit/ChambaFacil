@@ -22,7 +22,7 @@ export default function Home() {
 
         <Categorias />
         <Trabajos />
-        {/* <Ofrecer /> */}
+        <Ofrecer /> <br /><br />
         <Footer showIncorporaLugar={true} />
       </Box>
     </>

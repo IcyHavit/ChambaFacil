@@ -17,7 +17,7 @@ export default function Navbar({ isLoggedIn = true }) {
 
 
   return (
-    <AppBar position="static" sx={{ bgcolor: theme.palette.background.paper, boxShadow: 'none'}}>
+    <AppBar position="sticky" sx={{ bgcolor: theme.palette.background.paper, boxShadow: '0px 5px 3px rgba(0, 0, 0, 0.05)', zIndex: 1100 }}>
         <Toolbar sx={{ justifyContent: 'space-between', px: 2 }}>
             {/* Logo */}
             <Typography

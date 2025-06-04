@@ -139,16 +139,14 @@ export default function Trabajos() {
         ))}
       </Stack>
 
-      {/* Tarjetas */}
-      <Container maxWidth="lg">
-        <Grid
-          container
+      {/* Sección de las tarjetas */}
+        <Grid container
           spacing={4}
           justifyContent="center"
           sx={{ mt: 4 }}
         >
           {filteredJobs.map(job => (
-            <Grid item xs={12} sm={10} md={6} lg={4} key={job.id}>
+            <Grid size={{ xs: 12, sm: 10, md: 6, lg: 3 }} key={job.id}>
               <Card
                 elevation={3}
                 sx={{
@@ -236,7 +234,6 @@ export default function Trabajos() {
             </Grid>
           ))}
         </Grid>
-      </Container>
     </Box>
   );
 }

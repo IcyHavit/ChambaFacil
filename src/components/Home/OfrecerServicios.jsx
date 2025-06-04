@@ -16,9 +16,9 @@ export default function Ofrecer() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        bgcolor: theme.palette.secondary.light,
-        px: 4,
-        py: 3,
+        bgcolor: theme.palette.primary.light,
+        px: 30,
+        py: 2,
         flexDirection: { xs: 'column', md: 'row' },
         gap: 3,
       }}
@@ -35,17 +35,17 @@ export default function Ofrecer() {
 
       {/* Contenido */}
       <Box>
-        <Typography variant="h6" fontWeight={600}>
+        <Typography variant="h6" fontWeight={600} color ={theme.palette.background.default}>
           ¿Quieres ofrecer tus servicios?
         </Typography>
-        <Typography variant="body2" sx={{ mt: 1, mb: 2 }}>
+        <Typography variant="body2" sx={{ mt: 1, mb: 2 } } color={theme.palette.background.default}>
           Regístrate como prestador y conecta con personas que buscan justo lo que tú sabes hacer.
         </Typography>
         <Button
           variant="contained"
           sx={{
-            bgcolor: theme.palette.primary.main,
-            '&:hover': { bgcolor: theme.palette.primary.dark },
+            bgcolor: theme.palette.secondary.main,
+            '&:hover': { bgcolor: theme.palette.secondary.dark },
             fontWeight: 'bold',
             borderRadius: 2,
           }}
