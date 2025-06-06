@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, IconButton, Grid } from '@mui/material';
+import { Box, IconButton, Grid, Chip, Pagination, Stack } from '@mui/material';
 import { useTheme } from '@emotion/react';
 import FilterAltIcon from '@mui/icons-material/Tune';
 import SearchBar from '../components/SearchBar';
@@ -7,72 +7,43 @@ import FilterDrawer from '../components/Search/FilterDrawer'; // Importar el nue
 import CardWork from '../components/Search/CardWork';
 import Typography from '@mui/material/Typography';
 import img from '../assets/images/Home/HERO_FINAL.png'
-
+import Sidebar from '../components/Search/Sidebar';
+import { trabajos } from '../components/Search/trabajos'; // Importar el arreglo de trabajos
 
 export default function Search() {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
+  const [selectedWork, setSelectedWork] = useState(null); // Estado para el trabajo seleccionado
+  const [page, setPage] = useState(1); // Estado para la página actual
+  const trabajosPorPagina = 9; // Número máximo de trabajos por página
+  const totalPaginas = Math.ceil(trabajos.length / trabajosPorPagina);
 
+  const handlePageChange = (event, value) => {
+    setPage(value); // Actualizar la página actual
+  };
 
-  //arreglo para los trabajos
-  const trabajos = [
-    {
-      titulo: 'Desarrollador Frontend',
-      prestamista: 'Juan Pérez',
-      imagen: img,
-      categoria: 'Tecnología',
-      alcaldia: 'Cuauhtémoc',
-      descripcion: 'Buscamos un desarrollador frontend con experiencia en React y JavaScript. LOREM IPSUM DOLOR SIT AMET, CONSECTETUR ADIPISICING ELIGENDI.',
-      fecha: '2023-10-01',
-    },
-    {
-      titulo: 'Diseñador Gráfico',
-      prestamista: 'María López',
+  const trabajosMostrados = trabajos.slice(
+    (page - 1) * trabajosPorPagina,
+    page * trabajosPorPagina
+  );
 
-      categoria: 'Diseño',
-      alcaldia: 'Benito Juárez',
-      descripcion: 'Se requiere diseñador gráfico con habilidades en Adobe Photoshop e Illustrator.',
-      fecha: '2023-10-02',
-    },
-    {
-      titulo: 'Gerente de Proyectos',
-      prestamista: 'Carlos García',
-      categoria: 'Gestión',
-      alcaldia: 'Iztapalapa',
-      descripcion: 'Gerente de proyectos con experiencia en metodologías ágiles y gestión de equipos.',
-      fecha: '2023-10-03',
-    },
-    {
-      titulo: 'Analista de Datos',
-      prestamista: 'Ana Martínez',
-      categoria: 'Análisis',
-      alcaldia: 'Coyoacán',
-      descripcion: 'Buscamos un analista de datos con experiencia en SQL y herramientas de visualización.',
-      fecha: '2023-10-04',
-    },
-    {
-      titulo: 'Especialista en Marketing Digital',
-      prestamista: 'Luis Hernández',
-      categoria: 'Marketing',
-      alcaldia: 'Gustavo A. Madero',
-      descripcion: 'Especialista en marketing digital con experiencia en SEO y campañas de publicidad online.',
-      fecha: '2023-10-05',
-    },
-    // Agrega más trabajos según sea necesario
-  ];
+  const handleCardClick = (trabajo) => {
+    setSelectedWork(trabajo); // Actualizar el trabajo seleccionado
+  };
 
   const handleBuscar = (trabajo, alcaldia) => {
-    // Aquí puedes manejar la lógica de búsqueda con los valores de trabajo y alcaldía
+    // Aquí se maneja la lógica de búsqueda con los valores de trabajo y alcaldía
+    //trabajo de backend
     console.log('Buscar:', trabajo, 'en', alcaldia);
 
   };
 
   const handleApplyFilters = (filters) => {
-    // Aquí puedes manejar la lógica de aplicación de filtros
+
+    // Aquí se maneja la lógica de aplicación de filtros
+
     console.log('Filtros aplicados:', filters);
   }
-
-
 
   const handleFilter = (newOpen) => setOpen(newOpen);
 
@@ -113,80 +84,49 @@ export default function Search() {
       <Grid container spacing={2} sx={{ width: '100%', margin: '0 auto', padding: '1rem' }}>
         {/* Sidebar */}
         <Grid size={{ xs: 0, md: 3.5 }}>
-          <Box
-            sx={{
-              padding: '1rem',
-              backgroundColor: theme.palette.tertiary.main,
-              borderRadius: '8px',
-              boxShadow: '0px 1px 4px rgba(0, 0, 0, .5)',
-              height: 600,
-              display: { xs: 'none', md: 'block' }, // Ocultar en móviles
-              width: '100%',
-            }}
-          >
-            <Typography variant="h6" sx={{ color: theme.palette.primary.main, fontWeight: 'bold' }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Box
-                  sx={{
-                    width: '50px',
-                    height: '50px',
-                    borderRadius: '50%',
-                    overflow: 'hidden',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <img
-                    src={img}
-                    alt={img}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  />
-                </Box>
-                <Typography sx={{ fontSize: 20, fontWeight: 'bold' }}>Hernesto Zedillo Perez</Typography>
-              </Box>
-            </Typography>
-            <Typography variant='h4' sx={{ color: theme.palette.primary.main, fontWeight: 'bold', marginTop: '1rem' }}>
-              TITULO
-            </Typography>
-            <Typography variant="body1" sx={{ color: theme.palette.secondary.main, marginTop: '0.5rem' }}>
-              <Typography component="span" sx={{ fontWeight: 'bold' }}>Alcaldía:</Typography> Cuauhtémoc
-            </Typography>
-            <Typography variant="body1" sx={{ color: theme.palette.secondary.main, marginTop: '0.5rem' }}>
-              <Typography component="span" sx={{ fontWeight: 'bold' }}>Categoría:</Typography> Tecnología
-            </Typography>
-            <Typography variant="body1" sx={{ color: theme.palette.secondary.main, marginTop: '0.5rem' }}>
-              <Typography component="span" sx={{ fontWeight: 'bold' }}>Subcategoría:</Typography> Desarrollo Web
-            </Typography>
-            <Typography variant="body1" sx={{ color: theme.palette.secondary.main, marginTop: '0.5rem' }}>
-              <Typography component="span" sx={{ fontWeight: 'bold' }}>Incluye materiales:</Typography> Sí
-            </Typography>
-            <Typography variant="body1" sx={{ color: theme.palette.secondary.main, marginTop: '0.5rem' }}>
-              <Typography component="span" sx={{ fontWeight: 'bold' }}>Garantía:</Typography> 15 días
-            </Typography>
-            <Typography variant="body1" sx={{ color: theme.palette.secondary.main, marginTop: '0.5rem' }}>
-              <Typography component="span" sx={{ fontWeight: 'bold' }}>Dirección de referencia:</Typography> Av. Paseo de la Reforma 123, Col. Juárez, CDMX
-            </Typography>
-            <Typography variant="body1" sx={{ color: theme.palette.secondary.main, marginTop: '0.5rem' }}>
-              <Typography component="span" sx={{ fontWeight: 'bold' }}>Descripción:</Typography> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            </Typography>
-            <Typography variant="body1" sx={{ color: theme.palette.secondary.main, marginTop: '0.5rem' }}>
-              <Typography component="span" sx={{ fontWeight: 'bold' }}>Modalidad de trabajo:</Typography>
-            </Typography>
-            <Typography variant="body1" sx={{ color: theme.palette.secondary.main, marginTop: '0.5rem' }}>
-              <Typography component="span" sx={{ fontWeight: 'bold' }}>Costo:</Typography> $5000
-            </Typography>
-            <Typography variant="body1" sx={{ color: theme.palette.secondary.main, marginTop: '0.5rem' }}>
-              <Typography component="span" sx={{ fontWeight: 'bold' }}>Disponibilidad:</Typography> Lunes a Viernes, 9:00 AM - 5:00 PM
-            </Typography>
-            <Typography variant="body1" sx={{ color: theme.palette.secondary.main, marginTop: '0.5rem' }}>
-              <Typography component="span" sx={{ fontWeight: 'bold' }}>Evidencias:</Typography>
-            </Typography>
-            <Typography variant="body1" sx={{ color: theme.palette.secondary.main, marginTop: '0.5rem' }}>
-              <Typography component="span" sx={{ fontWeight: 'bold' }}>Fecha de publicación:</Typography> 2023-10-01
-            </Typography>
-
-          </Box>
+          {selectedWork ? (
+            <Sidebar
+              theme={theme}
+              img={selectedWork.imagen}
+              nombre={selectedWork.prestamista}
+              calificacion={4.5} // Puedes ajustar esto según los datos disponibles
+              fechaPublicacion={selectedWork.fecha}
+              alcaldia={selectedWork.alcaldia}
+              categoria={selectedWork.categoria}
+              incluyeMateriales={selectedWork.incluyeMateriales}
+              garantia={selectedWork.garantia}
+              direccionReferencia={selectedWork.direccionReferencia}
+              descripcion={selectedWork.descripcion}
+              modalidadesCobro={selectedWork.modalidadesCobro}
+              costo={selectedWork.costo}
+              disponibilidad={selectedWork.disponibilidad}
+              evidencias={selectedWork.evidencias}
+            />
+          ) : (
+            <Box
+              sx={{
+                padding: '1rem',
+                backgroundColor: theme.palette.tertiary.main,
+                borderRadius: '8px',
+                boxShadow: '0px 1px 4px rgba(0, 0, 0, .5)',
+                height: 'auto',
+                display: { xs: 'none', md: 'flex' }, // Ocultar en móviles
+                width: '100%',
+                flexDirection: 'column',
+                alignItems: 'center', // Centrar contenido horizontalmente
+                justifyContent: 'center', // Centrar contenido verticalmente
+              }}
+            >
+              <Typography variant="h6" sx={{ color: theme.palette.primary.main, fontWeight: 'bold', textAlign: 'center' }}>
+                Selecciona un trabajo para ver más detalles
+              </Typography>
+              <img
+                src={img}
+                alt="Imagen de ejemplo"
+                style={{ width: 300, height: 'auto', marginTop: '2rem' }}
+              />
+            </Box>
+          )}
         </Grid>
 
         {/* El contenedor de cards ocupará todo el espacio en móviles */}
@@ -202,7 +142,7 @@ export default function Search() {
               maxWidth: '100%', // Asegura que el contenedor no exceda el ancho disponible
             }}
           >
-            {trabajos.map((trabajo, index) => (
+            {trabajosMostrados.map((trabajo, index) => (
               <CardWork
                 key={index}
                 titulo={trabajo.titulo}
@@ -212,11 +152,18 @@ export default function Search() {
                 alcaldia={trabajo.alcaldia}
                 descripcion={trabajo.descripcion}
                 fecha={trabajo.fecha}
+                onClick={() => handleCardClick(trabajo)} // Manejar clic en la tarjeta
               />
             ))}
           </Box>
+          {/* Paginación */}
+          <Stack spacing={2} sx={{ marginTop: '1rem', alignItems: 'center' }}>
+            <Pagination count={totalPaginas} page={page} onChange={handlePageChange} />
+          </Stack>
         </Grid>
       </Grid>
+
+
 
     </>
   );

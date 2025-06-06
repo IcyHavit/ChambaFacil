@@ -4,16 +4,17 @@ import { useTheme } from '@emotion/react';
 import LocationPinIcon from '@mui/icons-material/LocationPin';
 import SearchIcon from '@mui/icons-material/Search';
 import ButtonMod from '../ButtonMod';
+import WorkIcon from '@mui/icons-material/Work';
 
-export default function CardWork({ titulo,nombre,imagen ,categoria, alcaldia, descripcion, fecha }) {
+export default function CardWork({ titulo, nombre, imagen, categoria, alcaldia, descripcion, fecha, onClick }) {
   const theme = useTheme();
 
   return (
     <Box>
       <Card
         sx={{
-          width: { xs: '60vh', sm: 600 ,md:540, lg: 320 }, // Ancho completo en móviles, 320px en tablets y superior
-          height: 250,
+          width: { xs: '60vh', sm: 600, md: 540, lg: 320 },
+          height: 270,
           backgroundColor: theme.palette.tertiary.main,
           borderRadius: theme.shape.borderRadius,
           boxShadow: '0px 1px 4px rgba(0, 0, 0, .5)',
@@ -44,7 +45,7 @@ export default function CardWork({ titulo,nombre,imagen ,categoria, alcaldia, de
             </Box>
           }
           title={
-            <Box sx={{ width: '220px' }}> {/* Contenedor con ancho fijo */}
+            <Box sx={{ width: '220px' }}>
               <Typography
                 variant="h6"
                 sx={{
@@ -63,15 +64,15 @@ export default function CardWork({ titulo,nombre,imagen ,categoria, alcaldia, de
           subheader={nombre}
         />
         <CardContent sx={{ flexGrow: 1, overflow: 'hidden' }}>
-          <Box sx={{ display: 'flex', justifyContent:'space-between', gap: 1, mb: 1 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1, mb: 1 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <LocationPinIcon sx={{ color: theme.palette.primary.main, fontSize: '1rem' }} />
-            <Typography sx={{ fontSize: '1rem' }}>{categoria}</Typography>
-          </Box>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <LocationPinIcon sx={{ color: theme.palette.primary.main, fontSize: '1rem' }} />
-            <Typography sx={{ fontSize: '1rem' }}>{alcaldia}</Typography>
-          </Box>
+              <WorkIcon sx={{ color: theme.palette.primary.main, fontSize: '1rem' }} />
+              <Typography sx={{ fontSize: '1rem' }}>{categoria}</Typography>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <LocationPinIcon sx={{ color: theme.palette.primary.main, fontSize: '1rem' }} />
+              <Typography sx={{ fontSize: '1rem' }}>{alcaldia}</Typography>
+            </Box>
           </Box>
           <Box sx={{ maxWidth: '100%', px: 1 }}>
             <Typography
@@ -86,6 +87,8 @@ export default function CardWork({ titulo,nombre,imagen ,categoria, alcaldia, de
                 textAlign: 'justify',
                 lineHeight: '1.5em',
                 height: '4.5em',
+                paddingTop:2
+
               }}
             >
               {descripcion}
@@ -103,7 +106,7 @@ export default function CardWork({ titulo,nombre,imagen ,categoria, alcaldia, de
               textCont="Ver más"
               width="auto"
               height="1.8rem"
-              clickEvent={() => console.log('Eliminar trabajo')}
+              clickEvent={onClick} // Usar el evento onClick aquí
               startIcon={<SearchIcon />}
             />
           </Box>

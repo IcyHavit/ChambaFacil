@@ -11,6 +11,8 @@ export default function FilterDrawer({ open, onClose, selectedApplyFilters }) {
     rating: null,
     experience: [],
     academicExperience: [],
+        modalidadCobro: [], // Nuevo filtro
+    garantia: [], // Nuevo filtro
   });
 
   // Manejo genérico de cambios en los filtros
@@ -87,10 +89,26 @@ export default function FilterDrawer({ open, onClose, selectedApplyFilters }) {
 
         {/* Experiencia Académica */}
         <Divider sx={{ my: 2, backgroundColor: theme.palette.primary.main }} />
-        <Typography sx={{ color: theme.palette.secondary.main, fontSize: '1.2rem', fontWeight: 'bold', mt: 2 }}>Experiencia Académica</Typography>
+        <Typography sx={{ color: theme.palette.secondary.main, fontSize: '1.2rem', fontWeight: 'bold', mt: 2 }}>Experiencia</Typography>
         <FormGroup>
-          <FormControlLabel control={<Checkbox onChange={() => updateFilters('academicExperience', 'Con carrera')} />} label="Con carrera" />
-          <FormControlLabel control={<Checkbox onChange={() => updateFilters('academicExperience', 'Sin carrera')} />} label="Sin carrera" />
+          <FormControlLabel control={<Checkbox onChange={() => updateFilters('academicExperience', 'Sí')} />} label="Con carre" />
+          <FormControlLabel control={<Checkbox onChange={() => updateFilters('academicExperience', 'No')} />} label="Sin carrera" />
+        </FormGroup>
+        {/* Modalidad de Cobro */}
+        <Typography sx={{ color: theme.palette.secondary.main, fontSize: '1.2rem', fontWeight: 'bold', mt: 2 }}>Modalidad de Cobro</Typography>
+        <FormGroup>
+          <FormControlLabel control={<Checkbox onChange={() => updateFilters('modalidadCobro', 'Efectivo')} />} label="Efectivo" />
+          <FormControlLabel control={<Checkbox onChange={() => updateFilters('modalidadCobro', 'Transferencia')} />} label="Transferencia" />
+          <FormControlLabel control={<Checkbox onChange={() => updateFilters('modalidadCobro', 'Tarjeta')} />} label="Tarjeta" />
+        </FormGroup>
+
+        <Divider sx={{ my: 2, backgroundColor: theme.palette.primary.main }} />
+
+        {/* Garantía */}
+        <Typography sx={{ color: theme.palette.secondary.main, fontSize: '1.2rem', fontWeight: 'bold', mt: 2 }}>Garantía</Typography>
+        <FormGroup>
+          <FormControlLabel control={<Checkbox onChange={() => updateFilters('garantia', 'Sí')} />} label="Sí" />
+          <FormControlLabel control={<Checkbox onChange={() => updateFilters('garantia', 'No')} />} label="No" />
         </FormGroup>
 
         {/* Botón para aplicar filtros */}
