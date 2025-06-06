@@ -15,15 +15,14 @@ export default function Home() {
   return (
     <>
     <Navbar />
-
     <Box sx={{ bgcolor: theme.palette.background.default }}>
         {/* HERO */}
         <Hero />
 
         <Categorias />
         <Trabajos />
-        <Ofrecer /> <br /><br />
-        <Footer showIncorporaLugar={true} />
+        <Ofrecer /> <br />
+        <Footer />
       </Box>
     </>
   );

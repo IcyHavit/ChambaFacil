@@ -1,112 +1,123 @@
-import React from 'react';
-import { AppBar, Toolbar, Typography, Box, IconButton } from '@mui/material';
+import React, { useState } from 'react';
 import {
+  AppBar, Toolbar, Typography, IconButton, Box, Drawer,
+  List, ListItem, ListItemIcon, ListItemText, Button
+} from '@mui/material';
+import {
+  Menu as MenuIcon,
   Work as WorkIcon,
   Chat as ChatIcon,
   Description as DescriptionIcon,
-  AccountCircle as AccountCircleIcon,
-  Tune,
+  AccountCircle as AccountCircleIcon
 } from '@mui/icons-material';
-import { Button } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
 
 export default function Navbar({ isLoggedIn = true }) {
   const theme = useTheme();
   const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
 
+  const handleClose = () => setOpen(false);
+  const handleOpen = () => setOpen(true);
 
   return (
-    <AppBar position="sticky" sx={{ bgcolor: theme.palette.background.paper, boxShadow: '0px 5px 3px rgba(0, 0, 0, 0.05)', zIndex: 1100 }}>
-        <Toolbar sx={{ justifyContent: 'space-between', px: 2 }}>
-            {/* Logo */}
-            <Typography
-                variant="button"
-                sx={{
-                    fontWeight: 'bold',
-                    fontFamily: theme.typography.bodySmall,
-                    bgcolor: theme.palette.background.paper,
-                    color: theme.palette.secondary.dark,
-                    borderRadius: 1,
-                    px: 1.5,
-                    py: 0.5,
-                }}
-                onClick={() => navigate('/')}
-                >
-                ChambaFácil
-            </Typography>
-            {/* Íconos + Botones */}
-            <Box sx={{ display: 'flex', gap: 4, alignItems: 'center' }}>
-                <IconButton sx={{ color: theme.palette.secondary.dark }} onClick={() => navigate('/search')}>
-                    <WorkIcon sx={{ fontSize: 24 }} />
-                </IconButton>
+    <>
+      <AppBar position="sticky" sx={{ bgcolor: theme.palette.background.paper, boxShadow: 2 }}>
+        <Toolbar sx={{ justifyContent: 'space-between' }}>
+          {/* Logo */}
+          <Typography
+            variant="button"
+            onClick={() => navigate('/')}
+            sx={{ ...theme.typography.bodySmall, fontWeight: 'bold', cursor: 'pointer', color: theme.palette.secondary.dark }}
+          >
+            CHAMBAFÁCIL
+          </Typography>
 
-            <Typography
-                variant="button"
-                sx={{
-                    fontWeight: 'bold',
-                    fontFamily: theme.typography.bodySmall,
-                    bgcolor: theme.palette.background.paper,
-                    color: theme.palette.secondary.dark,
-                    borderRadius: 1,
-                    px: 1.5,
-                    py: 0.5,
-                }}
-                onClick={() => navigate('/search')}
-                >
-                Trabajos
-            </Typography>
+          {/* El normal de desktop */}
+          <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 5, alignItems: 'center' }}>
+            <IconButton sx={{ color: theme.palette.secondary.dark }} onClick={() => navigate('/search')}>
+              <WorkIcon />
+            </IconButton>
 
             {isLoggedIn ? (
-            <>
-              <IconButton sx={{ color: theme.palette.secondary.dark }} onClick={() => navigate('/chat')}>
-                <ChatIcon sx={{ fontSize: 24 }} />
-              </IconButton>
-              <IconButton sx={{ color: theme.palette.secondary.dark }} onClick={() => navigate('/solicitudes')}>
-                <DescriptionIcon sx={{ fontSize: 24 }} />
-              </IconButton>
-              <IconButton sx={{ color: theme.palette.secondary.dark }}>
-                <AccountCircleIcon sx={{ fontSize: 32 }} />
-              </IconButton>
-            </>
-          ) : (
-            <>
-              <Button
-                variant="outlined"
-                sx={{
-                  color: 'black',
-                  borderColor: 'black',
-                  textTransform: 'none',
-                  fontWeight: 'bold',
-                  '&:hover': {
-                    borderColor: 'white',
-                    bgcolor: theme.palette.secondary.dark,
-                    color: theme.palette.background.default,
-                  },
-                }}
-                onClick={() => navigate('/login')}
-              >
-                Login
-              </Button>
-              <Button
-                variant="contained"
-                sx={{
-                  bgcolor: theme.palette.primary.main,
-                  color: 'white',
-                  textTransform: 'none',
-                  fontWeight: 'bold',
-                  '&:hover': {
-                    bgcolor: theme.palette.primary.dark,
-                  },
-                }}
-                onClick={() => navigate('/register')}
-              >
-                Únete ahora
-              </Button>
-            </>
-          )}
+              <>
+                <IconButton sx={{ color: theme.palette.secondary.dark }} onClick={() => navigate('/chat')}>
+                  <ChatIcon />
+                </IconButton>
+                <IconButton sx={{ color: theme.palette.secondary.dark }} onClick={() => navigate('/solicitudes')}>
+                  <DescriptionIcon />
+                </IconButton>
+                <IconButton sx={{ color: theme.palette.secondary.dark }} onClick={() => navigate('/perfil')}>
+                  <AccountCircleIcon />
+                </IconButton>
+              </>
+            ) : (
+              <>
+                <Button
+                  variant="outlined"
+                  sx={{ textTransform: 'none', fontWeight: 'bold' }}
+                  onClick={() => navigate('/login')}
+                >
+                  Login
+                </Button>
+                <Button
+                  variant="contained"
+                  sx={{ textTransform: 'none', fontWeight: 'bold' }}
+                  onClick={() => navigate('/register')}
+                >
+                  Únete ahora
+                </Button>
+              </>
+            )}
+          </Box>
+
+          {/* Esta parte es para lo del menú hamburguesa */}
+          <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+            <IconButton sx={{ color: theme.palette.secondary.dark }}  onClick={handleOpen}>
+              <MenuIcon />
+            </IconButton>
+          </Box>
+        </Toolbar>
+      </AppBar>
+
+      {/* Drawer lateral */}
+      <Drawer anchor="right" open={open} onClose={handleClose}>
+        <Box sx={{ width: 220, p: 2 }} role="presentation" onClick={handleClose}>
+          <List>
+            <ListItem button onClick={() => navigate('/search')}>
+              <ListItemIcon sx={{ color: theme.palette.secondary.dark }} ><WorkIcon /></ListItemIcon>
+              <ListItemText primary="Buscar" />
+            </ListItem>
+
+            {isLoggedIn ? (
+              <>
+                <ListItem button onClick={() => navigate('/chat')}>
+                  <ListItemIcon sx={{ color: theme.palette.secondary.dark }} ><ChatIcon /></ListItemIcon>
+                  <ListItemText primary="Chat" />
+                </ListItem>
+                <ListItem button onClick={() => navigate('/solicitudes')}>
+                  <ListItemIcon sx={{ color: theme.palette.secondary.dark }} ><DescriptionIcon /></ListItemIcon>
+                  <ListItemText primary="Solicitudes" />
+                </ListItem>
+                <ListItem button onClick={() => navigate('/perfil')}>
+                  <ListItemIcon sx={{ color: theme.palette.secondary.dark }} ><AccountCircleIcon /></ListItemIcon>
+                  <ListItemText primary="Perfil" />
+                </ListItem>
+              </>
+            ) : (
+              <>
+                <ListItem button onClick={() => navigate('/login')}>
+                  <ListItemText primary="Login" />
+                </ListItem>
+                <ListItem button onClick={() => navigate('/register')}>
+                  <ListItemText primary="Únete ahora" />
+                </ListItem>
+              </>
+            )}
+          </List>
         </Box>
-      </Toolbar>
-    </AppBar>
+      </Drawer>
+    </>
   );
 }
