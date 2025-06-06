@@ -10,7 +10,7 @@ import EmailIcon from '@mui/icons-material/Email';
 import PhoneIcon from '@mui/icons-material/Phone';
 import { useTheme } from '@mui/material/styles';
 
-export default function Footer({ showIncorporaLugar }) {
+export default function Footer({ }) {
 
   const theme = useTheme();
   const navigate = useNavigate();
@@ -36,13 +36,7 @@ export default function Footer({ showIncorporaLugar }) {
               Más de nosotros
             </Typography>
             <Stack spacing={1}>
-              {showIncorporaLugar && (
-              <Box
-                onClick={() => navigate('/publicar')}
-                sx={{ color: '#fff', textDecoration: 'none', cursor: 'pointer' }}>
-                Publica tus servicios
-              </Box>
-              )}
+
               <Box onClick={() => navigate('/login')} sx={{ cursor: 'pointer', color: '#fff' }}>
                 Términos y Condiciones
               </Box>

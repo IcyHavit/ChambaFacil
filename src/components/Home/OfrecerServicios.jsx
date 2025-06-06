@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
+//import ButtonMod from '../ButtonMod';
 import Trabajador from '../../assets/images/Home/Trabajador.png';
 
 export default function Ofrecer() {
@@ -12,15 +13,17 @@ export default function Ofrecer() {
   return (
     <Box
       sx={{
-        mt: 6,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        bgcolor: theme.palette.primary.light,
-        px: 30,
-        py: 2,
-        flexDirection: { xs: 'column', md: 'row' },
-        gap: 3,
+            mt: 4,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            px: { xs: 4, md: 10 },
+            py: 2,
+            gap: { xs: 4, md: 10 },
+            bgcolor: 'rgba(76, 155, 130, 0.85)', 
+            border: '2px solid #2f5d4d',        // Borde oscuro
+            borderRadius: 1.5,
+            flexDirection: { xs: 'column', md: 'row' },
       }}
     >
       {/* Imagen */}
@@ -43,14 +46,21 @@ export default function Ofrecer() {
         </Typography>
         <Button
           variant="contained"
+          color="primary"
+          onClick={() => navigate('/register')}
           sx={{
-            bgcolor: theme.palette.secondary.main,
-            '&:hover': { bgcolor: theme.palette.secondary.dark },
-            fontWeight: 'bold',
-            borderRadius: 2,
+            bgcolor: theme.palette.background.paper,
+            color: theme.palette.secondary.dark,
+            border: `1px solid ${theme.palette.secondary.main}`,
+            borderRadius: 1,
+            '&:hover': {
+              bgcolor: theme.palette.secondary.dark,
+              color: theme.palette.background.paper,
+              transition: '0.3s',
+            },
           }}
         >
-          Crea una cuenta
+          Ofrecer Servicios
         </Button>
       </Box>
     </Box>
