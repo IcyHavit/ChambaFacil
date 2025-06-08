@@ -7,6 +7,7 @@ import Solicitudes from './pages/Solicitudes';
 import Register from './pages/Register';
 import Search from './pages/Search';
 import PublicarServicio from './pages/PublicarServicio';
+import Perfil from './pages/Perfil';
 
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/search" element={<Search />} />
         <Route path="/publicar" element={<PublicarServicio />} />
+        <Route path="/perfil" element={<Perfil />} />
         {/* Add more routes as needed */}
       </Routes>
     </BrowserRouter>
