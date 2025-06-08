@@ -19,7 +19,7 @@ export default function SubidaImagenes({ handleImagenes }) {
         />
       </Button>
       <Typography variant="body2" sx={{ mt: 1 }}>
-        Puedes subir varias imágenes como evidencia de tu servicio.
+        Puedes subir hasta 3 imágenes como evidencia de tu servicio.
       </Typography>
     </Paper>
   );
