@@ -1,8 +1,5 @@
 import { Box, Typography, Button,TextField,Divider,List,IconButton,Stack } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
-import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
-import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import React from 'react';
 import ChatBubble from '../components/Chat/Chats';
 import ProfilePanel from '../components/Chat/Informacion';
@@ -14,7 +11,6 @@ import Navbar from '../components/Navbar';
 export default function Home() {
 
 const [openProfile, setOpenProfile] = React.useState(false);
-const [searchOpen, setSearchOpen] = React.useState(false);
 const [selectedChat, setSelectedChat] = React.useState(null);
 
 const handleChatSelect = (chatId) => {
@@ -84,56 +80,31 @@ const chatsData = [
     },
     {
     id: 5,
-    name: 'Luis Martinez',
+    name: 'Luis Ramirez',
     avatar: '',
-    lastMessage: 'Revisé el informe, está bien.',
-    time: '09:45',
-    job: 'Gerente',
+    lastMessage: 'Necesito tu opinión sobre el diseño.',
+    time: '09:30',
+    job: 'Constructor',
     phone1: '+52 55-4567-8901',
     phone2: '',
-    rating: 4.6,
+    rating: 4.2,
     files: [],
     messages: []
-    },
-    {
+    }
+    ,{
     id: 6,
-    name: 'Luis Martinez',
+    name: 'Sofia Martinez',
     avatar: '',
-    lastMessage: 'Revisé el informe, está bien.',
-    time: '09:45',
-    job: 'Gerente',
-    phone1: '+52 55-4567-8901',
-    phone2: '',
+    lastMessage: '¿Cómo va el proyecto?',
+    time: '08:45',
+    job: 'Gerente de Proyecto',
+    phone1: '+52 55-5678-9012',
+    phone2: '+52 55-7890-1234',
     rating: 4.6,
     files: [],
     messages: []
-    },
-    {
-    id: 7,
-    name: 'Luis Martinez',
-    avatar: '',
-    lastMessage: 'Revisé el informe, está bien.',
-    time: '09:45',
-    job: 'Gerente',
-    phone1: '+52 55-4567-8901',
-    phone2: '',
-    rating: 4.6,
-    files: [],
-    messages: []
-    },
-    {
-    id: 8,
-    name: 'Luis Martinez',
-    avatar: '',
-    lastMessage: 'Revisé el informe, está bien.',
-    time: '09:45',
-    job: 'Gerente',
-    phone1: '+52 55-4567-8901',
-    phone2: '',
-    rating: 4.6,
-    files: [],
-    messages: []
-    } 
+    }
+    
 ];
 
 const handleSearchChange = (event) => {
@@ -158,7 +129,7 @@ return (
 
     {/* 1. Lista de Chats */}
 
-    <Box sx={{ width: 300, bgcolor: 'background.paper', borderRadius: 2, boxShadow: 1, display: 'flex', flexDirection: 'column' }}>
+    <Box sx={{ width: 300, bgcolor: 'background.paper', borderRadius: 2, boxShadow: 1, display: 'flex', flexDirection: 'column', height: 'calc(100vh - 64px - 32px)'}}>
         <Typography variant="h5" sx={{ p: 2, fontWeight: 'bold', color: 'text.secondary' }}>Chats</Typography>
         <Box sx={{ px: 2, pb: 2 }}>
             <TextField
@@ -170,22 +141,22 @@ return (
         </Box>
         <Divider />
         <List sx={{
-                    overflowY: 'auto',
-                    flexGrow: 1,
-                    '&::-webkit-scrollbar': {
-                    width: '8px',
-                    },
-                    '&::-webkit-scrollbar-track': {
-                    background: '#f0f0f0',
-                    borderRadius: '4px',
-                    },
-                    '&::-webkit-scrollbar-thumb': {
-                    backgroundColor: 'secondary.main', // tu color verde del proyecto
-                    borderRadius: '4px',
-                    border: '2px solid #f0f0f0',
-                    },
-                }}
-                >
+            overflowY: 'auto',
+            flexGrow: 1,
+            maxHeight: '100%', // ahora usará la altura disponible del contenedor
+            '&::-webkit-scrollbar': {
+                width: '8px',
+            },
+            '&::-webkit-scrollbar-track': {
+                background: '#f0f0f0',
+                borderRadius: '4px',
+            },
+            '&::-webkit-scrollbar-thumb': {
+                backgroundColor: '#4c9b82', // tu color verde (primary.main)
+                borderRadius: '4px',
+                border: '2px solid #f0f0f0',
+            },
+            }}>
             {chatsData.map(chat => (
                 <ChatBubble
                 key={chat.id}
@@ -204,39 +175,46 @@ return (
     <Box sx={{ flexGrow: 1, bgcolor: 'background.paper', borderRadius: 2, boxShadow: 1, display: 'flex', flexDirection: 'column', p: 2 }}>
         {/* Header */}
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <Box sx={{ flexGrow: 1 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
+                {selectedChat?.avatar ? (
                     <Box
-                        sx={{ display: 'inline-block', cursor: selectedChat ? 'pointer' : 'default' }}
-                        onClick={() => selectedChat && setOpenProfile((p) => !p)}
-                    >
-                        <Typography variant="h6" color="text.primary">
-                        {selectedChat ? selectedChat.name : 'Selecciona un chat'}
-                        </Typography>
-                    </Box>
-                    {selectedChat && (
-                        <Typography variant="body2" color="text.secondary">
-                        {selectedChat.job || 'Ocupación no disponible'}
-                        </Typography>
-                    )}
-                    </Box>
-                <Box sx={{ display: 'flex', gap: 2, bgcolor: 'secondary.main', borderRadius: 1, boxShadow: 2, p: 1 }}>
-                {searchOpen && (
-                    <TextField
-                    size="small"
-                    placeholder="Buscar mensajes..."
-                    variant="outlined"
-                    sx={{ ml: 2, bgcolor: 'background.paper', borderRadius: 1 }}
-                    autoFocus
-                    onChange={handleSearchChange} // define esta función para manejar la búsqueda
+                    component="img"
+                    src={selectedChat.avatar || PerfilImg}
+                    alt={selectedChat.name}
+                    sx={{
+                        width: 48,
+                        height: 48,
+                        borderRadius: '50%',
+                        mr: 2,
+                    }}
+                    />
+                ) : (
+                    <Box
+                    component="img"
+                    src={PerfilImg}
+                    alt="default"
+                    sx={{
+                        width: 48,
+                        height: 48,
+                        borderRadius: '50%',
+                        mr: 2,
+                    }}
                     />
                 )}
 
-                <IconButton onClick={() => setSearchOpen(prev => !prev)}>
-                <SearchIcon sx={{ color: 'common.white' }} />
-                </IconButton>
-                <IconButton><InsertDriveFileIcon sx={{ color: 'common.white' }} /></IconButton>
-                <IconButton><InsertPhotoIcon sx={{ color: 'common.white' }} /></IconButton>
-                
+                <Box
+                    sx={{ cursor: selectedChat ? 'pointer' : 'default' }}
+                    onClick={() => selectedChat && setOpenProfile((p) => !p)}
+                >
+                    <Typography variant="h6" color="text.primary">
+                    {selectedChat ? selectedChat.name : 'Selecciona un chat'}
+                    </Typography>
+                    {selectedChat && (
+                    <Typography variant="body2" color="text.secondary">
+                        {selectedChat.job || 'Ocupación no disponible'}
+                    </Typography>
+                    )}
+                </Box>
                 </Box>
             </Box>
             <Divider />
