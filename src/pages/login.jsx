@@ -204,7 +204,7 @@ export default function Login() {
               <p>
                 ¿Olvidaste la contraseña?{' '}
                 <Link
-                  to="/login"
+                  to="/contraseña"
                   style={{ color: theme.palette.primary.main }}
                 >
                   Restaura tu contraseña

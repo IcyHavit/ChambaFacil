@@ -2,8 +2,6 @@
 import React from 'react';
 import { Box, Typography, TextField, Button, Stack } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import ImagenHero from '../../assets/images/Home/ImagenHero.png';
-import Trabajadores1 from '../../assets/images/Home/Trabajadores1.png';
 import IMG_HERO from '../../assets/images/Home/IMG_HERO.png';
 import SearchBar from '../SearchBar';
 

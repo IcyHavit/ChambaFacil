@@ -16,11 +16,11 @@ export default function Footer({ }) {
   const navigate = useNavigate();
 
   return (
-    <Box component="footer" sx={{ bgcolor: theme.palette.primary.main, color: theme.palette.background.paper, pt: 2, pb: 1 }}>
+    <Box component="footer" sx={{ bgcolor: theme.palette.secondary.light, color: theme.palette.background.paper, pt: 1, pb: 1 }}>
       <Box sx={{ px: { xs: 1, md: 6 }}}>
         <Grid container spacing={15}>
 
-          <Grid item xs={12} md={3}>
+          <Grid size={{xs: 12, md: 4}}>
             <Typography variant="h6" fontWeight="bold" gutterBottom>
               ChambaFácil
             </Typography>
@@ -65,10 +65,7 @@ export default function Footer({ }) {
           </Grid>
 
           {/* Redes sociales */}
-          <Grid item xs={12} md={3}>
-            <Typography variant="h6" fontWeight="bold" gutterBottom>
-              Síguenos
-            </Typography>
+          <Grid size = {{ xs: 12, md: 3}} >
             <Stack direction="row" spacing={1} flexWrap="wrap">
               <IconButton onClick={() => navigate('/')} sx={{ color: '#fff' }}>
                 <FacebookIcon />
@@ -84,10 +81,13 @@ export default function Footer({ }) {
         </Grid>
       </Box>
 
-      <Box mt={5} textAlign="center" sx={{ borderTop: '1px solid #fff', pt: 2 }}>
+      <Box mt={5} textAlign="center" sx={{ borderTop: '1px solid #fff', pt: 1 }}>
         <Typography variant="body2">©️ {new Date().getFullYear()} ChambaFácil</Typography>
       </Box>
     </Box>
   );
 }
+
+
+
 

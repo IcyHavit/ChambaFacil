@@ -86,7 +86,7 @@ const JOBS = [
 
 export default function Trabajos() {
   const theme = useTheme();
-  const [activeCat, setActiveCat] = useState('ama');          // categoría activa
+  const [activeCat, setActiveCat] = useState('Hogar');          // categoría activa
 
 
   const filteredJobs =
@@ -201,7 +201,7 @@ export default function Trabajos() {
                   </Stack>
 
                   {/* Descripción */}
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body2" color="text.secondary" sx={{justifyContent: 'center', textAlign: 'justify'}}>
                     {job.description}
                   </Typography>
                 </CardContent>
