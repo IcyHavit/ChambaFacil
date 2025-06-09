@@ -11,7 +11,7 @@ export default function FilterDrawer({ open, onClose, selectedApplyFilters }) {
     rating: null,
     experience: [],
     academicExperience: [],
-        modalidadCobro: [], // Nuevo filtro
+    modalidadCobro: [], // Nuevo filtro
     garantia: [], // Nuevo filtro
   });
 
@@ -87,13 +87,6 @@ export default function FilterDrawer({ open, onClose, selectedApplyFilters }) {
           <FormControlLabel control={<Checkbox onChange={() => updateFilters('experience', '5 años o más')} />} label="5 años o más" />
         </FormGroup>
 
-        {/* Experiencia Académica */}
-        <Divider sx={{ my: 2, backgroundColor: theme.palette.primary.main }} />
-        <Typography sx={{ color: theme.palette.secondary.main, fontSize: '1.2rem', fontWeight: 'bold', mt: 2 }}>Experiencia</Typography>
-        <FormGroup>
-          <FormControlLabel control={<Checkbox onChange={() => updateFilters('academicExperience', 'Sí')} />} label="Con carre" />
-          <FormControlLabel control={<Checkbox onChange={() => updateFilters('academicExperience', 'No')} />} label="Sin carrera" />
-        </FormGroup>
         {/* Modalidad de Cobro */}
         <Typography sx={{ color: theme.palette.secondary.main, fontSize: '1.2rem', fontWeight: 'bold', mt: 2 }}>Modalidad de Cobro</Typography>
         <FormGroup>
