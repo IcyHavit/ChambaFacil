@@ -1,9 +1,9 @@
 import React from 'react';
-import { Box, Typography, Button } from '@mui/material';
+import { Box, Typography, Button, Grid } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
 //import ButtonMod from '../ButtonMod';
-import Trabajador from '../../assets/images/Home/Trabajador.png';
+import Trabajadores2 from '../../assets/images/Home/Trabajadores2.png';
 
 export default function Ofrecer() {
 
@@ -13,56 +13,50 @@ export default function Ofrecer() {
   return (
     <Box
       sx={{
-            mt: 4,
+            mt: 8,
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
-            px: { xs: 4, md: 10 },
+            justifyContent: 'justify',
+            px: { xs: 4, md: 19 },
             py: 2,
             gap: { xs: 4, md: 10 },
             bgcolor: 'rgba(76, 155, 130, 0.85)', 
-            border: '2px solid #2f5d4d',        // Borde oscuro
-            borderRadius: 1.5,
+            border: `3px solid ${theme.palette.primary.light}`, 
             flexDirection: { xs: 'column', md: 'row' },
+            color: theme.palette.background.paper,
       }}
     >
-      {/* Imagen */}
-      <Box
-        component="img"
-        src={Trabajador} alt="Ilustración principal"
-        sx={{
-          maxWidth: '200px',
-          width: '100%',
-        }}
-      />
-
       {/* Contenido */}
-      <Box>
-        <Typography variant="h6" fontWeight={600} color ={theme.palette.background.default}>
-          ¿Quieres ofrecer tus servicios?
-        </Typography>
-        <Typography variant="body2" sx={{ mt: 1, mb: 2 } } color={theme.palette.background.default}>
-          Regístrate como prestador y conecta con personas que buscan justo lo que tú sabes hacer.
-        </Typography>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => navigate('/register')}
-          sx={{
-            bgcolor: theme.palette.background.paper,
-            color: theme.palette.secondary.dark,
-            border: `1px solid ${theme.palette.secondary.main}`,
-            borderRadius: 1,
-            '&:hover': {
-              bgcolor: theme.palette.secondary.dark,
-              color: theme.palette.background.paper,
-              transition: '0.3s',
-            },
-          }}
-        >
-          Ofrecer Servicios
-        </Button>
-      </Box>
+      <Grid 
+      container alignItems="center"
+      justifyContent="center"
+      spacing={4}
+      >
+        <Grid size={{xs: 12, md: 5}}>
+          <Box 
+            component="img"
+            display="flex" justifyContent="center"
+            src={Trabajadores2} alt="Ilustración"
+            sx={{
+              maxWidth: '600px',
+              width: '100%',
+            }}
+          >
+          </Box>
+        </Grid>
+
+         <Grid size={{xs: 12, md: 7}}>
+          <Typography variant="h4" fontWeight="bold" mb={2}>
+            ¿Quieres ofrecer tus servicios?
+          </Typography>
+          <Typography variant="body1" mb={3}>
+            Regístrate como prestador y conecta con personas que buscan justo lo que tú sabes hacer.
+          </Typography>
+          <Button variant="contained" color="secondary">
+            OFRECER SERVICIOS
+          </Button>
+        </Grid>
+      </Grid>
     </Box>
   );
 }

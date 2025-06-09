@@ -13,7 +13,7 @@ import {
 import { useTheme } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 
-export default function Navbar({ isLoggedIn = true }) {
+export default function Navbar({ isLoggedIn = false }) {
   const theme = useTheme();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
@@ -23,7 +23,7 @@ export default function Navbar({ isLoggedIn = true }) {
 
   return (
     <>
-      <AppBar position="sticky" sx={{ bgcolor: theme.palette.background.paper, boxShadow: 2 }}>
+      <AppBar position="sticky" sx={{ bgcolor: theme.palette.background.paper, boxShadow: '0px 8px 3px rgba(0, 0, 0, 0.05)', zIndex: 1100 }}>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
           {/* Logo */}
           <Typography

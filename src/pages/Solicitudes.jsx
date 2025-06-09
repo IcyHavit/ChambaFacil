@@ -111,6 +111,9 @@ export default function Solicitudes() {
           display: 'flex',
           gap: 3,
           mx: 'auto',
+          mb: 4,
+          mt: 4,
+          
         }}
       >
         {/* --------- Sidebar --------- */}
@@ -205,7 +208,7 @@ export default function Solicitudes() {
         </Box>
       </Box>
 
-      <Footer showIncorporaLugar={true} />
+      <Footer/>
 
     </Box>
     

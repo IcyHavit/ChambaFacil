@@ -8,6 +8,8 @@ import Register from './pages/Register';
 import Search from './pages/Search';
 import PublicarServicio from './pages/PublicarServicio';
 import InitialForm from './pages/InitialForm'
+import Perfil from './pages/Perfil';
+import Contraseña from './pages/Contraseña';
 
 
 function App() {
@@ -22,6 +24,8 @@ function App() {
         <Route path="/search" element={<Search />} />
         <Route path="/publicar" element={<PublicarServicio />} />
         <Route path='/datos' element={<InitialForm/>} />
+        <Route path="/perfil" element={<Perfil />} />
+        <Route path="/contraseña" element={<Contraseña />} />
         {/* Add more routes as needed */}
       </Routes>
     </BrowserRouter>
