@@ -1,5 +1,4 @@
 import { Box, FormGroup, Grid, TextField, Typography } from '@mui/material';
-import React from 'react';
 import { useTheme } from '@emotion/react';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -20,38 +19,32 @@ import Button from '@mui/material/Button';
 
 dayjs.locale('es'); // aplica el idioma
 
-const Cliente = () => {
+export default function Cliente() {
   const [fechaNacimiento, setFechaNacimiento] = useState(null);
 
-const handleSubmit = (event) => {
-  event.preventDefault();
-  const data = new FormData(event.currentTarget);
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
 
-  // Adjunta la imagen manualmente si fue seleccionada
-  if (foto) {
-    data.append('fotoPerfil', foto);
-  }
+    // Adjunta la imagen manualmente si fue seleccionada
+    if (foto) {
+      data.append('fotoPerfil', foto);
+    }
 
-  const cliente = {
-    nombre: data.get('name'),
-    telefono1: data.get('tel1'),
-    telefono2: data.get('tel2'),
-    tipoCuenta: data.get('tipoCuenta'),
-    fechaNacimiento: fechaNacimiento ? fechaNacimiento.format('DD/MM/YYYY') : null,
-    preferenciasPago: data.getAll('pago'),
-    horarios: data.getAll('horario'),
-    // puedes enviar la imagen como base64, o directamente como FormData
-    fotoPerfil: foto
+    const cliente = {
+      nombre: data.get('name'),
+      telefono1: data.get('tel1'),
+      telefono2: data.get('tel2'),
+      tipoCuenta: data.get('tipoCuenta'),
+      fechaNacimiento: fechaNacimiento ? fechaNacimiento.format('DD/MM/YYYY') : null,
+      preferenciasPago: data.getAll('pago'),
+      horarios: data.getAll('horario'),
+      fotoPerfil: foto
+    };
+
+    console.log(cliente);
+
   };
-
-  console.log(cliente);
-
-  // Ejemplo: envío con fetch
-  // fetch('/api/cliente', {
-  //   method: 'POST',
-  //   body: data
-  // });
-};
 
   const theme = useTheme();
 
@@ -61,7 +54,7 @@ const handleSubmit = (event) => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     setFoto(file);
-    setPreview(URL.createObjectURL(file)); // genera vista previa temporal
+    setPreview(URL.createObjectURL(file));
   };
 
 
@@ -85,27 +78,27 @@ const handleSubmit = (event) => {
         <Typography sx={{ fontFamily: theme.typography.bodySmall, fontWeight: 'bold', color: theme.palette.secondary.main }}>
           Elige una foto de perfil
         </Typography>
-<Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-  {preview && (
-    <Avatar src={preview} sx={{ width: 150, height: 150 }} />
-  )}
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+          {preview && (
+            <Avatar src={preview} sx={{ width: 150, height: 150 }} />
+          )}
 
-  <input
-    accept="image/*"
-    type="file"
-    name="fotoPerfil"
-    id="fotoPerfil"
-    onChange={handleFileChange}
-    style={{ display: 'none' }}
-  />
+          <input
+            accept="image/*"
+            type="file"
+            name="fotoPerfil"
+            id="fotoPerfil"
+            onChange={handleFileChange}
+            style={{ display: 'none' }}
+          />
 
-  <label htmlFor="fotoPerfil">
-    <Button variant="contained" component="span">
-      Subir foto
-    </Button>
-    
-  </label>
-</Box>
+          <label htmlFor="fotoPerfil">
+            <Button variant="contained" component="span">
+              Subir foto
+            </Button>
+
+          </label>
+        </Box>
 
         <TextField
           name='name'
@@ -228,5 +221,3 @@ const handleSubmit = (event) => {
     </Box >
   );
 };
-
-export default Cliente;
