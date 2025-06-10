@@ -6,7 +6,15 @@ import IMG_HERO from '../../assets/images/Home/IMG_HERO.png';
 import SearchBar from '../SearchBar';
 
 
+
 export default function Hero() {
+  const handleBuscar = (trabajo, alcaldia) => {
+    // Aquí se maneja la lógica de búsqueda con los valores de trabajo y alcaldía
+    //trabajo de backend
+    console.log('Buscar:', trabajo, 'en', alcaldia);
+
+  };
+
   const theme = useTheme();
 
   return (
@@ -56,7 +64,7 @@ export default function Hero() {
           </Typography>
         </Box>
         <Box sx={{ width: '100%', maxWidth: 750, alignSelf: 'auto' }}>
-          <SearchBar />
+          <SearchBar handleBuscar={handleBuscar} />
         </Box>
       </Box>
 

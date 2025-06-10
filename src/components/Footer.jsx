@@ -18,19 +18,7 @@ export default function Footer({ }) {
   return (
     <Box component="footer" sx={{ bgcolor: theme.palette.secondary.light, color: theme.palette.background.paper, pt: 1, pb: 1 }}>
       <Box sx={{ px: { xs: 1, md: 6 }}}>
-        <Grid container spacing={15}>
-
-          <Grid size={{xs: 12, md: 4}}>
-            <Typography variant="h6" fontWeight="bold" gutterBottom>
-              ChambaFácil
-            </Typography>
-            <Typography variant="body2">
-              Descubre y organiza tus experiencias en la Ciudad de México <br />
-              desde lugares icónicos hasta rincones menos conocidos.
-            </Typography>
-          </Grid>
-
-
+        <Grid container spacing={10} justifyContent="space-between">
           <Grid item xs={12} sm={6} md={3}>
             <Typography variant="h6" fontWeight="bold" gutterBottom>
               Más de nosotros
