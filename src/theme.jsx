@@ -4,13 +4,11 @@ import { createTheme } from '@mui/material/styles';
 const bodyLarge = {
   fontFamily: 'Montserrat, sans-serif',
   fontSize: '3rem', // tamaño mayor (~20px)
-  fontWeight: 400,
 };
 
 const bodySmall = {
   fontFamily: 'Poppins, sans-serif',
   fontSize: '1rem', // tamaño menor (~14px)
-  fontWeight: 400,
 };
 
 const theme = createTheme({
