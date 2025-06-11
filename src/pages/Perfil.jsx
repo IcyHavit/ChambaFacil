@@ -4,7 +4,7 @@ import PerfilPrestamista from '../components/Perfil/PerfilPrestamista';
 export default function Perfil() {
 const tipoUsuario = ''; // Temporal, reemplaza por contexto de autenticación real
 
-return tipoUsuario === 'Cliente'
+return tipoUsuario === ''
   ? <PerfilCliente />
   : <PerfilPrestamista />;
 

@@ -8,6 +8,7 @@ import ButtonMod from '../ButtonMod';
 
 export default function Sidebar({
     theme,
+    titulo,
     img,
     nombre,
     calificacion,
@@ -89,6 +90,12 @@ export default function Sidebar({
                             {renderStars()}
                         </Box>
                 </Typography>
+
+
+                <Typography sx={{ color: theme.palette.primary.main, marginTop: '0.5rem',fontSize:25, fontWeight:'bold'}}>
+                    {titulo}
+                </Typography>
+
 
                 <Typography variant="body1" sx={{ color: theme.palette.secondary.main, marginTop: '0.5rem' }}>
                     <Typography component="span" sx={{ fontWeight: 'bold' }}>Fecha de publicación:</Typography> {fechaPublicacion}

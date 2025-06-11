@@ -3,13 +3,15 @@ import React, { useState } from 'react';
 import {
   Box, Button, Container, Paper, TextField, Typography,
   FormControl, InputLabel, Select, MenuItem,
-  FormControlLabel, RadioGroup, Radio, Grid
+  FormControlLabel, RadioGroup, Radio, Grid,
+  FormGroup, Checkbox
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import DisponibilidadDia from '../components/PublicarServicio/DisponibilidadDia';
 import SubidaImagenes from '../components/PublicarServicio/SubidaImagenes';
+import { Form } from 'react-router-dom';
 
 const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 const alcaldias = [
@@ -111,7 +113,6 @@ export default function PublicarServicio() {
 
             <Typography fontWeight="bold" mt={2}>Zona de trabajo</Typography>
             <Select fullWidth required value={zonaTrabajo} onChange={(e) => setZonaTrabajo(e.target.value)}>
-              <MenuItem value="A domicilio">A domicilio</MenuItem>
               <MenuItem value="Mi lugar">Mi lugar</MenuItem>
               {alcaldias.map((a) => (
                 <MenuItem key={a} value={a}>{a}</MenuItem>
@@ -122,12 +123,29 @@ export default function PublicarServicio() {
               <TextField fullWidth required label="Dirección de tu lugar" placeholder="Calle, número..." sx={{ mt: 2 }} value={direccion} onChange={(e) => setDireccion(e.target.value)} />
             )}
 
-            {zonaTrabajo !== '' && zonaTrabajo !== 'A domicilio' && (
-              <TextField fullWidth required label="Dirección de referencia" placeholder="Cerca de parque, metro..." sx={{ mt: 2 }} value={referencia} onChange={(e) => setReferencia(e.target.value)} />
+            {zonaTrabajo !== 'Mi lugar' && (
+              <TextField fullWidth label="Dirección de referencia" placeholder="Cerca de parque, metro..." sx={{ mt: 2 }} value={referencia} onChange={(e) => setReferencia(e.target.value)} />
             )}
           </Paper>
 
           {/* Bloque 4: Modalidad y precio */}
+
+
+          <Paper sx={{p:3, mb: 3}}>
+            <Typography fontWeight="bold" mt={2}>Modalidad de cobro</Typography>
+
+            <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }} gap={2} pl={2}>
+              <FormGroup>
+                <FormControlLabel control={<Checkbox/>} label = 'Por hora' />
+                <FormControlLabel control = {<Checkbox/>} label='Por semana'/>
+                <FormControlLabel control={<Checkbox/>} label = 'Por proyecto'/>
+                <FormControlLabel control={<Checkbox/>} label = 'Por mes' />
+                <FormControlLabel control={<Checkbox/>} label='Visita de diagnóstico sin cobro'/>
+                <FormControlLabel control= {<Checkbox/>} label='Visita de diagnóstico con costo'/>
+                <FormControlLabel control={<Checkbox/>} label='Cotización'/>
+              </FormGroup>
+            </Box>
+          </Paper>
           <Paper sx={{ p: 3, mb: 3 }}>
             <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }} gap={2}>
               <FormControl required fullWidth>
@@ -135,7 +153,7 @@ export default function PublicarServicio() {
                 <Select value={tipoPrecio} label="Modalidad de cobro" onChange={(e) => setTipoPrecio(e.target.value)}>
                   <MenuItem value="Por hora">Por hora</MenuItem>
                   <MenuItem value="Por proyecto">Por proyecto</MenuItem>
-                  <MenuItem value="Visita de diagnóstico">Visita de diagnóstico</MenuItem>
+                  <MenuItem value="Visita de diagnóstico sin cobro">Visita de diagnóstico</MenuItem>
                   <MenuItem value="Cotización">Cotización</MenuItem>
                   <MenuItem value="Semana">Semana</MenuItem>
                   <MenuItem value="Mes">Mes</MenuItem>

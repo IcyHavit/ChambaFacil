@@ -99,6 +99,7 @@ export default function Search() {
           {selectedWork ? (
             <Sidebar
               theme={theme}
+              titulo={selectedWork.titulo}
               img={selectedWork.imagen}
               nombre={selectedWork.prestamista}
               calificacion={4.5} // Puedes ajustar esto según los datos disponibles
