@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import {
   AppBar, Toolbar, Typography, IconButton, Box, Drawer,
-  List, ListItem, ListItemIcon, ListItemText, Button
+  List, ListItem, ListItemIcon, ListItemText, Button,
+  Tooltip
 } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -10,8 +11,24 @@ import {
   Description as DescriptionIcon,
   AccountCircle as AccountCircleIcon
 } from '@mui/icons-material';
+import { tooltipClasses } from '@mui/material/Tooltip';
+import Zoom from '@mui/material/Zoom';
 import { useTheme } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
+import { styled } from '@mui/material/styles';
+
+
+const LightTooltip = styled(({ className, ...props }) => (
+  <Tooltip {...props} classes={{ popper: className }} />
+))(({ theme }) => ({
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: theme.palette.background.paper,
+    color: 'rgba(0, 0, 0, 0.87)',
+    boxShadow: theme.shadows[1],
+    fontSize: 11,
+  },
+}));
+
 
 export default function Navbar({ isLoggedIn = false }) {
   const theme = useTheme();
@@ -36,21 +53,51 @@ export default function Navbar({ isLoggedIn = false }) {
 
           {/* El normal de desktop */}
           <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 5, alignItems: 'center' }}>
-            <IconButton sx={{ color: theme.palette.secondary.dark }} onClick={() => navigate('/search')}>
-              <WorkIcon />
-            </IconButton>
+            <LightTooltip 
+              title="Buscar trabajos" 
+              slots={{
+                transition: Zoom,
+              }}
+            >
+              <IconButton sx={{ color: theme.palette.secondary.dark }} onClick={() => navigate('/search')}>
+                <WorkIcon />
+              </IconButton>
+            </LightTooltip>  
 
             {isLoggedIn ? (
               <>
+              <LightTooltip 
+                title="Chat" 
+                slots={{
+                  transition: Zoom,
+                }}
+              >
                 <IconButton sx={{ color: theme.palette.secondary.dark }} onClick={() => navigate('/chat')}>
                   <ChatIcon />
                 </IconButton>
+              </LightTooltip>
+
+              <LightTooltip 
+                title="Solicitudes" 
+                slots={{
+                  transition: Zoom,
+                }}
+              >
                 <IconButton sx={{ color: theme.palette.secondary.dark }} onClick={() => navigate('/solicitudes')}>
                   <DescriptionIcon />
                 </IconButton>
+              </LightTooltip>
+              
+              <LightTooltip 
+                title="Mi perfil" 
+                slots={{
+                  transition: Zoom,
+                }}
+              >
                 <IconButton sx={{ color: theme.palette.secondary.dark }} onClick={() => navigate('/perfil')}>
                   <AccountCircleIcon />
                 </IconButton>
+              </LightTooltip>
               </>
             ) : (
               <>
