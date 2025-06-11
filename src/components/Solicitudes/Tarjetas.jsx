@@ -72,6 +72,11 @@ export default function SolicitudCard({ data }) {
           Inicio:&nbsp;{inicio}
         </Typography>
       </Box>
+
+      {/* flecha */}
+      <IconButton>
+        <ChevronRightIcon />
+      </IconButton>
     </Box>
   );
 }

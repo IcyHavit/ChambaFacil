@@ -13,6 +13,7 @@ import {
   Stack,
 } from '@mui/material';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import WorkHistoryIcon from '@mui/icons-material/WorkHistory';
 import { useEffect } from 'react';
 
@@ -148,6 +149,11 @@ export default function SolicitudCardAceptada({ data, role, onCancel, onFinish }
             </Button>
           </Stack>
         )}
+
+        {/* flecha detalle */}
+        <IconButton sx={{ ml: 1 }}>
+          <ChevronRightIcon />
+        </IconButton>
       </Box>
 
       {/* ---------- Diálogo Cancelar ---------- */}
