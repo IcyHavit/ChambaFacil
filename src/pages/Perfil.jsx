@@ -2,9 +2,10 @@ import PerfilCliente from '../components/Perfil/PerfilCliente';
 import PerfilPrestamista from '../components/Perfil/PerfilPrestamista';
 
 export default function Perfil() {
-  const tipoUsuario = ''; // puede venir de auth context o API
+const tipoUsuario = ''; // Temporal, reemplaza por contexto de autenticación real
 
-  return tipoUsuario === 'Cliente'
-    ? <PerfilCliente />
-    : <PerfilPrestamista />;
+return tipoUsuario === 'Cliente'
+  ? <PerfilCliente />
+  : <PerfilPrestamista />;
+
 }
