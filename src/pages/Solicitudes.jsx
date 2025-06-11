@@ -13,7 +13,8 @@ import {
 
 import Mascota from '../assets/images/Mascota.png';
 import SolicitudCard from '../components/Solicitudes/Tarjetas';               // genérica
-import SolicitudCardAceptada from '../components/Solicitudes/TarjetasAceptadas'; // para aceptadas
+import SolicitudCardAceptada from '../components/Solicitudes/TarjetasAceptadas';
+import SolicitudCardPendiente from '../components/Solicitudes/TarjetasPendientes';
 import Footer from '../components/Footer';
 import Navbar from '../components/Navbar';
 
@@ -30,7 +31,7 @@ const solicitudesMock = [
 
 export default function Solicitudes() {
   /* --- rol --- */
-  const role = 'Prestamista';           // cámbialo a 'prestamista' cuando corresponda
+  const role = 'prestamista';           // cámbialo a 'prestamista' cuando corresponda
 
   /* --- estado principal --- */
   const [solicitudes, setSolicitudes] = useState(solicitudesMock);
@@ -67,6 +68,20 @@ export default function Solicitudes() {
     setSolicitudes((prev) => prev.filter((s) => s.id !== id));
     setAlert({ open: true, msg: 'Trabajo finalizado', sev: 'success' });
   };
+
+  const handleAccept = (id) => {
+    // cambia el estado a 'aceptadas'
+    setSolicitudes((prev) =>
+      prev.map((s) => (s.id === id ? { ...s, estado: 'aceptadas' } : s)),
+    );
+    setAlert({ open: true, msg: 'Solicitud aceptada', sev: 'success' });
+  };
+
+  const handleReject = (id, motivo) => {
+    setSolicitudes((prev) => prev.filter((s) => s.id !== id));
+    setAlert({ open: true, msg: 'Solicitud rechazada', sev: 'warning' });
+  };
+
 
   /* --- botones del sidebar --- */
   const botones = [
@@ -167,16 +182,23 @@ export default function Solicitudes() {
             {pageData.map((s) => (
               <ListItem key={s.id} sx={{ mb: 2, p: 0 }}>
                 {s.estado === 'aceptadas' ? (
-                  <SolicitudCardAceptada
-                    data={s}
-                    role={role}
-                    onCancel={handleCancel}
-                    onFinish={handleFinish}
-                  />
-                ) : (
-                  <SolicitudCard data={s} />
-                )}
-              </ListItem>
+                    <SolicitudCardAceptada
+                      data={s}
+                      role={role}
+                      onCancel={handleReject}     // cancelar aceptada
+                      onFinish={handleFinish}     // finalizar
+                    />
+                  ) : s.estado === 'pendientes' ? (
+                    <SolicitudCardPendiente
+                      data={s}
+                      role={role}
+                      onAccept={handleAccept}
+                      onReject={handleReject}
+                    />
+                  ) : (
+                    <SolicitudCard data={s} />      // archivadas u otras
+                  )}
+                </ListItem>
             ))}
           </List>
 
