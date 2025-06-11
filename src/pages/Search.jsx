@@ -54,8 +54,18 @@ export default function Search() {
       {/* Contenedor principal */}
       <Box
         sx={{
+          backgroundColor: theme.palette.primary.main,
+
+        }}
+      >
+        <Typography
+        sx={{textAlign:'center', color:theme.palette.tertiary.main, fontWeight:'bold',fontFamily:theme.typography.bodyLarge, fontSize:60,}}>
+          Buscador
+        </Typography>
+        <Box
+        sx={{
           width: '100%',
-          height: '16rem',
+          height: '10rem',
           backgroundColor: theme.palette.primary.main,
           display: 'flex',
           alignItems: 'center',
@@ -71,8 +81,10 @@ export default function Search() {
         <IconButton color="secondary" onClick={() => handleFilter(true)}>
           <FilterAltIcon sx={{ fontSize: '2rem', color: theme.palette.tertiary.main }} />
         </IconButton>
+        </Box>
 
         {/* Drawer de filtros */}
+
         <FilterDrawer
           open={open}
           onClose={() => handleFilter(false)}
@@ -110,11 +122,11 @@ export default function Search() {
                 borderRadius: '8px',
                 boxShadow: '0px 1px 4px rgba(0, 0, 0, .5)',
                 height: 'auto',
-                display: { xs: 'none', md: 'flex' }, // Ocultar en móviles
+                display: { xs: 'none', md: 'flex' },
                 width: '100%',
                 flexDirection: 'column',
-                alignItems: 'center', // Centrar contenido horizontalmente
-                justifyContent: 'center', // Centrar contenido verticalmente
+                alignItems: 'center',
+                justifyContent: 'center', 
               }}
             >
               <Typography variant="h6" sx={{ color: theme.palette.primary.main, fontWeight: 'bold', textAlign: 'center' }}>
@@ -129,7 +141,6 @@ export default function Search() {
           )}
         </Grid>
 
-        {/* El contenedor de cards ocupará todo el espacio en móviles */}
         <Grid size={{ xs: 12, md: 8.5 }}>
           <Box
             sx={{

@@ -19,7 +19,6 @@ export default function Sidebar({
     direccionReferencia,
     descripcion,
     modalidadesCobro,
-    costo,
     disponibilidad,
     evidencias,
 }) {
@@ -117,19 +116,19 @@ export default function Sidebar({
                 <Typography variant="body1" sx={{ color: theme.palette.secondary.main, marginTop: '0.5rem' }}>
                     <Typography component="span" sx={{ fontWeight: 'bold' }}>Descripción:</Typography> {descripcion}
                 </Typography>
-                <Typography variant="body1" sx={{ color: theme.palette.secondary.main, marginTop: '0.5rem' }}>
-                    <Typography component="span" sx={{ fontWeight: 'bold' }}>Modalidad de Cobro:</Typography>
-                </Typography>
-                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                        {modalidadesCobro.map((modalidad) => (
-                            <Chip
-                                key={modalidad}
-                                label={`${modalidad} - $${costo}`}
-                                color="success"
-                                variant="outlined"
-                            />
-                        ))}
-                    </Box>
+<Typography variant="body1" sx={{ color: theme.palette.secondary.main, marginTop: '0.5rem' }}>
+  <Typography component="span" sx={{ fontWeight: 'bold' }}>Modalidad de Cobro:</Typography>
+</Typography>
+<Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+  {modalidadesCobro.map((modalidad, index) => (
+    <Chip
+      key={index}
+      label={modalidad.costo ? `${modalidad.modalidad} - $${modalidad.costo}` : modalidad.modalidad}
+      color="success"
+      variant="outlined"
+    />
+  ))}
+</Box>
                 <Typography variant="body1" sx={{ color: theme.palette.secondary.main, marginTop: '0.5rem' }}>
                     <Typography component="span" sx={{ fontWeight: 'bold' }}>Disponibilidad:</Typography>
                 </Typography>
