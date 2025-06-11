@@ -1,5 +1,3 @@
-// ✅ Versión final refinada — PerfilPrestamista.jsx (foto y eliminación de imágenes solo en modo edición)
-
 import { useState } from 'react';
 import {
   Avatar, Typography, TextField, Grid, Button,
@@ -11,6 +9,12 @@ import SaveIcon from '@mui/icons-material/Save';
 import CloseIcon from '@mui/icons-material/Close';
 import Footer from '../Footer';
 import Navbar from '../Navbar';
+import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs from 'dayjs';
+import 'dayjs/locale/es';
+import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
+/* No extra imports needed */
 
 const tiposPrestamista = ['Individual', 'Cuadrilla', 'Empresa pequeña'];
 const metodosPago = ['Efectivo', 'Transferencia', 'Tarjeta'];
@@ -25,18 +29,41 @@ export default function PerfilPrestamista() {
   const [preview, setPreview] = useState(null);
   const [imagenes, setImagenes] = useState([]);
 
+
+
   const [datos, setDatos] = useState({
-    nombre: 'Carlos Martínez',
-    fechaNacimiento: '1985-05-12',
-    descripcion: '',
-    tipoPrestamista: '',
-    contacto1: '',
-    contacto2: '',
-    portafolio: '',
-    metodoPago: [],
-    horarios: [],
-    redes: { facebook: '', instagram: '', youtube: '' },
-  });
+  nombre: 'Carlos Martínez',
+  fechaNacimiento: '1985-05-12',
+  descripcion: '',
+  tipoPrestamista: '',
+  contacto1: '',
+  contacto2: '',
+  portafolio: '',
+  metodoPago: [],
+  horarios: [],
+  redes: { facebook: '', instagram: '', youtube: '' },
+});
+
+  const [fechaNacimiento, setFechaNacimiento] = useState(dayjs(datos.fechaNacimiento));
+  const [nuevaExperiencia, setNuevaExperiencia] = useState('');
+
+  const agregarExperiencia = () => {
+  if (nuevaExperiencia.trim() !== '') {
+    setDatos((prev) => ({
+      ...prev,
+      portafolio: [...prev.portafolio, nuevaExperiencia.trim()],
+    }));
+    setNuevaExperiencia('');
+  }
+};
+
+const eliminarExperiencia = (index) => {
+  setDatos((prev) => ({
+    ...prev,
+    portafolio: prev.portafolio.filter((_, i) => i !== index),
+  }));
+};
+
 
   const toggleEdit = () => setEditMode(!editMode);
   const handleChange = (e) => setDatos({ ...datos, [e.target.name]: e.target.value });
@@ -73,7 +100,7 @@ export default function PerfilPrestamista() {
     <Stack sx={{ minHeight: '100vh', backgroundColor: theme.palette.background.default }}>
       <Navbar />
 
-      <Paper elevation={3} sx={{ maxWidth: 1000, mx: 'auto', mt: 5, p: 4, borderRadius: 4 }}>
+      <Paper elevation={3} sx={{ maxWidth: 1000, mx: 'auto', mt: 5, p: 4, borderRadius: 4, mb: 4 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column', mb: 4 }}>
           {editMode ? (
             <>
@@ -113,74 +140,210 @@ export default function PerfilPrestamista() {
         <Divider sx={{ mb: 3 }} />
         <Typography variant="h6" color="primary" sx={{ mb: 2 }}>Información Personal</Typography>
 
-        <Grid container spacing={2}>
-          <Grid item xs={6}>
-            <Typography variant="subtitle2">Fecha de Nacimiento</Typography>
-            <TextField fullWidth type="date" name="fechaNacimiento" value={datos.fechaNacimiento} onChange={handleChange} disabled={!editMode} />
-          </Grid>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+  <Box sx={{ flex: '1 1 300px' }}>
+    <Typography variant="subtitle2">Fecha de Nacimiento</Typography>
+    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
+      <DatePicker
+        value={fechaNacimiento}
+        onChange={(newValue) => {
+          setFechaNacimiento(newValue);
+          setDatos((prev) => ({
+            ...prev,
+            fechaNacimiento: newValue ? newValue.format('YYYY-MM-DD') : '',
+          }));
+        }}
+        format="DD/MM/YYYY"
+        disabled={!editMode}
+        slotProps={{
+          textField: {
+            name: 'fechaNacimiento',
+            fullWidth: true,
+          },
+        }}
+      />
+    </LocalizationProvider>
+  </Box>
 
-          <Grid item xs={6}>
-            <Typography variant="subtitle2">Tipo de Prestamista</Typography>
-            {editMode ? (
-              <TextField select name="tipoPrestamista" value={datos.tipoPrestamista} onChange={handleChange} fullWidth>
-                {tiposPrestamista.map((t) => <MenuItem key={t} value={t}>{t}</MenuItem>)}
-              </TextField>
-            ) : (
-              <TextField fullWidth value={datos.tipoPrestamista} disabled />
-            )}
-          </Grid>
+  <Box sx={{ flex: '1 1 300px' }}>
+    <Typography variant="subtitle2">Tipo de Prestamista</Typography>
+    {editMode ? (
+      <TextField
+        select
+        name="tipoPrestamista"
+        value={datos.tipoPrestamista}
+        onChange={handleChange}
+        fullWidth
+      >
+        {tiposPrestamista.map((t) => (
+          <MenuItem key={t} value={t}>{t}</MenuItem>
+        ))}
+      </TextField>
+    ) : (
+      <TextField fullWidth value={datos.tipoPrestamista} disabled />
+    )}
+  </Box>
+</Box>
 
-          <Grid item xs={6}>
-            <Typography variant="subtitle2">Contacto 1</Typography>
-            <TextField fullWidth name="contacto1" value={datos.contacto1} onChange={handleChange} disabled={!editMode} />
-          </Grid>
+{/* Fila 2: Contacto 1 + Contacto 2 */}
+<Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mt: 2 }}>
+  <Box sx={{ flex: '1 1 300px' }}>
+    <Typography variant="subtitle2">Contacto 1</Typography>
+    <TextField
+      fullWidth
+      name="contacto1"
+      value={datos.contacto1}
+      onChange={handleChange}
+      disabled={!editMode}
+    />
+  </Box>
 
-          <Grid item xs={6}>
-            <Typography variant="subtitle2">Contacto 2</Typography>
-            <TextField fullWidth name="contacto2" value={datos.contacto2} onChange={handleChange} disabled={!editMode} />
-          </Grid>
+  <Box sx={{ flex: '1 1 300px' }}>
+    <Typography variant="subtitle2">Contacto 2</Typography>
+    <TextField
+      fullWidth
+      name="contacto2"
+      value={datos.contacto2}
+      onChange={handleChange}
+      disabled={!editMode}
+    />
+  </Box>
+</Box>
 
-          <Grid item xs={12}>
-            <Typography variant="subtitle2">Descripción</Typography>
-            <TextField fullWidth name="descripcion" value={datos.descripcion} onChange={handleChange} multiline rows={3} disabled={!editMode} />
-          </Grid>
+{/* Campo descripción separado */}
+<Box sx={{ mt: 3 }}>
+  <Typography variant="subtitle2">Descripción</Typography>
+  <TextField
+    fullWidth
+    name="descripcion"
+    value={datos.descripcion}
+    onChange={handleChange}
+    multiline
+    rows={3}
+    disabled={!editMode}
+  />
+</Box>
 
-          <Grid item xs={12}>
-            <Typography variant="subtitle2">Portafolio / Experiencia</Typography>
-            <TextField fullWidth name="portafolio" value={datos.portafolio} onChange={handleChange} multiline rows={3} disabled={!editMode} />
-          </Grid>
+<Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mt: 3 }}>
+  <Box sx={{ width: '100%' }}>
+  <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: theme.palette.secondary.main, mb: 1 }}>
+    Portafolio - Experiencias
+  </Typography>
 
-          <Grid item xs={4}>
-            <Typography variant="subtitle2">Métodos de Pago</Typography>
-            <FormGroup>
-              {metodosPago.map((m) => (
-                <FormControlLabel key={m} control={<Checkbox checked={datos.metodoPago.includes(m)} onChange={(e) => handleCheckChange(e, 'metodoPago')} value={m} disabled={!editMode} />} label={m} />
-              ))}
-            </FormGroup>
-          </Grid>
+  {editMode && (
+    <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
+      <TextField
+        label="Nueva experiencia"
+        placeholder="Ej. Instalación de aire acondicionado"
+        value={nuevaExperiencia}
+        onChange={(e) => setNuevaExperiencia(e.target.value)}
+        fullWidth
+      />
+      <Button variant="outlined" onClick={agregarExperiencia}>Agregar</Button>
+    </Box>
+  )}
 
-          <Grid item xs={4}>
-            <Typography variant="subtitle2">Horarios Preferidos</Typography>
-            <FormGroup>
-              {diasSemana.map((d) => (
-                <FormControlLabel key={d} control={<Checkbox checked={datos.horarios.includes(d)} onChange={(e) => handleCheckChange(e, 'horarios')} value={d} disabled={!editMode} />} label={d} />
-              ))}
-            </FormGroup>
-          </Grid>
+  {datos.portafolio.length === 0 ? (
+    <Typography color="text.secondary">Aún no has agregado ninguna experiencia.</Typography>
+  ) : (
+    datos.portafolio.map((exp, index) => (
+      <Box key={index} sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+        <Typography
+          sx={{
+            padding: 1,
+            flexGrow: 1,
+            border: '2px solid',
+            borderColor: theme.palette.primary.main,
+            borderRadius: 1,
+            backgroundColor: editMode ? '#f9f9f9' : 'transparent',
+          }}
+        >
+          {exp}
+        </Typography>
+        {editMode && (
+          <Button
+            variant="outlined"
+            color="error"
+            onClick={() => eliminarExperiencia(index)}
+            size="small"
+          >
+            Eliminar
+          </Button>
+        )}
+      </Box>
+    ))
+  )}
+</Box>
 
-          <Grid item xs={4}>
-            <Typography variant="subtitle2">Redes Sociales</Typography>
-            <TextField label="Facebook" name="facebook" value={datos.redes.facebook} onChange={handleRedChange} fullWidth disabled={!editMode} sx={{ mb: 1 }} />
-            <TextField label="Instagram" name="instagram" value={datos.redes.instagram} onChange={handleRedChange} fullWidth disabled={!editMode} sx={{ mb: 1 }} />
-            <TextField label="Youtube" name="youtube" value={datos.redes.youtube} onChange={handleRedChange} fullWidth disabled={!editMode} />
-          </Grid>
-        </Grid>
+
+  <Box>
+  <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1 }}>
+    Métodos de Pago
+  </Typography>
+  <FormGroup row>
+    {metodosPago.map((m) => (
+      <FormControlLabel
+        key={m}
+        control={
+          <Checkbox
+            checked={datos.metodoPago.includes(m)}
+            onChange={(e) => handleCheckChange(e, 'metodoPago')}
+            value={m}
+            disabled={!editMode}
+          />
+        }
+        label={m}
+      />
+    ))}
+  </FormGroup>
+</Box>
+
+
+  <Box>
+  <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1 }}>
+    Horarios Preferidos
+  </Typography>
+  <FormGroup row>
+    {diasSemana.map((d) => (
+      <FormControlLabel
+        key={d}
+        control={
+          <Checkbox
+            checked={datos.horarios.includes(d)}
+            onChange={(e) => handleCheckChange(e, 'horarios')}
+            value={d}
+            disabled={!editMode}
+          />
+        }
+        label={d}
+      />
+    ))}
+  </FormGroup>
+</Box>
+
+</Box>
+
 
         <Divider sx={{ my: 3 }} />
         <Typography variant="h6" color="primary">Imágenes de Trabajo (máx. 5)</Typography>
         {editMode && (
-          <input type="file" multiple accept="image/*" onChange={handleImageUpload} style={{ marginTop: 8 }} />
-        )}
+  <Box sx={{ mt: 1 }}>
+    <input
+      accept="image/*"
+      multiple
+      type="file"
+      id="imagenesTrabajo"
+      onChange={handleImageUpload}
+      style={{ display: 'none' }}
+    />
+    <label htmlFor="imagenesTrabajo">
+      <Button variant="contained" component="span" startIcon={<AddAPhotoIcon />}>
+        Subir imágenes
+      </Button>
+    </label>
+  </Box>
+)}
+
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mt: 2 }}>
           {imagenes.map((src, idx) => (
             <Box key={idx} sx={{ position: 'relative' }}>

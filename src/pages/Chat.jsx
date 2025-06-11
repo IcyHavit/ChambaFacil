@@ -33,8 +33,8 @@ const chatsData = [
       { id: 1, src: PerfilImg }
     ],
     messages: [
-      { id: 1, from: 'them', text: '¿Nos vemos mañana en la obra?', time: '13:45' },
-      { id: 2, from: 'me',   text: 'Claro, 5 pm en el sitio.',      time: '13:46' },
+      { id: 1, from: 'them',messageType: 'text', text: '¿Nos vemos mañana en la obra?', time: '13:45' },
+      { id: 2, from: 'me',messageType: 'text',   text: 'Claro, 5 pm en el sitio.',      time: '13:46' },
     ]
   },
     {
@@ -47,9 +47,10 @@ const chatsData = [
     phone1: '+52 55-9876-5432',
     phone2: '+52 55-8765-4321',
     rating: 4.8,
-    files: [],
+    files: [ { id: 1, src: PerfilImg }],
     messages: [
-      { id: 1, from: 'them', text: 'Perfecto, gracias por confirmar.', time: '12:30' },
+      { id: 1, from: 'them',messageType: 'text', text: 'Perfecto, gracias por confirmar.', time: '12:30' },
+       { id: 2, from: 'me',   messageType: 'image', src:  PerfilImg, time: '13:46' },
     ]
     },
     {
@@ -220,7 +221,7 @@ return (
             <Divider />
 
             {/* Mensajes */}
-                <Box sx={{ flexGrow: 1, overflowY: 'auto', mt: 2, px: 1 }}>
+                <Box sx={{ flexGrow: 1, overflowY: 'auto', mt: 2, px: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
                 {selectedChat?.messages.map((m) => (
                     <MessageBubble key={m.id} {...m} />
                 ))}

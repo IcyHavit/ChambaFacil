@@ -1,8 +1,6 @@
-// ✅ Versión final refinada — PerfilCliente.jsx (sin sección de imágenes de trabajo)
-
 import { useState } from 'react';
 import {
-  Avatar, Typography, TextField, Grid, Button,
+  Avatar, Typography, TextField, Button,
   Box, MenuItem, Divider, Paper, Checkbox, FormGroup, FormControlLabel,
   useTheme, Stack
 } from '@mui/material';
@@ -10,6 +8,10 @@ import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import Footer from '../Footer';
 import Navbar from '../Navbar';
+import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs from 'dayjs';
+import 'dayjs/locale/es';
 
 const tiposCliente = ['Particular', 'Representante del negocio'];
 const metodosPago = ['Efectivo', 'Transferencia', 'Tarjeta'];
@@ -30,6 +32,9 @@ export default function PerfilCliente() {
     metodoPago: [],
   });
 
+  const [fechaNacimiento, setFechaNacimiento] = useState(dayjs(datos.fechaNacimiento));
+
+
   const toggleEdit = () => setEditMode(!editMode);
   const handleChange = (e) => setDatos({ ...datos, [e.target.name]: e.target.value });
   const handleCheckChange = (e, key) => {
@@ -48,7 +53,7 @@ export default function PerfilCliente() {
     <Stack sx={{ minHeight: '100vh', backgroundColor: theme.palette.background.default }}>
       <Navbar />
 
-      <Paper elevation={3} sx={{ maxWidth: 1000, mx: 'auto', mt: 5, p: 4, borderRadius: 4 }}>
+      <Paper elevation={3} sx={{ maxWidth: 1000, mx: 'auto', mt: 5, p: 4, borderRadius: 4, mb: 4 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column', mb: 4 }}>
           {editMode ? (
             <>
@@ -86,16 +91,35 @@ export default function PerfilCliente() {
         </Box>
 
         <Divider sx={{ mb: 3 }} />
-
         <Typography variant="h6" color="primary" sx={{ mb: 2 }}>Información Personal</Typography>
 
-        <Grid container spacing={2}>
-          <Grid item xs={6}>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+          <Box sx={{ flex: '1 1 300px' }}>
             <Typography variant="subtitle2">Fecha de Nacimiento</Typography>
-            <TextField fullWidth type="date" name="fechaNacimiento" value={datos.fechaNacimiento} onChange={handleChange} disabled={!editMode} />
-          </Grid>
+           <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
+  <DatePicker
+    value={fechaNacimiento}
+    onChange={(newValue) => {
+      setFechaNacimiento(newValue);
+      setDatos((prev) => ({
+        ...prev,
+        fechaNacimiento: newValue ? newValue.format('YYYY-MM-DD') : '',
+      }));
+    }}
+    format="DD/MM/YYYY"
+    disabled={!editMode}
+    slotProps={{
+      textField: {
+        name: 'fechaNacimiento',
+        fullWidth: true,
+      },
+    }}
+  />
+</LocalizationProvider>
 
-          <Grid item xs={6}>
+          </Box>
+
+          <Box sx={{ flex: '1 1 300px' }}>
             <Typography variant="subtitle2">Tipo de Cliente</Typography>
             {editMode ? (
               <TextField select name="tipoCliente" value={datos.tipoCliente} onChange={handleChange} fullWidth>
@@ -104,21 +128,37 @@ export default function PerfilCliente() {
             ) : (
               <TextField fullWidth value={datos.tipoCliente} disabled />
             )}
-          </Grid>
+          </Box>
+        </Box>
 
-          <Grid item xs={6}>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mt: 2 }}>
+          <Box sx={{ flex: '1 1 300px' }}>
             <Typography variant="subtitle2">Teléfono 1</Typography>
-            <TextField fullWidth name="telefono1" value={datos.telefono1} onChange={handleChange} disabled={!editMode} />
-          </Grid>
+            <TextField
+              fullWidth
+              name="telefono1"
+              value={datos.telefono1}
+              onChange={handleChange}
+              disabled={!editMode}
+            />
+          </Box>
 
-          <Grid item xs={6}>
+          <Box sx={{ flex: '1 1 300px' }}>
             <Typography variant="subtitle2">Teléfono 2</Typography>
-            <TextField fullWidth name="telefono2" value={datos.telefono2} onChange={handleChange} disabled={!editMode} />
-          </Grid>
+            <TextField
+              fullWidth
+              name="telefono2"
+              value={datos.telefono2}
+              onChange={handleChange}
+              disabled={!editMode}
+            />
+          </Box>
+        </Box>
 
-          <Grid item xs={12} sm={6}>
-            <Typography variant="subtitle2">Métodos de Pago</Typography>
-            <FormGroup>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mt: 3 }}>
+          <Box>
+            <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1 }}>Métodos de Pago</Typography>
+            <FormGroup row>
               {metodosPago.map((m) => (
                 <FormControlLabel
                   key={m}
@@ -127,11 +167,11 @@ export default function PerfilCliente() {
                 />
               ))}
             </FormGroup>
-          </Grid>
+          </Box>
 
-          <Grid item xs={12} sm={6}>
-            <Typography variant="subtitle2">Horarios Preferidos</Typography>
-            <FormGroup>
+          <Box>
+            <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1 }}>Horarios Preferidos</Typography>
+            <FormGroup row>
               {diasSemana.map((d) => (
                 <FormControlLabel
                   key={d}
@@ -140,8 +180,8 @@ export default function PerfilCliente() {
                 />
               ))}
             </FormGroup>
-          </Grid>
-        </Grid>
+          </Box>
+        </Box>
 
         <Box textAlign="center" mt={4}>
           <Button variant="contained" startIcon={editMode ? <SaveIcon /> : <EditIcon />} onClick={toggleEdit}>
