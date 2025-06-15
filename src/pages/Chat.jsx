@@ -18,12 +18,32 @@ const handleChatSelect = (chatId) => {
   setSelectedChat(chatObj || null);
 };
 
+const getLastPreview = chat => {
+  // Si no hay mensajes, usa el campo estático lastMessage
+  if (!chat.messages || chat.messages.length === 0) return chat.lastMessage || '';
+
+  const last = chat.messages[chat.messages.length - 1];
+
+  switch (last.messageType) {
+    case 'image':
+      return 'Foto';        // etiqueta para imágenes
+    case 'document':
+      return 'Documento';   // etiqueta para documentos
+    default:
+      return last.text;     // texto normal
+  }
+};
+
+const getLastTime = chat =>
+  chat.messages && chat.messages.length
+    ? chat.messages[chat.messages.length - 1].time
+    : chat.time;
+
 const chatsData = [
   {
     id: 1,
     name: 'Juan Perez',
     avatar: '',
-    lastMessage: '¿Nos vemos mañana en la obra?',
     time: '13:45',
     job: 'Albañil',        
     phone1: '+52 55-1234-5678',
@@ -41,13 +61,22 @@ const chatsData = [
     id: 2,
     name: 'Maria Lopez',
     avatar: '',
-    lastMessage: 'Hola, ¿cómo estás?',
     time: '12:30',
     job: 'Arquitecta',     
     phone1: '+52 55-9876-5432',
     phone2: '+52 55-8765-4321',
     rating: 4.8,
-    files: [ { id: 1, src: PerfilImg }],
+    files: [ { id: 1, src: PerfilImg },
+			{ id: 2, src: PerfilImg },
+	 		{ id: 3, src: PerfilImg },
+			{ id: 4, src: PerfilImg },
+			{ id: 5, src: PerfilImg },
+			{ id: 6, src: PerfilImg },
+			{ id: 7, src: PerfilImg },
+			{ id: 8, src: PerfilImg },
+			{ id: 9, src: PerfilImg },
+			{ id: 10, src: PerfilImg },				
+		],
     messages: [
       { id: 1, from: 'them',messageType: 'text', text: 'Perfecto, gracias por confirmar.', time: '12:30' },
        { id: 2, from: 'me',   messageType: 'image', src:  PerfilImg, time: '13:46' },
@@ -57,7 +86,6 @@ const chatsData = [
     id: 3,
     name: 'Carlos Gomez',
     avatar: '',
-    lastMessage: 'El proyecto está en marcha.',
     time: '11:15',
     job: 'Ingeniero',      
     phone1: '+52 55-2345-6789',
@@ -70,7 +98,6 @@ const chatsData = [
     id: 4,
     name: 'Ana Torres',
     avatar: '',
-    lastMessage: '¿Puedes enviarme los planos?',
     time: '10:00',
     job: 'Diseñadora',    
     phone1: '+52 55-3456-7890',
@@ -83,7 +110,6 @@ const chatsData = [
     id: 5,
     name: 'Luis Ramirez',
     avatar: '',
-    lastMessage: 'Necesito tu opinión sobre el diseño.',
     time: '09:30',
     job: 'Constructor',
     phone1: '+52 55-4567-8901',
@@ -96,7 +122,6 @@ const chatsData = [
     id: 6,
     name: 'Sofia Martinez',
     avatar: '',
-    lastMessage: '¿Cómo va el proyecto?',
     time: '08:45',
     job: 'Gerente de Proyecto',
     phone1: '+52 55-5678-9012',
@@ -144,7 +169,7 @@ return (
         <List sx={{
             overflowY: 'auto',
             flexGrow: 1,
-            maxHeight: '100%', // ahora usará la altura disponible del contenedor
+            maxHeight: '100%',
             '&::-webkit-scrollbar': {
                 width: '8px',
             },
@@ -153,7 +178,7 @@ return (
                 borderRadius: '4px',
             },
             '&::-webkit-scrollbar-thumb': {
-                backgroundColor: '#4c9b82', // tu color verde (primary.main)
+                backgroundColor: '#4c9b82',
                 borderRadius: '4px',
                 border: '2px solid #f0f0f0',
             },
@@ -163,7 +188,7 @@ return (
                 key={chat.id}
                 name={chat.name}
                 avatar={chat.avatar}
-                lastMessage={chat.lastMessage}
+                lastMessage={getLastPreview(chat)} 
                 time={chat.time}
                 isActive={selectedChat?.id === chat.id}
                 onSelect={() => handleChatSelect(chat.id)}
