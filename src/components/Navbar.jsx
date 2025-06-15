@@ -30,10 +30,13 @@ const LightTooltip = styled(({ className, ...props }) => (
 }));
 
 
-export default function Navbar({ isLoggedIn = false }) {
+export default function Navbar() {
   const theme = useTheme();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+
+
+const [isLoggedIn, setLogged] = useState(true);
 
   const handleClose = () => setOpen(false);
   const handleOpen = () => setOpen(true);

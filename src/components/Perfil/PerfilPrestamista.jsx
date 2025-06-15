@@ -7,8 +7,6 @@ import {
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import CloseIcon from '@mui/icons-material/Close';
-import Footer from '../Footer';
-import Navbar from '../Navbar';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
@@ -384,7 +382,6 @@ export default function PerfilPrestamista() {
 
   return (
     <Stack sx={{ minHeight: '100vh', backgroundColor: theme.palette.background.default }}>
-      <Navbar />
 
       <Paper elevation={3} sx={{ maxWidth: 1000, mx: 'auto', mt: 5, p: 4, borderRadius: 4, mb: 4 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column', mb: 4 }}>
@@ -730,7 +727,6 @@ export default function PerfilPrestamista() {
         </Box>
       </Paper>
 
-      <Footer />
     </Stack>
   );
 }

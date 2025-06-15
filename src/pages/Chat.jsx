@@ -5,8 +5,6 @@ import ChatBubble from '../components/Chat/Chats';
 import ProfilePanel from '../components/Chat/Informacion';
 import MessageBubble from '../components/Chat/ChatPrincipal';
 import PerfilImg from '../assets/images/Perfil.png';
-import Footer from '../components/Footer';
-import Navbar from '../components/Navbar';
 
 export default function Home() {
 
@@ -149,7 +147,6 @@ React.useEffect(() => {
 return (
 
 <Stack sx={{ height: '100vh', width: '100%' }}>
-<Navbar />
 
  <Box sx={{ height: '100vh', display: 'flex', bgcolor: 'background.default', p: 2, gap: 2 }}>
 
@@ -293,7 +290,6 @@ return (
     )}
 
 </Box>
-    <Footer />
 </Stack>
 );
 
