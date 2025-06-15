@@ -8,12 +8,12 @@ export default function ChatBubble({
   avatar,
   lastMessage,
   time,
-  onSelect,          // <–– nuevo
-  isActive = false,  // <–– nuevo
+  onSelect,          
+  isActive = false, 
 }) {
   return (
     <Box
-      onClick={onSelect}                     /* ← dispara la selección */
+      onClick={onSelect}                    
       sx={{
         display: 'flex',
         alignItems: 'center',
