@@ -6,6 +6,9 @@ import img from '../assets/images/registro/registro.webp';
 import ButtonMod from '../components/ButtonMod'; // Asegúrate de que la ruta sea correcta
 import { Link } from 'react-router-dom';
 
+// Backend
+import axios from 'axios';
+
 export default function Register() {
   const theme = useTheme();
   const [formData, setFormData] = useState({
@@ -54,14 +57,43 @@ export default function Register() {
     return newErrors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
     } else {
       console.log('Formulario válido:', formData);
-      // Aquí puedes enviar los datos al servidor
+      const data = {
+        correo: formData.email, 
+        contraseña: formData.password, 
+        telefono: formData.phone,
+      };
+
+      try {
+        const response = await axios.post('http://localhost:3000/api/prestamista/register', data, {
+          withCredentials: true,
+        });
+        console.log(response);
+
+        localStorage.setItem('correo', response.data.email);
+        localStorage.setItem('id', response.data.id);
+        localStorage.setItem('name', response.data.name);
+        localStorage.setItem('role', response.data.role);
+
+        // Aviso provisional sin estilo de registro exitoso
+        alert('Registro exitoso (Alerta provisional). Por favor, revisa tu correo para confirmar tu cuenta.');
+      } catch (error) {
+        const errorMessage = error.response?.data?.error || 'Error al registrar. Por favor, intenta nuevamente.';
+        // Aleta provisional sin estilo de error
+        alert(`Error en el registro. ${errorMessage}`);
+      }
+
+      // Prueba de el token en cookies
+      // const response = axios.get('http://localhost:3000/check-token', { withCredentials: true })
+      // .then(res => console.log(res.data))
+      // .catch(err => console.error('Error al obtener token:', err));
+      // console.log(response);
     }
   };
 

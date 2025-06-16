@@ -6,6 +6,9 @@ import ButtonMod from '../components/ButtonMod';
 import { Link } from 'react-router-dom';
 import img from '../assets/images/registro/registro.webp';
 
+// Backend
+import axios from 'axios';
+
 export default function Login() {
   const theme = useTheme();
 
@@ -62,14 +65,37 @@ export default function Login() {
   };
 
   // Manejar el envío del formulario
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
     } else {
       console.log('Formulario válido:', formData);
-      // Aquí puedes enviar los datos al servidor
+      const data = {
+        correo: formData.email, 
+        contraseña: formData.password,
+      };
+
+      try {
+        const response = await axios.post('http://localhost:3000/api/prestamista/login', data, {
+          withCredentials: true,
+        });
+        console.log(response);
+  
+        localStorage.setItem('correo', response.data.email);
+        localStorage.setItem('id', response.data.id);
+        localStorage.setItem('name', response.data.name);
+        localStorage.setItem('role', response.data.role);
+
+        alert('Login exitoso (Alerta provisional).');
+      }
+      catch (error) {
+        const errorMessage = error.response?.data?.error || 'Error al registrar. Por favor, intenta nuevamente.';
+        // Aleta provisional sin estilo de error
+        alert(`Error en el login. ${errorMessage}`);
+      }
+  
     }
   };
 
