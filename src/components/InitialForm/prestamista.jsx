@@ -282,10 +282,6 @@ export default function Prestamista() {
       }
     }
 
-    // Validar experiencias
-    if (experiencias.length === 0) {
-      newErrors.experiencias = 'Agrega al menos una experiencia';
-    }
 
     // Validar preferencias de pago
     if (formData.preferenciasPago.length === 0) {

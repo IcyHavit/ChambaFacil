@@ -10,11 +10,14 @@ import PublicarServicio from './pages/PublicarServicio';
 import InitialForm from './pages/InitialForm'
 import Perfil from './pages/Perfil';
 import Contraseña from './pages/Contraseña';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 
 
 function App() {
   return (
     <BrowserRouter>
+    <Navbar/>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
@@ -28,6 +31,7 @@ function App() {
         <Route path="/contraseña" element={<Contraseña />} />
         {/* Add more routes as needed */}
       </Routes>
+      <Footer/>
     </BrowserRouter>
   );
 }

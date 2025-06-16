@@ -284,7 +284,7 @@ export default function Cliente() {
               </DemoContainer>
             </LocalizationProvider>
           </Grid>
-          <Grid item xs={6}>
+          <Grid size={6}>
             <FormControl error={!!errores.tipoCuenta}>
               <FormLabel id="tipo">Tipo de cuenta</FormLabel>
               <RadioGroup 
@@ -332,7 +332,7 @@ export default function Cliente() {
               onChange={handleChange}
               error={!!errores.telefono2}
               helperText={errores.telefono2 || 'Opcional: 10 dígitos'}
-              inputProps={{ maxLength: 15, pattern: '[0-9]*' }}
+              slotProps={{input:{ maxLength: 15, pattern: '[0-9]*' }}}
             />
           </Grid>
         </Grid>
