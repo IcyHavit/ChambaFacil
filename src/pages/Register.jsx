@@ -7,7 +7,8 @@ import ButtonMod from '../components/ButtonMod'; // Asegúrate de que la ruta se
 import { Link } from 'react-router-dom';
 
 // Backend
-import axios from 'axios';
+import { useGoogleLogin } from '@react-oauth/google';
+import { registerPrestamista, registerPrestamistaGoogle, errorGoogleHandler} from '../api/auth';
 
 export default function Register() {
   const theme = useTheme();
@@ -71,22 +72,20 @@ export default function Register() {
       };
 
       try {
-        const response = await axios.post('http://localhost:3000/api/prestamista/register', data, {
-          withCredentials: true,
-        });
-        console.log(response);
+        const response = await registerPrestamista(data); // Llamamos a la función del archivo API
 
-        localStorage.setItem('correo', response.data.email);
-        localStorage.setItem('id', response.data.id);
-        localStorage.setItem('name', response.data.name);
-        localStorage.setItem('role', response.data.role);
+        localStorage.setItem('email', response.email);
+        localStorage.setItem('id', response.id);
+        localStorage.setItem('name', response.name);
+        localStorage.setItem('role', response.role);
 
         // Aviso provisional sin estilo de registro exitoso
-        alert('Registro exitoso (Alerta provisional). Por favor, revisa tu correo para confirmar tu cuenta.');
+        alert('Registro exitoso (Alerta provisional).');
+        // window.location.href = '/login';
+      
       } catch (error) {
-        const errorMessage = error.response?.data?.error || 'Error al registrar. Por favor, intenta nuevamente.';
-        // Aleta provisional sin estilo de error
-        alert(`Error en el registro. ${errorMessage}`);
+        // Alerta provisional sin estilo de error
+        alert(`Error en el registro. ${error.message}`);
       }
 
       // Prueba de el token en cookies
@@ -97,10 +96,29 @@ export default function Register() {
     }
   };
 
-  const handleGoogleRegister = () => {
-    // Aquí puedes manejar la lógica para el registro con Google
-    console.log('Registro con Google');
+  const successGoogleHandler = async (tokenResponse) => {
+    try {
+      const response = await registerPrestamistaGoogle(tokenResponse.access_token);
+
+      localStorage.setItem('email', response.email);
+      localStorage.setItem('id', response.id);
+      localStorage.setItem('name', response.name);
+      localStorage.setItem('role', response.role);
+
+      // Aviso provisional sin estilo de registro exitoso
+      alert('Registro exitoso con Google (Alerta provisional). Por favor, revisa tu correo para confirmar tu cuenta.');
+      // window.location.href = '/login';
+    } catch (error) {
+      console.error('Error al obtener información del usuario:', error);
+      // Alerta provisional sin estilo de error
+      alert(`Error al registrar con Google. ${error.message}`);
+    }
   };
+
+  const handleGoogleRegister = useGoogleLogin({
+    onSuccess: successGoogleHandler,
+    onError: errorGoogleHandler,
+  });
 
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', bgcolor: theme.palette.background.default, padding: 2 }}>

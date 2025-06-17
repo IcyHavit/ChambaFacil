@@ -7,7 +7,8 @@ import { Link } from 'react-router-dom';
 import img from '../assets/images/registro/registro.webp';
 
 // Backend
-import axios from 'axios';
+import { useGoogleLogin } from '@react-oauth/google';
+import { loginPrestamista, loginPrestamistaGoogle, errorGoogleHandler } from '../api/auth';
 
 export default function Login() {
   const theme = useTheme();
@@ -78,10 +79,7 @@ export default function Login() {
       };
 
       try {
-        const response = await axios.post('http://localhost:3000/api/prestamista/login', data, {
-          withCredentials: true,
-        });
-        console.log(response);
+        const response = await loginPrestamista(data);
   
         localStorage.setItem('correo', response.data.email);
         localStorage.setItem('id', response.data.id);
@@ -89,6 +87,8 @@ export default function Login() {
         localStorage.setItem('role', response.data.role);
 
         alert('Login exitoso (Alerta provisional).');
+        // Redirigir al usuario a la página de inicio o dashboard
+        // window.location.href = '/';
       }
       catch (error) {
         const errorMessage = error.response?.data?.error || 'Error al registrar. Por favor, intenta nuevamente.';
@@ -99,9 +99,29 @@ export default function Login() {
     }
   };
 
-  const handleGoogleLogin = () => {
-    console.log('Inicia con Google');
+  const successGoogleHandler = async (tokenResponse) => {
+    try {
+      const response = await loginPrestamistaGoogle(tokenResponse.access_token);
+
+      localStorage.setItem('email', response.email);
+      localStorage.setItem('id', response.id);
+      localStorage.setItem('name', response.name);
+      localStorage.setItem('role', response.role);
+
+      // Aviso provisional sin estilo de registro exitoso
+      alert('Inicio de sesion exitoso con Google (Alerta provisional).');
+      // window.location.href = '/login';
+      } catch (error) {
+      console.error('Error al obtener información del usuario:', error);
+      // Alerta provisional sin estilo de error
+      alert(`Error al iniciar sesion con Google. ${error.message}`);
+    }
   };
+
+  const handleGoogleLogin = useGoogleLogin({
+    onSuccess: successGoogleHandler,
+    onError: errorGoogleHandler,
+  });
 
   return (
     <Box
