@@ -12,7 +12,8 @@ import Perfil from './pages/Perfil';
 import Contraseña from './pages/Contraseña';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-
+import FormCliente from './pages/FormCliente'
+import FormPrestamista from './pages/FormPrestamista'
 
 function App() {
   return (
@@ -29,7 +30,8 @@ function App() {
         <Route path='/datos' element={<InitialForm/>} />
         <Route path="/perfil" element={<Perfil />} />
         <Route path="/contraseña" element={<Contraseña />} />
-        {/* Add more routes as needed */}
+        <Route path='/FormCliente' element={<FormCliente/>}/>
+        <Route path='/FormPrestamista' element={<FormPrestamista/>}/>
       </Routes>
       <Footer/>
     </BrowserRouter>

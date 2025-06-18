@@ -5,10 +5,11 @@ import GoogleIcon from '@mui/icons-material/Google'; // Asegúrate de instalar @
 import img from '../assets/images/registro/registro.webp';
 import ButtonMod from '../components/ButtonMod'; // Asegúrate de que la ruta sea correcta
 import { Link } from 'react-router-dom';
+import { FormControl, InputLabel, Select, MenuItem, FormHelperText } from '@mui/material';
 
 // Backend
 import { useGoogleLogin } from '@react-oauth/google';
-import { registerPrestamista, registerPrestamistaGoogle, errorGoogleHandler} from '../api/auth';
+import { registerPrestamista, registerPrestamistaGoogle, errorGoogleHandler } from '../api/auth';
 
 export default function Register() {
   const theme = useTheme();
@@ -17,6 +18,7 @@ export default function Register() {
     phone: '',
     password: '',
     confirmPassword: '',
+    tipoUsuario: '',
   });
 
   const [errors, setErrors] = useState({});
@@ -40,6 +42,8 @@ export default function Register() {
       }
     }
   };
+  const passwordRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{8,15}$/;
 
   const validate = () => {
     const newErrors = {};
@@ -49,8 +53,12 @@ export default function Register() {
     if (formData.phone.length < 10) {
       newErrors.phone = 'El teléfono debe tener al menos 10 dígitos.';
     }
-    if (formData.password.length < 6) {
-      newErrors.password = 'La contraseña debe tener al menos 6 caracteres.';
+    if (!formData.tipoUsuario) {
+      newErrors.tipoUsuario = 'Selecciona un tipo de usuario.';
+    }
+    if (!passwordRegex.test(formData.password)) {
+      newErrors.password =
+        'Debe tener 8-15 caracteres y al menos una mayúscula, minúscula, número y símbolo.';
     }
     if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Las contraseñas no coinciden.';
@@ -58,7 +66,7 @@ export default function Register() {
     return newErrors;
   };
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
@@ -66,8 +74,8 @@ export default function Register() {
     } else {
       console.log('Formulario válido:', formData);
       const data = {
-        correo: formData.email, 
-        contraseña: formData.password, 
+        correo: formData.email,
+        contraseña: formData.password,
         telefono: formData.phone,
       };
 
@@ -82,7 +90,7 @@ export default function Register() {
         // Aviso provisional sin estilo de registro exitoso
         alert('Registro exitoso (Alerta provisional).');
         // window.location.href = '/login';
-      
+
       } catch (error) {
         // Alerta provisional sin estilo de error
         alert(`Error en el registro. ${error.message}`);
@@ -95,6 +103,8 @@ export default function Register() {
       // console.log(response);
     }
   };
+
+
 
   const successGoogleHandler = async (tokenResponse) => {
     try {
@@ -131,25 +141,23 @@ export default function Register() {
           p: 2
         }}
       >
-        <Grid container sx={{ minHeight: '400' }} >
+        <Grid container alignItems="flex-start" sx={{ minHeight: '400' }} >
 
-          <Grid size={6} sx={{ paddingRight: 2, xs: 12, md: 6 }}>
-            <item>
-              <img
-                src={img}
-                alt="Registro"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  borderTopLeftRadius: 8,
-                  borderBottomLeftRadius: 8,
-                }}
-              />
-            </item>
+          <Grid size={6} sx={{ pr: { md: 2 } }}>
+  <Box
+    component="img"
+    src={img}
+    alt="Registro"
+    sx={{
+      pt:8,
+      maxWidth: '100%',        // no se desborda
+      height: 'auto',
+      objectFit: 'cover',
+      borderRadius: 2          // theme.spacing(0.25) en rems
+    }}
+  />
           </Grid>
           <Grid size={6} sx={{ xs: 12, md: 6 }}>
-            <item>
               <Box component="form" onSubmit={handleSubmit} required noValidate autoComplete="off" sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
                 <h1 style={{ textAlign: 'center', color: theme.palette.primary.main, fontFamily: theme.typography.bodyLarge.main, fontWeight: 'bold' }}>Registro</h1>
                 {/* Boton de google para registrarte de ahi mas rapido */}
@@ -196,6 +204,27 @@ export default function Register() {
                   error={!!errors.phone}
                   helperText={errors.phone || ' '}
                 />
+                <FormControl fullWidth required error={!!errors.tipoUsuario}>
+                  <InputLabel id="tipoUser">Tipo de usuario</InputLabel>
+
+                  <Select
+                    labelId="tipoUser"
+                    id="tipoUsuario"
+                    name="tipoUsuario"
+                    label="Tipo de usuario"
+                    value={formData.tipoUsuario}
+                    onChange={handleChange}
+                  >
+                    <MenuItem value="Prestamista">Prestamista</MenuItem>
+                    <MenuItem value="Cliente">Cliente</MenuItem>
+                  </Select>
+
+                  {/* 👉 aquí va el texto de error (o un espacio en blanco para no mover el layout) */}
+                  <FormHelperText>
+                    {errors.tipoUsuario || ' '}
+                  </FormHelperText>
+                </FormControl>
+
                 <TextField
                   required
                   id="password"
@@ -237,9 +266,6 @@ export default function Register() {
                   type='submit'
                 />
               </Box>
-
-
-            </item>
 
           </Grid>
 

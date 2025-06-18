@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { Box, Grid, Typography, IconButton, Stack } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import FacebookIcon from '@mui/icons-material/Facebook';
@@ -10,7 +9,7 @@ import EmailIcon from '@mui/icons-material/Email';
 import PhoneIcon from '@mui/icons-material/Phone';
 import { useTheme } from '@mui/material/styles';
 
-export default function Footer({ }) {
+export default function Footer() {
 
   const theme = useTheme();
   const navigate = useNavigate();
@@ -19,7 +18,7 @@ export default function Footer({ }) {
     <Box component="footer" sx={{ bgcolor: theme.palette.secondary.light, color: theme.palette.background.paper, pt: 1, pb: 1 }}>
       <Box sx={{ px: { xs: 1, md: 6 }}}>
         <Grid container spacing={10} justifyContent="space-between">
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size={{xs:12, sm:6, md:3}} >
             <Typography variant="h6" fontWeight="bold" gutterBottom>
               Más de nosotros
             </Typography>
@@ -35,7 +34,7 @@ export default function Footer({ }) {
           </Grid>
 
           {/* Contacto */}
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size={{xs:12, sm:6, md:3}} >
             <Typography variant="h6" fontWeight="bold" gutterBottom>
               Contacto
             </Typography>

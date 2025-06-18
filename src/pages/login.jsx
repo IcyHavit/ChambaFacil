@@ -40,10 +40,10 @@ export default function Login() {
       });
     }
 
-    if (name === 'password' && value.length < 6) {
+    if (name === 'password' && value.length ===0) {
       setErrors((prevErrors) => ({
         ...prevErrors,
-        password: 'La contraseña debe tener al menos 6 caracteres.',
+        password: 'La contraseña no debe estar vacía.',
       }));
     } else if (name === 'password') {
       setErrors((prevErrors) => {
@@ -59,8 +59,8 @@ export default function Login() {
     if (!formData.email.includes('@')) {
       newErrors.email = 'El correo debe ser válido.';
     }
-    if (formData.password.length < 6) {
-      newErrors.password = 'La contraseña debe tener al menos 6 caracteres.';
+    if (formData.password.length == 0) {
+      newErrors.password = 'La contraseña no debe estar vacía.';
     }
     return newErrors;
   };

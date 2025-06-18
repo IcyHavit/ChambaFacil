@@ -15,8 +15,7 @@ import Mascota from '../assets/images/Mascota.png';
 import SolicitudCard from '../components/Solicitudes/Tarjetas';               // genérica
 import SolicitudCardAceptada from '../components/Solicitudes/TarjetasAceptadas';
 import SolicitudCardPendiente from '../components/Solicitudes/TarjetasPendientes';
-import Footer from '../components/Footer';
-import Navbar from '../components/Navbar';
+
 
 /* ---------- datos mock ---------- */
 const solicitudesMock = [
@@ -101,7 +100,6 @@ export default function Solicitudes() {
         bgcolor: 'background.default',
       }}
     >
-      <Navbar />
 
       <Box
         sx={{
@@ -215,8 +213,6 @@ export default function Solicitudes() {
           )}
         </Box>
       </Box>
-
-      <Footer />
 
       {/* ---------- Snackbar ---------- */}
       <Snackbar
