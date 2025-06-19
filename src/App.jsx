@@ -14,6 +14,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import FormCliente from './pages/FormCliente'
 import FormPrestamista from './pages/FormPrestamista'
+import Correo from './pages/Correo';
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
         <Route path="/contraseña" element={<Contraseña />} />
         <Route path='/FormCliente' element={<FormCliente/>}/>
         <Route path='/FormPrestamista' element={<FormPrestamista/>}/>
+        <Route path='/correo' element={<Correo/>}/>
       </Routes>
       <Footer/>
     </BrowserRouter>

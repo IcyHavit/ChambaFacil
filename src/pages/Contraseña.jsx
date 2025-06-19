@@ -3,42 +3,25 @@ import { useTheme } from '@mui/material/styles';
 import React, { useState } from 'react';
 import img from '../assets/images/contraseña/contraseña.png';
 
-const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])([A-Za-z\d$@$!%*?&]|[^ ]){8,15}$/;
-
 export default function Contraseña() {
   const theme = useTheme();
 
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [errors, setErrors] = useState({
-    password: '',
-    confirmPassword: '',
-  });
+  const [email, setEmail] = useState('');
+  const [error, setError] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const newErrors = {
-      password: '',
-      confirmPassword: '',
-    };
-
-    if (!regex.test(password)) {
-      newErrors.password = 'Debe tener 8-15 caracteres, incluyendo mayúsculas, minúsculas, número y símbolo.';
+    // Validación simple de correo
+    if (!email || !/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
+      setError('Por favor ingresa un correo válido.');
+      return;
     }
 
-    if (confirmPassword !== password) {
-      newErrors.confirmPassword = 'Las contraseñas no coinciden.';
-    }
-
-    setErrors(newErrors);
-
-    if (!newErrors.password && !newErrors.confirmPassword) {
-      // Aquí puedes enviar la nueva contraseña al backend
-      alert('Contraseña cambiada con éxito');
-    }
+    setError('');
+    // Aquí puedes enviar el correo al backend para recuperación
+    alert('Se ha enviado un correo para recuperar tu contraseña');
   };
-
 
   return (
     <Box
@@ -61,50 +44,44 @@ export default function Contraseña() {
         }}
       >
         <Grid container spacing={10} alignItems="center">
-            <Grid size={{xs: 12, md: 5}}>
-                <Box
-                component="img"
-                src={img}
-                alt="Registro"
-                sx={{
-                    width: '100%',
-                    maxWidth: 260,
-                    display: 'block',
-                    mx: 'auto',
-                }}
-                />
-            </Grid>
+          <Grid item xs={12} md={5}>
+            <Box
+              component="img"
+              src={img}
+              alt="Recuperar contraseña"
+              sx={{
+                width: '100%',
+                maxWidth: 260,
+                display: 'block',
+                mx: 'auto',
+              }}
+            />
+          </Grid>
+          {/**holaaaa */}
 
-            {/* Formulario */}
-            <Grid size={{xs: 12, md: 6}}>
-                <Typography variant="h4" fontWeight="bold" gutterBottom>
-                Cambiar Contraseña
-                </Typography>
-
-                 <Stack spacing={2} component="form" mt={2} onSubmit={handleSubmit}>
-                  <TextField
-                    label="Nueva contraseña"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    error={!!errors.password}
-                    helperText={errors.password}
-                    fullWidth
-                  />
-                  <TextField
-                    label="Confirmar contraseña"
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    error={!!errors.confirmPassword}
-                    helperText={errors.confirmPassword}
-                    fullWidth
-                  />
-                  <Button variant="contained" color="primary" type="submit">
-                    Confirmar cambio
-                  </Button>
-                </Stack>
-            </Grid>
+          {/* Formulario */}
+          <Grid item xs={12} md={6}>
+            <Typography variant="h4" fontWeight="bold" gutterBottom>
+              Recuperar Contraseña
+            </Typography>
+            <Typography variant="body1" mb={2}>
+              Por favor ingresa tu correo para recuperar tu contraseña
+            </Typography>
+            <Stack spacing={2} component="form" mt={2} onSubmit={handleSubmit}>
+              <TextField
+                label="Correo electrónico"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                error={!!error}
+                helperText={error}
+                fullWidth
+              />
+              <Button variant="contained" color="primary" type="submit">
+                Enviar correo de recuperación
+              </Button>
+            </Stack>
+          </Grid>
         </Grid>
       </Paper>
     </Box>
