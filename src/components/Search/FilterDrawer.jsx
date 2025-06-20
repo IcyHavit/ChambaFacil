@@ -80,11 +80,7 @@ export default function FilterDrawer({ open, onClose, selectedApplyFilters }) {
         <Typography sx={{ color: theme.palette.secondary.main, fontSize: '1.2rem', fontWeight: 'bold', mt: 2 }}>Experiencia</Typography>
         <FormGroup>
           <FormControlLabel control={<Checkbox onChange={() => updateFilters('experience', 'Sin experiencia')} />} label="Sin experiencia" />
-          <FormControlLabel control={<Checkbox onChange={() => updateFilters('experience', '1 año')} />} label="1 año" />
-          <FormControlLabel control={<Checkbox onChange={() => updateFilters('experience', '2 años')} />} label="2 años" />
-          <FormControlLabel control={<Checkbox onChange={() => updateFilters('experience', '3 años')} />} label="3 años" />
-          <FormControlLabel control={<Checkbox onChange={() => updateFilters('experience', '4 años')} />} label="4 años" />
-          <FormControlLabel control={<Checkbox onChange={() => updateFilters('experience', '5 años o más')} />} label="5 años o más" />
+          <FormControlLabel control={<Checkbox onChange={() => updateFilters('experience', 'Con experiencia')} />} label="Con experiencia" />
         </FormGroup>
 
         {/* Modalidad de Cobro */}
