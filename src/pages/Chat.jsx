@@ -6,14 +6,70 @@ import ProfilePanel from '../components/Chat/Informacion';
 import MessageBubble from '../components/Chat/ChatPrincipal';
 import PerfilImg from '../assets/images/Perfil.png';
 
+// Pruebas de axios
+import axios from 'axios';
+
 export default function Home() {
 
-  const [openProfile, setOpenProfile] = React.useState(false);
-  const [selectedChat, setSelectedChat] = React.useState(null);
+  // cambiar esto por el email real del localStorage
+  const actualUserEmail = 'jesushervert@correo.com';
 
-  const handleChatSelect = (chatId) => {
-    const chatObj = chatsData.find((c) => c.id === chatId);
-    setSelectedChat(chatObj || null);
+
+  // Estados para manejar: los ultimos chats, el chat seleccionado, todos los chats y el estado del perfil abierto
+  const [recentChats, setRecentChats] = React.useState([]);
+  const [selectedChat, setSelectedChat] = React.useState(null);
+  const [chats, setChats] = React.useState([]);
+  const [openProfile, setOpenProfile] = React.useState(false);
+  const [contactData, setContactData] = React.useState([]);
+
+
+  // recuperar los chats desde un API al cargar el componente
+  React.useEffect(() => {
+    const obtainRecentChats = async () => {
+      try {
+        const response = await axios.get('http://localhost:3000/api/chat/last-messages/' + actualUserEmail);
+        setRecentChats(response.data);
+        //console.log("Chats obtenidos:", response.data);
+      } catch (error) {
+        console.error("Error fetching recent chats:", error);
+      }
+    }
+    obtainRecentChats();
+  }, []);
+
+  // Funcion para obtener los mensajes de un chat especifico entre dos usuarios
+  const obtainUsersChat = async (senderEmail, receiverEmail) => {
+    try {
+      const response = await axios.get('http://localhost:3000/api/chat/messages/' + senderEmail + '/' + receiverEmail);
+      setChats(response.data);
+      console.log("Chat obtenido:", response.data);
+    } catch (error) {
+      console.error("Error fetching chat:", error);
+    }
+  }
+
+  // Funcion para obtener los datos de contacto de un usuario
+  const obtainContactData = async (actualUserEmail, contactEmail) => {
+    try {
+      const response = await axios.get('http://localhost:3000/api/chat/user-profile/' + actualUserEmail + '/' + contactEmail);
+      setContactData(response.data);
+      console.log("Datos de contacto obtenidos:", response.data);
+    } catch (error) {
+      console.error("Error fetching contact data:", error);
+    }
+  }
+
+  // Manejar la seleccion de un chat
+  const handleChatSelect = (chat_Id) => {
+    const chatObj = recentChats.find(chat => chat._id === chat_Id);
+    if (chatObj) {
+      setSelectedChat(chatObj);
+      setOpenProfile(false);
+      obtainUsersChat(actualUserEmail, chatObj.senderEmail === actualUserEmail ? chatObj.receiverEmail : chatObj.senderEmail);
+      console.log("Chat seleccionado:", chatObj);
+    } else {
+      console.warn("Chat not found:", chat_Id);
+    }
   };
 
   const getLastPreview = chat => {
@@ -31,11 +87,6 @@ export default function Home() {
         return last.text;     // texto normal
     }
   };
-
-  const getLastTime = chat =>
-    chat.messages && chat.messages.length
-      ? chat.messages[chat.messages.length - 1].time
-      : chat.time;
 
   const chatsData = [
     {
@@ -131,11 +182,6 @@ export default function Home() {
 
   ];
 
-  const handleSearchChange = (event) => {
-    const searchValue = event.target.value;
-    console.log("Buscando mensajes con:", searchValue);
-  };
-
   const bottomRef = React.useRef(null);
 
   React.useEffect(() => {
@@ -145,9 +191,7 @@ export default function Home() {
 
 
   return (
-
     <Stack sx={{ height: '100vh', width: '100%' }}>
-
       <Box sx={{ height: '100vh', display: 'flex', bgcolor: 'background.default', p: 2, gap: 2 }}>
 
         {/* 1. Lista de Chats */}
@@ -180,17 +224,23 @@ export default function Home() {
               border: '2px solid #f0f0f0',
             },
           }}>
-            {chatsData.map(chat => (
-              <ChatBubble
-                key={chat.id}
-                name={chat.name}
-                avatar={chat.avatar}
-                lastMessage={getLastPreview(chat)}
-                time={chat.time}
-                isActive={selectedChat?.id === chat.id}
-                onSelect={() => handleChatSelect(chat.id)}
-              />
-            ))}
+            {recentChats.map((chat) => {
+              const destinRealName = actualUserEmail === chat.senderEmail ? chat.receiverName : chat.senderName;
+              const destinRealAvatar = actualUserEmail === chat.senderEmail ? chat.receiverAvatar : chat.senderAvatar;
+              const hour24 = new Date(chat.timestamp).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', hour12: false });
+
+
+              return (
+                <ChatBubble
+                  key={chat._id}
+                  name={destinRealName}
+                  avatar={destinRealAvatar || PerfilImg}
+                  lastMessage={typeof chat.content === 'string' ? chat.content : 'Foto'}
+                  time={hour24}
+                  isActive={selectedChat?._id === chat._id}
+                  onSelect={() => handleChatSelect(chat._id)} />
+              );
+            })}
           </List>
         </Box>
 
@@ -227,28 +277,66 @@ export default function Home() {
 
               <Box
                 sx={{ cursor: selectedChat ? 'pointer' : 'default' }}
-                onClick={() => selectedChat && setOpenProfile((p) => !p)}
+                onClick={() => {
+                  if (selectedChat) {
+                    setOpenProfile((p) => !p);
+                    obtainContactData(
+                      actualUserEmail,
+                      selectedChat.senderEmail === actualUserEmail ? selectedChat.receiverEmail : selectedChat.senderEmail
+                    );
+                  }
+                }}
               >
+                {/* Nombre del chat */}
                 <Typography variant="h6" color="text.primary">
-                  {selectedChat ? selectedChat.name : 'Selecciona un chat'}
+                  {
+                    selectedChat
+                      ? (selectedChat.senderEmail === actualUserEmail
+                        ? selectedChat.receiverName
+                        : selectedChat.senderName)
+                      : 'Selecciona un chat'
+                  }
                 </Typography>
+
+                {/* Ocupacion del chat */}
                 {selectedChat && (
                   <Typography variant="body2" color="text.secondary">
-                    {selectedChat.job || 'Ocupación no disponible'}
+                    {
+                      selectedChat
+                        ? (selectedChat.senderEmail === actualUserEmail
+                          ? selectedChat.receiverOccupation
+                          : selectedChat.senderOccupation)
+                        : 'Selecciona un chat'
+                    }
                   </Typography>
                 )}
               </Box>
+
             </Box>
           </Box>
           <Divider />
 
           {/* Mensajes */}
           <Box sx={{ flexGrow: 1, overflowY: 'auto', mt: 2, px: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
-            {selectedChat?.messages.map((m) => (
-              <MessageBubble key={m.id} {...m} />
-            ))}
+            {chats.map((message) => {
+              const isMe = message.senderEmail === actualUserEmail ? 'me' : 'them';
+              const time = new Date(message.timestamp).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', hour12: false });
+
+              return (
+                <MessageBubble
+                  key={message._id}
+                  from={isMe}
+                  messageType={typeof message.content === 'string' ? 'text' : 'image'}
+                  text={typeof message.content === 'string' ? message.content : undefined}
+                  src={typeof message.content === 'object' ? message.content : undefined}
+                  time={time}
+                />
+              );
+            })}
             <div ref={bottomRef} />
           </Box>
+
+
           {/* Input mensaje */}
           <Box sx={{ mt: 2, display: 'flex', gap: 1, alignItems: 'center' }}>
             <TextField fullWidth placeholder="Escribe un mensaje..." size="small" variant="outlined" />
@@ -275,16 +363,17 @@ export default function Home() {
 
         {/* 3. Panel de Perfil como barra lateral */}
         {openProfile && selectedChat && (
+          
           <ProfilePanel
             user={{
-              name: selectedChat.name,
-              job: selectedChat.job,
-              phone1: selectedChat.phone1,
-              phone2: selectedChat.phone2,
-              rating: selectedChat.rating,
-              avatar: selectedChat.avatar,
+              id: contactData.id,
+              name: contactData.contactName || 'Cargando...',
+              job: contactData.contactOccupation || 'Cargando...',
+              phone1: contactData.contactPhone || 'Cargando...',
+              rating: contactData.contactRating || 0,
+              avatar: contactData.contactPathProfilePicture || PerfilImg,
             }}
-            files={selectedChat.files}
+            files={contactData.sharedFiles || []}
             onClose={() => setOpenProfile(false)}
           />
         )}

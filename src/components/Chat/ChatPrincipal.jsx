@@ -3,7 +3,7 @@ import { Box, Typography, useTheme } from '@mui/material';
 
 export default function MessageBubble({
   from,
-  messageType = 'text',   // 'text' | 'image'
+  messageType,   // 'text' | 'image'
   text,
   src,
   time,

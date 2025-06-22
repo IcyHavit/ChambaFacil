@@ -88,9 +88,9 @@ export default function ProfilePanel({ user, files, onClose }) {
         </Typography>
 
         <ImageList cols={3} gap={8} sx={{ overflowY: 'auto' }}>
-          {files.map((f) => (
+          {files.map((f, index) => (
             <ImageListItem
-              key={f.id}
+              key={f.id || index}
               sx={{ cursor: 'pointer' }}
               onClick={() => setPreviewSrc(f.src)}
             >
