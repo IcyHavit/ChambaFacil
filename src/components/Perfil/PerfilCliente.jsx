@@ -12,10 +12,13 @@ import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 import 'dayjs/locale/es';
+import ButtonMod from '../ButtonMod'
 
 const tiposCliente = ['Personal', 'Grupo', 'Empresa'];
 const metodosPago = ['Efectivo', 'Transferencia', 'Tarjeta'];
 const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+
+
 
 export default function PerfilCliente() {
   dayjs.locale('es');
@@ -35,6 +38,10 @@ export default function PerfilCliente() {
     metodoPago: [],
   });
 
+
+  const handleCerrarSesion = () => {
+    console.log("webos pal gayro")
+  }
   const [fechaNacimiento, setFechaNacimiento] = useState(dayjs(datos.fechaNacimiento));
 
   // Validaciones
@@ -281,7 +288,6 @@ export default function PerfilCliente() {
   };
   return (
     <Stack sx={{ minHeight: '100vh', backgroundColor: theme.palette.background.default }}>
-      <Navbar />
 
       <Paper elevation={3} sx={{ maxWidth: 1000, mx: 'auto', mt: 5, p: 4, borderRadius: 4, mb: 4 }}>
         <Box component="form" onSubmit={handleSubmit}>
@@ -465,20 +471,31 @@ export default function PerfilCliente() {
               )}
             </Box>
           </Box>
-
           <Box textAlign="center" mt={4}>
-            <Button
-              variant="contained"
-              startIcon={editMode ? <SaveIcon /> : <EditIcon />}
-              onClick={editMode ? handleSave : toggleEdit}
-            >
-              {editMode ? 'Guardar cambios' : 'Editar perfil'}
-            </Button>
+            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
+              <ButtonMod
+                variant="principal"
+                textCont={editMode ? 'Guardar cambios' : 'Editar perfil'}
+                startIcon={editMode ? <SaveIcon /> : <EditIcon />}
+                clickEvent={editMode ? handleSave : toggleEdit}
+              />
+              
+              <ButtonMod
+                variant=''
+                textCont='Cerrar sesión'
+                width='auto'
+                height='2.3rem'
+                clickEvent={handleCerrarSesion}
+              />
+            </Box>
           </Box>
+
         </Box>
+
       </Paper>
 
-      <Footer />
+
+
     </Stack>
   );
 }
