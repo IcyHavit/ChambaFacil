@@ -19,23 +19,58 @@ export default function Home() {
   const [recentChats, setRecentChats] = React.useState([]);
   const [selectedChat, setSelectedChat] = React.useState(null);
   const [chats, setChats] = React.useState([]);
+  const [messageContent, setMessageContent] = React.useState("");
   const [openProfile, setOpenProfile] = React.useState(false);
   const [contactData, setContactData] = React.useState([]);
-
+  const [searchText, setSearchText] = React.useState("");
 
   // recuperar los chats desde un API al cargar el componente
-  React.useEffect(() => {
-    const obtainRecentChats = async () => {
-      try {
-        const response = await axios.get('http://localhost:3000/api/chat/last-messages/' + actualUserEmail);
-        setRecentChats(response.data);
-        //console.log("Chats obtenidos:", response.data);
-      } catch (error) {
-        console.error("Error fetching recent chats:", error);
-      }
+  const obtainRecentChats = async () => {
+    try {
+      const response = await axios.get('http://localhost:3000/api/chat/last-messages/' + actualUserEmail);
+      setRecentChats(response.data);
+      //console.log("Chats obtenidos:", response.data);
+    } catch (error) {
+      console.error("Error fetching recent chats:", error);
     }
+  }
+  React.useEffect(() => {
     obtainRecentChats();
-  }, []);
+  }, [chats]);
+
+  // Filtrar chats con base en el texto de busqeuda
+  const filteredChats = recentChats.filter(chat => {
+    const destinRealName = actualUserEmail === chat.senderEmail ? chat.receiverName : chat.senderName;
+    return destinRealName.toLowerCase().includes(searchText.toLowerCase());
+  });
+
+  // Función para enviar el mensaje
+  const sendMessage = async () => {
+    if (!messageContent.trim()) {
+      console.log("No se puede enviar un mensaje vacío.");
+      return;
+    }
+
+    try {
+      const messageData = {
+        senderEmail: actualUserEmail,
+        receiverEmail: selectedChat.senderEmail === actualUserEmail ? selectedChat.receiverEmail : selectedChat.senderEmail,
+        content: messageContent,
+        timestamp: new Date().toISOString(),
+      };
+
+      // Enviar la solicitud POST al backend
+      const response = await axios.post('http://localhost:3000/api/chat/send', messageData);
+      console.log("Mensaje enviado:", response.data);
+
+      // Si el mensaje fue enviado correctamente, actualizar el chat
+      setChats(prevChats => [...prevChats, response.data]);
+      setMessageContent("");
+
+    } catch (error) {
+      console.error("Error al enviar el mensaje:", error);
+    }
+  };
 
   // Funcion para obtener los mensajes de un chat especifico entre dos usuarios
   const obtainUsersChat = async (senderEmail, receiverEmail) => {
@@ -72,122 +107,11 @@ export default function Home() {
     }
   };
 
-  const getLastPreview = chat => {
-    // Si no hay mensajes, usa el campo estático lastMessage
-    if (!chat.messages || chat.messages.length === 0) return chat.lastMessage || '';
-
-    const last = chat.messages[chat.messages.length - 1];
-
-    switch (last.messageType) {
-      case 'image':
-        return 'Foto';        // etiqueta para imágenes
-      case 'document':
-        return 'Documento';   // etiqueta para documentos
-      default:
-        return last.text;     // texto normal
-    }
-  };
-
-  const chatsData = [
-    {
-      id: 1,
-      name: 'Juan Perez',
-      avatar: '',
-      time: '13:45',
-      job: 'Albañil',
-      phone1: '+52 55-1234-5678',
-      phone2: '',
-      rating: 4.3,
-      files: [
-        { id: 1, src: PerfilImg }
-      ],
-      messages: [
-        { id: 1, from: 'them', messageType: 'text', text: '¿Nos vemos mañana en la obra?', time: '13:45' },
-        { id: 2, from: 'me', messageType: 'text', text: 'Claro, 5 pm en el sitio.', time: '13:46' },
-      ]
-    },
-    {
-      id: 2,
-      name: 'Maria Lopez',
-      avatar: '',
-      time: '12:30',
-      job: 'Arquitecta',
-      phone1: '+52 55-9876-5432',
-      phone2: '+52 55-8765-4321',
-      rating: 4.8,
-      files: [{ id: 1, src: PerfilImg },
-      { id: 2, src: PerfilImg },
-      { id: 3, src: PerfilImg },
-      { id: 4, src: PerfilImg },
-      { id: 5, src: PerfilImg },
-      { id: 6, src: PerfilImg },
-      { id: 7, src: PerfilImg },
-      { id: 8, src: PerfilImg },
-      { id: 9, src: PerfilImg },
-      { id: 10, src: PerfilImg },
-      ],
-      messages: [
-        { id: 1, from: 'them', messageType: 'text', text: 'Perfecto, gracias por confirmar.', time: '12:30' },
-        { id: 2, from: 'me', messageType: 'image', src: PerfilImg, time: '13:46' },
-      ]
-    },
-    {
-      id: 3,
-      name: 'Carlos Gomez',
-      avatar: '',
-      time: '11:15',
-      job: 'Ingeniero',
-      phone1: '+52 55-2345-6789',
-      phone2: '',
-      rating: 4.5,
-      files: [],
-      messages: []
-    },
-    {
-      id: 4,
-      name: 'Ana Torres',
-      avatar: '',
-      time: '10:00',
-      job: 'Diseñadora',
-      phone1: '+52 55-3456-7890',
-      phone2: '+52 55-6543-2109',
-      rating: 4.7,
-      files: [],
-      messages: []
-    },
-    {
-      id: 5,
-      name: 'Luis Ramirez',
-      avatar: '',
-      time: '09:30',
-      job: 'Constructor',
-      phone1: '+52 55-4567-8901',
-      phone2: '',
-      rating: 4.2,
-      files: [],
-      messages: []
-    }
-    , {
-      id: 6,
-      name: 'Sofia Martinez',
-      avatar: '',
-      time: '08:45',
-      job: 'Gerente de Proyecto',
-      phone1: '+52 55-5678-9012',
-      phone2: '+52 55-7890-1234',
-      rating: 4.6,
-      files: [],
-      messages: []
-    }
-
-  ];
-
   const bottomRef = React.useRef(null);
 
   React.useEffect(() => {
 
   }, [selectedChat]);
-
 
 
   return (
@@ -204,6 +128,8 @@ export default function Home() {
               placeholder="Buscar"
               size="small"
               variant="outlined"
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
             />
           </Box>
           <Divider />
@@ -224,7 +150,7 @@ export default function Home() {
               border: '2px solid #f0f0f0',
             },
           }}>
-            {recentChats.map((chat) => {
+            {filteredChats.map((chat) => {
               const destinRealName = actualUserEmail === chat.senderEmail ? chat.receiverName : chat.senderName;
               const destinRealAvatar = actualUserEmail === chat.senderEmail ? chat.receiverAvatar : chat.senderAvatar;
               const hour24 = new Date(chat.timestamp).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', hour12: false });
@@ -245,7 +171,7 @@ export default function Home() {
         </Box>
 
         {/* 2. Zona Central Chat */}
-        <Box sx={{ flexGrow: 1, bgcolor: 'background.paper', borderRadius: 2, boxShadow: 1, display: 'flex', flexDirection: 'column', p: 2 }}>
+        <Box sx={{ flexGrow: 1, bgcolor: 'background.paper', borderRadius: 2, boxShadow: 1, display: 'flex', flexDirection: 'column', p: 2, height: 'calc(100vh - 64px - 32px)' }}>
           {/* Header */}
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
@@ -339,7 +265,15 @@ export default function Home() {
 
           {/* Input mensaje */}
           <Box sx={{ mt: 2, display: 'flex', gap: 1, alignItems: 'center' }}>
-            <TextField fullWidth placeholder="Escribe un mensaje..." size="small" variant="outlined" />
+              <TextField
+                fullWidth
+                placeholder="Escribe un mensaje..."
+                size="small"
+                variant="outlined"
+                value={messageContent}
+                onChange={(e) => setMessageContent(e.target.value)}
+              />
+
 
             {/* Botón para adjuntar archivo */}
             <IconButton color="primary" component="label">
@@ -357,7 +291,7 @@ export default function Home() {
               />
             </IconButton>
 
-            <Button variant="contained" color="primary">Enviar</Button>
+            <Button variant="contained" color="primary" onClick={sendMessage}>Enviar</Button >
           </Box>
         </Box>
 
@@ -381,5 +315,4 @@ export default function Home() {
       </Box>
     </Stack>
   );
-
 }

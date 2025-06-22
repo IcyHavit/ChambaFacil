@@ -24,7 +24,7 @@ export default function ProfilePanel({ user, files, onClose }) {
       <Box
         sx={{
           width: 340,
-          height: '100%',
+          height:'calc(100vh - 64px - 32px)',
           bgcolor: 'background.paper',
           borderRadius: 2,
           boxShadow: 3,
