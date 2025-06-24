@@ -394,7 +394,7 @@ export default function Prestamista() {
           onChange={handleChange}
           error={!!errores.nombre}
           helperText={errores.nombre || ' '}
-          inputProps={{ maxLength: 50 }}
+          slotProps={{ input: { maxLength: 50 } }}
         />
 
         <TextField
@@ -409,7 +409,7 @@ export default function Prestamista() {
           onChange={handleChange}
           error={!!errores.descripcion}
           helperText={errores.descripcion || 'Mínimo 10 caracteres, máximo 500'}
-          inputProps={{ maxLength: 500 }}
+          slotProps={{ input: { maxLength: 500 } }}
         />
 
         <Grid container>
@@ -484,7 +484,7 @@ export default function Prestamista() {
               onChange={handleChange}
               error={!!errores.telefono1}
               helperText={errores.telefono1 || 'Formato: 10 dígitos'}
-              inputProps={{ maxLength: 15, pattern: '[0-9]*' }}
+              slotProps={{input:{ maxLength: 15, pattern: '[0-9]*' }}}
             />
           </Grid>
           <Grid size={6}>
@@ -496,7 +496,7 @@ export default function Prestamista() {
               onChange={handleChange}
               error={!!errores.telefono2}
               helperText={errores.telefono2 || 'Opcional: 10 dígitos'}
-              inputProps={{ maxLength: 15, pattern: '[0-9]*' }}
+              slotProps={{ input: { maxLength: 15, pattern: '[0-9]*' } }}
             />
           </Grid>
         </Grid>
@@ -519,7 +519,7 @@ export default function Prestamista() {
             fullWidth
             error={!!errores.experiencia}
             helperText={errores.experiencia}
-            inputProps={{ maxLength: 100 }}
+            slotProps={{input:{ maxLength: 100 }}}
           />
           <Button variant="outlined" onClick={agregarExperiencia}>
             Agregar

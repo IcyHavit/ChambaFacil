@@ -12,6 +12,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 import 'dayjs/locale/es';
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
+import ButtonMod from '../ButtonMod';
 
 dayjs.locale('es');
 
@@ -30,6 +31,7 @@ export default function PerfilPrestamista() {
   const [nuevaExperiencia, setNuevaExperiencia] = useState('');
   const [errores, setErrores] = useState({});
 
+
   const [datos, setDatos] = useState({
     nombre: 'Carlos Martínez',
     fechaNacimiento: '1985-05-12',
@@ -45,6 +47,11 @@ export default function PerfilPrestamista() {
 
   const [fechaNacimiento, setFechaNacimiento] = useState(dayjs(datos.fechaNacimiento));
 
+  // Función para manejar el cierre de sesión
+  const handleCerrarSesion = () => {
+    console.log("jairoGameplays")
+  }
+
   // Función de validación individual de campos
   const validateField = (name, value) => {
     switch (name) {
@@ -54,13 +61,13 @@ export default function PerfilPrestamista() {
         if (value.trim().length > 50) return 'El nombre no puede exceder 50 caracteres';
         if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(value)) return 'El nombre solo puede contener letras';
         return '';
-      
+
       case 'descripcion':
         if (!value.trim()) return 'La descripción es obligatoria';
         if (value.trim().length < 10) return 'La descripción debe tener al menos 10 caracteres';
         if (value.trim().length > 500) return 'La descripción no puede exceder 500 caracteres';
         return '';
-      
+
       case 'contacto1':
       case 'contacto2':
         if (name === 'contacto1' && !value.trim()) return 'El teléfono es obligatorio';
@@ -68,15 +75,15 @@ export default function PerfilPrestamista() {
           return 'El teléfono debe tener 10 dígitos';
         }
         return '';
-      
+
       case 'facebook':
-      case 'instagram': 
+      case 'instagram':
       case 'youtube':
         if (value.trim() && !isValidURL(value)) {
           return 'Ingresa una URL válida';
         }
         return '';
-      
+
       default:
         return '';
     }
@@ -104,15 +111,15 @@ export default function PerfilPrestamista() {
 
     const contacto1Error = validateField('contacto1', datos.contacto1);
     if (contacto1Error) newErrors.contacto1 = contacto1Error;
-    
+
     if (datos.contacto2) {
       const contacto2Error = validateField('contacto2', datos.contacto2);
       if (contacto2Error) newErrors.contacto2 = contacto2Error;
     }
 
     // Validar teléfonos duplicados
-    if (datos.contacto1 && datos.contacto2 && 
-        datos.contacto1.replace(/\s/g, '') === datos.contacto2.replace(/\s/g, '')) {
+    if (datos.contacto1 && datos.contacto2 &&
+      datos.contacto1.replace(/\s/g, '') === datos.contacto2.replace(/\s/g, '')) {
       newErrors.contacto2 = 'Los teléfonos no pueden ser iguales';
     }
 
@@ -122,7 +129,7 @@ export default function PerfilPrestamista() {
     } else {
       const today = dayjs();
       const age = today.diff(fechaNacimiento, 'year');
-      
+
       if (fechaNacimiento.isAfter(today)) {
         newErrors.fechaNacimiento = 'La fecha no puede ser futura';
       } else if (age < 18) {
@@ -154,14 +161,14 @@ export default function PerfilPrestamista() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    
+
     // Limpiar errores del campo actual
     if (errores[name]) {
       setErrores(prev => ({ ...prev, [name]: '' }));
     }
 
     setDatos({ ...datos, [name]: value });
-    
+
     // Validación en tiempo real
     const error = validateField(name, value);
     if (error) {
@@ -171,14 +178,14 @@ export default function PerfilPrestamista() {
 
   const handleRedChange = (e) => {
     const { name, value } = e.target;
-    
+
     // Limpiar errores del campo actual
     if (errores[name]) {
       setErrores(prev => ({ ...prev, [name]: '' }));
     }
 
     setDatos({ ...datos, redes: { ...datos.redes, [name]: value } });
-    
+
     // Validación en tiempo real
     const error = validateField(name, value);
     if (error) {
@@ -191,9 +198,9 @@ export default function PerfilPrestamista() {
     const actual = new Set(datos[key]);
     checked ? actual.add(value) : actual.delete(value);
     const updatedList = Array.from(actual);
-    
+
     setDatos((prev) => ({ ...prev, [key]: updatedList }));
-    
+
     // Limpiar errores si se selecciona al menos un elemento
     if (updatedList.length > 0 && errores[key]) {
       setErrores(prev => ({ ...prev, [key]: '' }));
@@ -206,17 +213,17 @@ export default function PerfilPrestamista() {
       ...prev,
       fechaNacimiento: newValue ? newValue.format('YYYY-MM-DD') : '',
     }));
-    
+
     // Limpiar error de fecha si existe
     if (errores.fechaNacimiento) {
       setErrores(prev => ({ ...prev, fechaNacimiento: '' }));
     }
-    
+
     // Validar fecha
     if (newValue) {
       const today = dayjs();
       const age = today.diff(newValue, 'year');
-      
+
       if (newValue.isAfter(today)) {
         setErrores(prev => ({ ...prev, fechaNacimiento: 'La fecha no puede ser futura' }));
       } else if (age < 18) {
@@ -237,13 +244,13 @@ export default function PerfilPrestamista() {
         setErrores(prev => ({ ...prev, experiencia: 'La experiencia no puede exceder 100 caracteres' }));
         return;
       }
-      
+
       setDatos((prev) => ({
         ...prev,
         portafolio: [...prev.portafolio, nuevaExperiencia.trim()],
       }));
       setNuevaExperiencia('');
-      
+
       // Limpiar errores
       if (errores.experiencia) {
         setErrores(prev => ({ ...prev, experiencia: '' }));
@@ -263,27 +270,27 @@ export default function PerfilPrestamista() {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    
+
     // Validar archivo
     if (file) {
       const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
       const maxSize = 5 * 1024 * 1024; // 5MB
-      
+
       if (!validTypes.includes(file.type)) {
         setErrores(prev => ({ ...prev, foto: 'Solo se permiten imágenes (JPG, PNG, GIF, WEBP)' }));
         return;
       }
-      
+
       if (file.size > maxSize) {
         setErrores(prev => ({ ...prev, foto: 'La imagen no puede superar 5MB' }));
         return;
       }
-      
+
       // Limpiar error de foto si existe
       if (errores.foto) {
         setErrores(prev => ({ ...prev, foto: '' }));
       }
-      
+
       setFoto(file);
       setPreview(URL.createObjectURL(file));
     }
@@ -291,12 +298,12 @@ export default function PerfilPrestamista() {
 
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files);
-    
+
     // Validar cada archivo
     const validFiles = [];
     const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
     const maxSize = 5 * 1024 * 1024; // 5MB
-    
+
     for (const file of files) {
       if (!validTypes.includes(file.type)) {
         setErrores(prev => ({ ...prev, imagenes: 'Solo se permiten imágenes (JPG, PNG, GIF, WEBP)' }));
@@ -308,12 +315,12 @@ export default function PerfilPrestamista() {
       }
       validFiles.push(file);
     }
-    
-    const urls = [...imagenes, ...validFiles].slice(0, 5).map((file) => 
+
+    const urls = [...imagenes, ...validFiles].slice(0, 5).map((file) =>
       typeof file === 'string' ? file : URL.createObjectURL(file)
     );
     setImagenes(urls);
-    
+
     if (validFiles.length > 0 && errores.imagenes) {
       setErrores(prev => ({ ...prev, imagenes: '' }));
     }
@@ -331,14 +338,14 @@ export default function PerfilPrestamista() {
   const handleSubmit = (event) => {
     event.preventDefault();
     const validationErrors = validate();
-    
+
     if (Object.keys(validationErrors).length > 0) {
       setErrores(validationErrors);
-      
+
       // Scroll al primer error
       const firstErrorField = Object.keys(validationErrors)[0];
-      const element = document.querySelector(`[name="${firstErrorField}"]`) || 
-                    document.querySelector(`#${firstErrorField}`);
+      const element = document.querySelector(`[name="${firstErrorField}"]`) ||
+        document.querySelector(`#${firstErrorField}`);
       if (element) {
         element.scrollIntoView({ behavior: 'smooth', block: 'center' });
         element.focus();
@@ -363,9 +370,9 @@ export default function PerfilPrestamista() {
       redesSociales: datos.redes,
       imagenes: imagenes
     };
-    
+
     console.log('Datos del prestamista:', prestamista);
-    
+
     // Aquí puedes agregar la lógica para enviar los datos
     alert('Perfil guardado exitosamente');
     setEditMode(false);
@@ -484,7 +491,7 @@ export default function PerfilPrestamista() {
               disabled={!editMode}
               error={!!errores.contacto1}
               helperText={errores.contacto1 || (editMode ? 'Formato: 10 dígitos' : '')}
-              slotProps={{input:{ maxLength: 15, pattern: '[0-9]*' }}}
+              slotProps={{ input: { maxLength: 15, pattern: '[0-9]*' } }}
 
             />
           </Box>
@@ -499,7 +506,7 @@ export default function PerfilPrestamista() {
               disabled={!editMode}
               error={!!errores.contacto2}
               helperText={errores.contacto2 || (editMode ? 'Opcional: 10 dígitos' : '')}
-                                slotProps={{input:{ maxLength: 15, pattern: '[0-9]*' }}}
+              slotProps={{ input: { maxLength: 15, pattern: '[0-9]*' } }}
             />
           </Box>
         </Box>
@@ -517,7 +524,7 @@ export default function PerfilPrestamista() {
             disabled={!editMode}
             error={!!errores.descripcion}
             helperText={errores.descripcion || (editMode ? 'Mínimo 10 caracteres, máximo 500' : '')}
-                  slotProps={{input:{ maxLength: 500 }}}
+            slotProps={{ input: { maxLength: 500 } }}
           />
         </Box>
 
@@ -582,7 +589,7 @@ export default function PerfilPrestamista() {
                   fullWidth
                   error={!!errores.experiencia}
                   helperText={errores.experiencia}
-                  slotProps={{input:{ maxLength: 100 }}}
+                  slotProps={{ input: { maxLength: 100 } }}
                 />
                 <Button variant="outlined" onClick={agregarExperiencia}>Agregar</Button>
               </Box>
@@ -692,9 +699,9 @@ export default function PerfilPrestamista() {
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mt: 2 }}>
           {imagenes.map((src, idx) => (
             <Box key={idx} sx={{ position: 'relative' }}>
-              <Avatar 
-                src={src} 
-                variant="rounded" 
+              <Avatar
+                src={src}
+                variant="rounded"
                 sx={{ width: 120, height: 120, boxShadow: 2, cursor: 'pointer' }}
                 onClick={() => handleImageClick(src)}
               />
@@ -717,14 +724,23 @@ export default function PerfilPrestamista() {
         </Modal>
 
         <Box textAlign="center" mt={4}>
-          <Button 
-            variant="contained" 
-            startIcon={editMode ? <SaveIcon /> : <EditIcon />} 
-            onClick={toggleEdit}
-          >
-            {editMode ? 'Guardar cambios' : 'Editar perfil'}
-          </Button>
+          <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
+            <ButtonMod
+              variant="principal"
+              textCont={editMode ? 'Guardar cambios' : 'Editar perfil'}
+              startIcon={editMode ? <SaveIcon /> : <EditIcon />}
+              clickEvent={toggleEdit}
+              />
+            <ButtonMod
+                variant=''
+                textCont='Cerrar sesión'
+                width='auto'
+                height='2.3rem'
+                clickEvent={handleCerrarSesion}
+              />
+          </Box>
         </Box>
+
       </Paper>
 
     </Stack>
