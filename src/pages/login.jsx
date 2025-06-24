@@ -250,7 +250,7 @@ export default function Login() {
               <p>
                 ¿Olvidaste la contraseña?{' '}
                 <Link
-                  to="/contraseña"
+                  to="/correo"
                   style={{ color: theme.palette.primary.main }}
                 >
                   Restaura tu contraseña

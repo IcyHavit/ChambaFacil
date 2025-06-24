@@ -3,35 +3,41 @@ import { useTheme } from '@mui/material/styles';
 import React, { useState } from 'react';
 import img from '../assets/images/contraseña/contraseña.png';
 
+const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])([A-Za-z\d$@$!%*?&]|[^ ]){8,15}$/;
+
 export default function Contraseña() {
   const theme = useTheme();
 
-  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // Validación simple de correo
-    if (!email || !/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
-      setError('Por favor ingresa un correo válido.');
+    // Validar formato de contraseña
+    if (!password.match(regex)) {
+      setError('La contraseña debe tener entre 8 y 15 caracteres, incluyendo mayúsculas, minúsculas, un número y un símbolo.');
       return;
     }
-
+    // Validar coincidencia
+    if (password !== confirmPassword) {
+      setError('Las contraseñas no coinciden.');
+      return;
+    }
     setError('');
-    // Aquí puedes enviar el correo al backend para recuperación
-    alert('Se ha enviado un correo para recuperar tu contraseña');
+
+    alert('Tu contraseña ha sido actualizada exitosamente.');
   };
 
   return (
     <Box
       sx={{
-        minHeight: '100vh',
+        minHeight: '85vh',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
         bgcolor: theme.palette.background.default,
-        p: 2,
+        p: 4,
       }}
     >
       <Paper
@@ -39,46 +45,55 @@ export default function Contraseña() {
         sx={{
           p: 4,
           width: '100%',
-          maxWidth: 900,
+          maxWidth: 800,
           textAlign: 'center',
         }}
       >
-        <Grid container spacing={10} alignItems="center">
-          <Grid item xs={12} md={5}>
+        <Grid container spacing={4} alignItems="center" justifyContent="center">
+          <Grid size={{xs: 10, md: 3}}>
             <Box
               component="img"
               src={img}
               alt="Recuperar contraseña"
               sx={{
                 width: '100%',
-                maxWidth: 260,
+                maxWidth: 200,
                 display: 'block',
                 mx: 'auto',
               }}
             />
           </Grid>
-          {/**holaaaa */}
-
-          {/* Formulario */}
-          <Grid item xs={12} md={6}>
+          <Grid size={{xs: 12, md: 9}}>
             <Typography variant="h4" fontWeight="bold" gutterBottom>
-              Recuperar Contraseña
+              Crea tu nueva contraseña
             </Typography>
             <Typography variant="body1" mb={2}>
-              Por favor ingresa tu correo para recuperar tu contraseña
+              Ingresa y confirma tu nueva contraseña
             </Typography>
-            <Stack spacing={2} component="form" mt={2} onSubmit={handleSubmit}>
+            <Stack
+              component="form"
+              spacing={2}
+              onSubmit={handleSubmit}
+            >
               <TextField
-                label="Correo electrónico"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                label="Contraseña"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                error={!!error}
+                fullWidth
+              />
+              <TextField
+                label="Confirmar contraseña"
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
                 error={!!error}
                 helperText={error}
                 fullWidth
               />
               <Button variant="contained" color="primary" type="submit">
-                Enviar correo de recuperación
+                Actualizar contraseña
               </Button>
             </Stack>
           </Grid>
