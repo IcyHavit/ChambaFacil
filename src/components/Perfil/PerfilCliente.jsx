@@ -1,13 +1,11 @@
 import { useState } from 'react';
 import {
-  Avatar, Typography, TextField, Button,
+  Avatar, Typography, TextField,
   Box, MenuItem, Divider, Paper, Checkbox, FormGroup, FormControlLabel,
   useTheme, Stack
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
-import Footer from '../Footer';
-import Navbar from '../Navbar';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
@@ -17,8 +15,6 @@ import ButtonMod from '../ButtonMod'
 const tiposCliente = ['Personal', 'Grupo', 'Empresa'];
 const metodosPago = ['Efectivo', 'Transferencia', 'Tarjeta'];
 const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
-
-
 
 export default function PerfilCliente() {
   dayjs.locale('es');
