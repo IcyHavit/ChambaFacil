@@ -25,10 +25,10 @@ export const login = async (data) => {
   }
 };
 
-export const registerPrestamistaGoogle = async (accessToken) => {
+export const registerUserGoogle = async (accessToken, role) => {
     console.log('Token de Googlereg:', accessToken);
     try {
-      const response = await axios.post('http://localhost:3000/api/prestamista/register-google', {accessToken}, {
+      const response = await axios.post(`http://localhost:3000/api/${role}/register-google`, {accessToken}, {
           withCredentials: true,
       });
       return response.data;
