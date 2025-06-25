@@ -43,7 +43,7 @@ export default function Register() {
     }
   };
   const passwordRegex =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{8,15}$/;
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&+])[A-Za-z\d$@$!%*?&+]{8,15}$/;
 
   const validate = () => {
     const newErrors = {};
@@ -262,7 +262,7 @@ export default function Register() {
                   textCont='Registrarse'
                   width='auto'
                   height='1.8rem'
-                  clickEvent={() => { }}
+                  clickEvent={handleSubmit}
                   type='submit'
                 />
               </Box>
