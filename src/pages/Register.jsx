@@ -1,17 +1,18 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useTheme } from '@mui/material/styles';
-import { Container, Box, Grid, TextField, Button } from '@mui/material';
-import GoogleIcon from '@mui/icons-material/Google'; // Asegúrate de instalar @mui/icons-material
+import { Container, Box, Grid, TextField } from '@mui/material';
+import GoogleIcon from '@mui/icons-material/Google';
 import img from '../assets/images/registro/registro.webp';
-import ButtonMod from '../components/ButtonMod'; // Asegúrate de que la ruta sea correcta
-import { Link } from 'react-router-dom';
+import ButtonMod from '../components/ButtonMod';
+import { Link, useNavigate } from 'react-router-dom';
 import { FormControl, InputLabel, Select, MenuItem, FormHelperText } from '@mui/material';
 
 // Backend
 import { useGoogleLogin } from '@react-oauth/google';
-import { registerPrestamista, registerPrestamistaGoogle, errorGoogleHandler } from '../api/auth';
+import { registerUser, registerPrestamistaGoogle, errorGoogleHandler } from '../api/auth';
 
 export default function Register() {
+  const navigate = useNavigate();
   const theme = useTheme();
   const [formData, setFormData] = useState({
     email: '',
@@ -42,8 +43,8 @@ export default function Register() {
       }
     }
   };
-  const passwordRegex =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&+])[A-Za-z\d$@$!%*?&+]{8,15}$/;
+  // const passwordRegex =
+  //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&+])[A-Za-z\d$@$!%*?&+]{8,15}$/;
 
   const validate = () => {
     const newErrors = {};
@@ -56,10 +57,10 @@ export default function Register() {
     if (!formData.tipoUsuario) {
       newErrors.tipoUsuario = 'Selecciona un tipo de usuario.';
     }
-    if (!passwordRegex.test(formData.password)) {
-      newErrors.password =
-        'Debe tener 8-15 caracteres y al menos una mayúscula, minúscula, número y símbolo.';
-    }
+    // if (!passwordRegex.test(formData.password)) {
+    //   newErrors.password =
+    //     'Debe tener 8-15 caracteres y al menos una mayúscula, minúscula, número y símbolo.';
+    // }
     if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Las contraseñas no coinciden.';
     }
@@ -68,6 +69,7 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
@@ -79,8 +81,10 @@ export default function Register() {
         telefono: formData.phone,
       };
 
+      const role = formData.tipoUsuario;
+
       try {
-        const response = await registerPrestamista(data); // Llamamos a la función del archivo API
+        const response = await registerUser(data, role);
 
         localStorage.setItem('email', response.email);
         localStorage.setItem('id', response.id);
@@ -89,8 +93,12 @@ export default function Register() {
 
         // Aviso provisional sin estilo de registro exitoso
         alert('Registro exitoso (Alerta provisional).');
-        // window.location.href = '/login';
 
+        if (response.role === 'prestamista') {
+          navigate('/FormPrestamista');
+        }else {
+          navigate('/FormCliente');
+        }
       } catch (error) {
         // Alerta provisional sin estilo de error
         alert(`Error en el registro. ${error.message}`);
@@ -150,10 +158,10 @@ export default function Register() {
     alt="Registro"
     sx={{
       pt:8,
-      maxWidth: '100%',        // no se desborda
+      maxWidth: '100%',
       height: 'auto',
       objectFit: 'cover',
-      borderRadius: 2          // theme.spacing(0.25) en rems
+      borderRadius: 2
     }}
   />
           </Grid>
@@ -215,11 +223,11 @@ export default function Register() {
                     value={formData.tipoUsuario}
                     onChange={handleChange}
                   >
-                    <MenuItem value="Prestamista">Prestamista</MenuItem>
-                    <MenuItem value="Cliente">Cliente</MenuItem>
+                    <MenuItem value="prestamista">Prestamista</MenuItem>
+                    <MenuItem value="cliente">Cliente</MenuItem>
                   </Select>
 
-                  {/* 👉 aquí va el texto de error (o un espacio en blanco para no mover el layout) */}
+                  {/* aquí va el texto de error (o un espacio en blanco para no mover el layout) */}
                   <FormHelperText>
                     {errors.tipoUsuario || ' '}
                   </FormHelperText>

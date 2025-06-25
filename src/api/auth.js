@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-export const registerPrestamista = async (data) => {
+export const registerUser = async (data, role) => {
   try {
-    const response = await axios.post('http://localhost:3000/api/prestamista/register', data, {
+    const response = await axios.post(`http://localhost:3000/api/${role}/register`, data, {
       withCredentials: true,
     });
     return response.data;
