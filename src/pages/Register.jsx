@@ -1,17 +1,38 @@
-import React, { useState } from 'react';
+import { useState, useRef } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Container, Box, Grid, TextField, InputAdornment, IconButton, FormControl, InputLabel, Select, MenuItem, FormHelperText, Dialog, DialogTitle, DialogContent, Stack, Typography } from '@mui/material';
+import { Visibility, VisibilityOff, Google as GoogleIcon } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
-import { Container, Box, Grid, TextField, Button } from '@mui/material';
-import GoogleIcon from '@mui/icons-material/Google'; // Asegúrate de instalar @mui/icons-material
 import img from '../assets/images/registro/registro.webp';
-import ButtonMod from '../components/ButtonMod'; // Asegúrate de que la ruta sea correcta
-import { Link } from 'react-router-dom';
-import { FormControl, InputLabel, Select, MenuItem, FormHelperText } from '@mui/material';
+import alertImage from '../assets/images/Mascota.png';
+// Componentes
+import ButtonMod from '../components/ButtonMod';
+import AlertD from '../components/alert';
 
 // Backend
 import { useGoogleLogin } from '@react-oauth/google';
-import { registerPrestamista, registerPrestamistaGoogle, errorGoogleHandler } from '../api/auth';
+import { registerUser, registerUserGoogle, errorGoogleHandler } from '../api/auth';
 
 export default function Register() {
+  const navigate = useNavigate();
+
+  /* Para mostrar la alerta de Success */
+  const alertSuccessRef = useRef();
+  const nextRoute = useRef(null);
+  const handleAlertOpen = () => {
+    if (nextRoute.current) {
+      navigate(nextRoute.current);
+    }
+  };
+  /* Para mostrar la alerta de Error */
+  const alertErrorRef = useRef();
+  const [alertError, setAlertError] = useState('');
+
+  /* Modal de Google para definir role del usuario */
+  const[openGoogleModal, setOpenGoogleModal] = useState(false);
+  const handleGoogleModalOpen = () => setOpenGoogleModal(true);
+  const handleGoogleModalClose = () => setOpenGoogleModal(false);
+
   const theme = useTheme();
   const [formData, setFormData] = useState({
     email: '',
@@ -21,13 +42,33 @@ export default function Register() {
     tipoUsuario: '',
   });
 
+  /* Para mostrar y ocultar contraseña */
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setConfirmShowPassword] = useState(false);
+  
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  }
+  const handlePasswordChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const toggleConfirmPasswordVisibility = () => {
+    setConfirmShowPassword((prev) => !prev);
+  }
+  const handleConfirmPasswordChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  /* Manejar validaciones  */
   const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
 
-    // Validación en tiempo real para "confirmPassword"
     if (name === 'confirmPassword') {
       if (value !== formData.password) {
         setErrors((prevErrors) => ({
@@ -43,7 +84,7 @@ export default function Register() {
     }
   };
   const passwordRegex =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&+])[A-Za-z\d$@$!%*?&+]{8,15}$/;
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&#+])[A-Za-z\d$@$!%*?&#+]{8,15}$/;
 
   const validate = () => {
     const newErrors = {};
@@ -66,8 +107,10 @@ export default function Register() {
     return newErrors;
   };
 
+  /* Manejar el registro normal del usuario */
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
@@ -79,21 +122,21 @@ export default function Register() {
         telefono: formData.phone,
       };
 
+      const role = formData.tipoUsuario;
+
       try {
-        const response = await registerPrestamista(data); // Llamamos a la función del archivo API
+        const response = await registerUser(data, role);
 
         localStorage.setItem('email', response.email);
         localStorage.setItem('id', response.id);
         localStorage.setItem('name', response.name);
         localStorage.setItem('role', response.role);
 
-        // Aviso provisional sin estilo de registro exitoso
-        alert('Registro exitoso (Alerta provisional).');
-        // window.location.href = '/login';
-
+        nextRoute.current = response.role === 'prestamista' ? '/FormPrestamista' : '/FormCliente';
+        alertSuccessRef.current.handleClickOpen();
       } catch (error) {
-        // Alerta provisional sin estilo de error
-        alert(`Error en el registro. ${error.message}`);
+        setAlertError(error.message);
+        alertErrorRef.current.handleClickOpen();
       }
 
       // Prueba de el token en cookies
@@ -104,24 +147,28 @@ export default function Register() {
     }
   };
 
-
+  /* Manejar el registro con Google */
+  const [selectedGoogleRole, setSelectedGoogleRole] = useState(null);
+  const handleSelectedGoogleRole = (role) => {
+    setSelectedGoogleRole(role);
+    handleGoogleRegister();
+    handleGoogleModalClose();
+  }
 
   const successGoogleHandler = async (tokenResponse) => {
     try {
-      const response = await registerPrestamistaGoogle(tokenResponse.access_token);
+      const response = await registerUserGoogle(tokenResponse.access_token, selectedGoogleRole);
 
       localStorage.setItem('email', response.email);
       localStorage.setItem('id', response.id);
       localStorage.setItem('name', response.name);
       localStorage.setItem('role', response.role);
 
-      // Aviso provisional sin estilo de registro exitoso
-      alert('Registro exitoso con Google (Alerta provisional). Por favor, revisa tu correo para confirmar tu cuenta.');
-      // window.location.href = '/login';
+      nextRoute.current = response.role === 'prestamista' ? '/FormPrestamista' : '/FormCliente';
+      alertSuccessRef.current.handleClickOpen();
     } catch (error) {
-      console.error('Error al obtener información del usuario:', error);
-      // Alerta provisional sin estilo de error
-      alert(`Error al registrar con Google. ${error.message}`);
+      setAlertError(error.message);
+      alertErrorRef.current.handleClickOpen();
     }
   };
 
@@ -131,32 +178,23 @@ export default function Register() {
   });
 
   return (
+    <>
     <Box sx={{ minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', bgcolor: theme.palette.background.default, padding: 2 }}>
-
-      <Container
-        maxWidth="md"
-        sx={{
-          border: `2px solid ${theme.palette.primary.main}`,
-          borderRadius: 2,
-          p: 2
-        }}
-      >
+      <Container maxWidth="md" sx={{ border: `2px solid ${theme.palette.primary.main}`, borderRadius: 2, p: 2 }}>
+        
         <Grid container alignItems="flex-start" sx={{ minHeight: '400' }} >
-
           <Grid size={6} sx={{ pr: { md: 2 } }}>
-  <Box
-    component="img"
-    src={img}
-    alt="Registro"
-    sx={{
-      pt:8,
-      maxWidth: '100%',        // no se desborda
-      height: 'auto',
-      objectFit: 'cover',
-      borderRadius: 2          // theme.spacing(0.25) en rems
-    }}
-  />
+            <Box component="img" src={img} alt="Registro"
+              sx={{
+                pt:8,
+                maxWidth: '100%',
+                height: 'auto',
+                objectFit: 'cover',
+                borderRadius: 2
+              }}
+            />
           </Grid>
+
           <Grid size={6} sx={{ xs: 12, md: 6 }}>
               <Box component="form" onSubmit={handleSubmit} required noValidate autoComplete="off" sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
                 <h1 style={{ textAlign: 'center', color: theme.palette.primary.main, fontFamily: theme.typography.bodyLarge.main, fontWeight: 'bold' }}>Registro</h1>
@@ -166,7 +204,7 @@ export default function Register() {
                   textCont='Registrarse con Google'
                   width='auto'
                   height='1.8rem'
-                  clickEvent={handleGoogleRegister}
+                  clickEvent={handleGoogleModalOpen}
                   startIcon={<GoogleIcon />}
                 />
                 {/*separador */}
@@ -215,11 +253,11 @@ export default function Register() {
                     value={formData.tipoUsuario}
                     onChange={handleChange}
                   >
-                    <MenuItem value="Prestamista">Prestamista</MenuItem>
-                    <MenuItem value="Cliente">Cliente</MenuItem>
+                    <MenuItem value="prestamista">Prestamista</MenuItem>
+                    <MenuItem value="cliente">Cliente</MenuItem>
                   </Select>
 
-                  {/* 👉 aquí va el texto de error (o un espacio en blanco para no mover el layout) */}
+                  {/* aquí va el texto de error (o un espacio en blanco para no mover el layout) */}
                   <FormHelperText>
                     {errors.tipoUsuario || ' '}
                   </FormHelperText>
@@ -229,27 +267,57 @@ export default function Register() {
                   required
                   id="password"
                   name="password"
-                  label="Contraseña"
+                  label="Ingresa tu contraseña"
                   variant="outlined"
                   size="small"
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   value={formData.password}
-                  onChange={handleChange}
+                  onChange={handlePasswordChange}
                   error={!!errors.password}
                   helperText={errors.password || ' '}
+                  slotProps={{
+                    input: {
+                      endAdornment: (
+                        <InputAdornment position='end'>
+                          <IconButton
+                            onClick={togglePasswordVisibility}
+                            edge='end'
+                            aria-label='mostrar/ocultar contraseña'
+                          >
+                            {showPassword ? <VisibilityOff/> : <Visibility/>}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    },
+                  }}
                 />
                 <TextField
                   required
                   id="confirmPassword"
                   name="confirmPassword"
-                  label="Confirmar Contraseña"
+                  label="Confirmar contraseña"
                   variant="outlined"
                   size="small"
-                  type="password"
+                  type={showConfirmPassword ? 'text' : 'password'}
                   value={formData.confirmPassword}
-                  onChange={handleChange}
+                  onChange={handleConfirmPasswordChange}
                   error={!!errors.confirmPassword}
                   helperText={errors.confirmPassword || ' '}
+                  slotProps={{
+                    input: {
+                      endAdornment: (
+                        <InputAdornment position='end'>
+                          <IconButton
+                            onClick={toggleConfirmPasswordVisibility}
+                            edge='end'
+                            aria-label='mostrar/ocultar contraseña'
+                          >
+                            {showConfirmPassword ? <VisibilityOff/> : <Visibility/>}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    },
+                  }}
                 />
 
                 <p>
@@ -266,14 +334,66 @@ export default function Register() {
                   type='submit'
                 />
               </Box>
-
           </Grid>
 
         </Grid>
-
       </Container>
-
     </Box>
+    {/* Alerta de Success */}
+    <AlertD
+      ref={alertSuccessRef}
+      titulo='Registro exitoso'
+      mensaje='Presiona aceptar para continuar'
+      imagen={alertImage}
+      boton1='Aceptar'
+      onConfirm={handleAlertOpen}
+    />
+    {/* Alerta de Error */}
+    <AlertD
+      ref={alertErrorRef}
+      titulo='Registro fallido'
+      mensaje={alertError}
+      imagen={alertImage}
+      boton1='Cerrar'
+      onConfirm={() => setAlertError('')}
+    />
+    {/* Modal para definir el tipo de usuario antes de registrarse con Google */}
+    <Dialog open={openGoogleModal} onClose={handleGoogleModalClose} fullWidth maxWidth='md'>
+      <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        Selecciona tu tipo de usuario
+        <ButtonMod
+          variant='secundario'
+          textCont='Cerrar'
+          width='auto'
+          clickEvent={handleGoogleModalClose}
+          type='button'
+        />
+      </DialogTitle>
+      <DialogContent>
+        <Stack direction='column' sx={{ width: '100%' }}>
+          <Typography sx={{ textAlign: 'center', mb: 2 }}>
+            ¿Cómo desea registrarse?
+          </Typography>
+          <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
+            <ButtonMod
+              variant='principal'
+              textCont='Prestamista'
+              width='auto'
+              height='2rem'
+              clickEvent={() => handleSelectedGoogleRole('prestamista')}
+            />
+            <ButtonMod
+              variant='principal'
+              textCont='Cliente'
+              width='auto'
+              height='2rem'
+              clickEvent={() => handleSelectedGoogleRole('cliente')}
+            />
+          </Box>
+        </Stack>
+      </DialogContent>
+    </Dialog>
+    </>
   );
 }
 

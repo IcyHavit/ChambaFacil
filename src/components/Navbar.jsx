@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   AppBar, Toolbar, Typography, IconButton, Box, Drawer,
   List, ListItem, ListItemIcon, ListItemText, Button,
-  Tooltip
+  Tooltip, Zoom
 } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -12,10 +12,8 @@ import {
   AccountCircle as AccountCircleIcon
 } from '@mui/icons-material';
 import { tooltipClasses } from '@mui/material/Tooltip';
-import Zoom from '@mui/material/Zoom';
-import { useTheme } from '@mui/material/styles';
+import { useTheme, styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
-import { styled } from '@mui/material/styles';
 
 
 const LightTooltip = styled(({ className, ...props }) => (
@@ -35,8 +33,7 @@ export default function Navbar() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
-
-const [isLoggedIn, setLogged] = useState(false);
+  const [isLoggedIn, setLogged] = useState(false);
 
   const handleClose = () => setOpen(false);
   const handleOpen = () => setOpen(true);

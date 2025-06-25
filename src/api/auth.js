@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-export const registerPrestamista = async (data) => {
+export const registerUser = async (data, role) => {
   try {
-    const response = await axios.post('http://localhost:3000/api/prestamista/register', data, {
+    const response = await axios.post(`http://localhost:3000/api/${role}/register`, data, {
       withCredentials: true,
     });
     return response.data;
@@ -12,22 +12,23 @@ export const registerPrestamista = async (data) => {
   }
 };
 
-export const loginPrestamista = async (data) => {
+export const login = async (data) => {
   try {
-    const response = await axios.post('http://localhost:3000/api/prestamista/login', data, {
+    const response = await axios.post('http://localhost:3000/api/user/login', data, {
       withCredentials: true,
     });
-    return response.data;
+    console.log('Response: ', response);
+    return response;
   } catch (error) {
     const errorMessage = error.response?.data?.error || 'Error al iniciar sesión. Por favor, intenta nuevamente.';
     throw new Error(errorMessage);
   }
 };
 
-export const registerPrestamistaGoogle = async (accessToken) => {
+export const registerUserGoogle = async (accessToken, role) => {
     console.log('Token de Googlereg:', accessToken);
     try {
-      const response = await axios.post('http://localhost:3000/api/prestamista/register-google', {accessToken}, {
+      const response = await axios.post(`http://localhost:3000/api/${role}/register-google`, {accessToken}, {
           withCredentials: true,
       });
       return response.data;
@@ -37,10 +38,10 @@ export const registerPrestamistaGoogle = async (accessToken) => {
     }
 }
 
-export const loginPrestamistaGoogle = async (accessToken) => {
+export const loginGoogle = async (accessToken) => {
   console.log('Token de Google login:', accessToken);
   try {
-    const response = await axios.post('http://localhost:3000/api/prestamista/login-google', {accessToken
+    const response = await axios.post('http://localhost:3000/api/user/login-google', {accessToken
     }, {
       withCredentials: true,
     });

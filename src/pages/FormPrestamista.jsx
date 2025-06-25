@@ -1,26 +1,16 @@
-import { Box, FormGroup, Grid, TextField, Typography } from '@mui/material';
+import { useState } from 'react';
 import { useTheme } from '@emotion/react';
+import { Box, FormGroup, Grid, TextField, Typography, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel, Checkbox, Avatar, Button, IconButton } from '@mui/material';
+import { AddAPhoto as AddAPhotoIcon, Close as CloseIcon, Send as SendIcon } from '@mui/icons-material';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
 import dayjs from 'dayjs';
-import 'dayjs/locale/es'; // idioma español
-import Checkbox from '@mui/material/Checkbox';
-import ButtonMod from '../components/ButtonMod'
-import { useState } from 'react';
-import { Avatar } from '@mui/material';
-import Button from '@mui/material/Button';
-import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
-import CloseIcon from '@mui/icons-material/Close';
-import { IconButton } from '@mui/material'
-import SendIcon from '@mui/icons-material/Send';
+import 'dayjs/locale/es';
 
-dayjs.locale('es'); // aplica el idioma
+import ButtonMod from '../components/ButtonMod';
+
+dayjs.locale('es');
 
 export default function Prestamista() {
   const theme = useTheme();
@@ -89,7 +79,8 @@ export default function Prestamista() {
     try {
       const url = new URL(string);
       return url.protocol === 'http:' || url.protocol === 'https:';
-    } catch (_) {
+    } catch (error) {
+      console.log(error.message);
       return false;
     }
   };
