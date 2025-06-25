@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { Container, Box, Grid, TextField } from '@mui/material';
 import GoogleIcon from '@mui/icons-material/Google';
@@ -257,7 +257,7 @@ export default function Login() {
                 </Link>
                 <br />
                 ¿Aun no cuentas con un perfil?{' '}
-                <a href="#" style={{ color: theme.palette.primary.main }}>
+                <a href="/register" style={{ color: theme.palette.primary.main }}>
                   Registrate
                 </a>
               </p>
