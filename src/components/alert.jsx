@@ -10,7 +10,7 @@ const AlertD = forwardRef(
       mensaje,
       imagen = null,
       boton1 = null,
-      boton2,
+      boton2 = null,
       onConfirm,
       onCloseAction
     },
@@ -75,13 +75,15 @@ const AlertD = forwardRef(
           </DialogContentText>
         </DialogContent>
         <DialogActions sx={{ justifyContent: 'center', gap: 1 }}>
-          <ButtonMod
-            variant="secundario"
-            textCont={boton2}
-            width="auto"
-            height="2rem"
-            clickEvent={handleClose}
-          />
+          {boton2 && (
+            <ButtonMod
+              variant="secundario"
+              textCont={boton2}
+              width="auto"
+              height="2rem"
+              clickEvent={handleClose}
+            />
+          )}
           {boton1 && (
             <ButtonMod
               variant="principal"

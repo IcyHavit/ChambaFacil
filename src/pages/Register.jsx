@@ -1,19 +1,30 @@
-import { useState } from 'react';
-import { useTheme } from '@mui/material/styles';
-import { Container, Box, Grid, TextField, InputAdornment, IconButton } from '@mui/material';
-import GoogleIcon from '@mui/icons-material/Google';
-import img from '../assets/images/registro/registro.webp';
-import ButtonMod from '../components/ButtonMod';
+import { useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FormControl, InputLabel, Select, MenuItem, FormHelperText } from '@mui/material';
+import { Container, Box, Grid, TextField, InputAdornment, IconButton, FormControl, InputLabel, Select, MenuItem, FormHelperText } from '@mui/material';
+import { Visibility, VisibilityOff, Google as GoogleIcon } from '@mui/icons-material';
+import { useTheme } from '@mui/material/styles';
+import img from '../assets/images/registro/registro.webp';
+import alertImage from '../assets/images/Mascota.png';
+// Componentes
+import ButtonMod from '../components/ButtonMod';
+import AlertD from '../components/alert';
 
 // Backend
 import { useGoogleLogin } from '@react-oauth/google';
 import { registerUser, registerPrestamistaGoogle, errorGoogleHandler } from '../api/auth';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 export default function Register() {
   const navigate = useNavigate();
+
+  /* Para mostrar la alerta */
+  const alertRef = useRef();
+  const nextRoute = useRef(null);
+  const handleAlertOpen = () => {
+    if (nextRoute.current) {
+      navigate(nextRoute.current);
+    }
+  };
+
   const theme = useTheme();
   const [formData, setFormData] = useState({
     email: '',
@@ -26,6 +37,7 @@ export default function Register() {
   /* Para mostrar y ocultar contraseña */
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setConfirmShowPassword] = useState(false);
+  
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
   }
@@ -33,6 +45,7 @@ export default function Register() {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+
   const toggleConfirmPasswordVisibility = () => {
     setConfirmShowPassword((prev) => !prev);
   }
@@ -111,14 +124,14 @@ export default function Register() {
         localStorage.setItem('name', response.name);
         localStorage.setItem('role', response.role);
 
-        // Aviso provisional sin estilo de registro exitoso
-        alert('Registro exitoso (Alerta provisional).');
-
-        if (response.role === 'prestamista') {
-          navigate('/FormPrestamista');
-        }else {
-          navigate('/FormCliente');
-        }
+        // alert('Registro exitoso (Alerta provisional).');
+        nextRoute.current = response.role === 'prestamista' ? '/FormPrestamista' : '/FormCliente';
+        alertRef.current.handleClickOpen();
+        // if (response.role === 'prestamista') {
+        //   navigate('/FormPrestamista');
+        // } else {
+        //   navigate('/FormCliente');
+        // }
       } catch (error) {
         // Alerta provisional sin estilo de error
         alert(`Error en el registro. ${error.message}`);
@@ -131,8 +144,6 @@ export default function Register() {
       // console.log(response);
     }
   };
-
-
 
   const successGoogleHandler = async (tokenResponse) => {
     try {
@@ -172,18 +183,18 @@ export default function Register() {
         <Grid container alignItems="flex-start" sx={{ minHeight: '400' }} >
 
           <Grid size={6} sx={{ pr: { md: 2 } }}>
-  <Box
-    component="img"
-    src={img}
-    alt="Registro"
-    sx={{
-      pt:8,
-      maxWidth: '100%',
-      height: 'auto',
-      objectFit: 'cover',
-      borderRadius: 2
-    }}
-  />
+            <Box
+              component="img"
+              src={img}
+              alt="Registro"
+              sx={{
+                pt:8,
+                maxWidth: '100%',
+                height: 'auto',
+                objectFit: 'cover',
+                borderRadius: 2
+              }}
+            />
           </Grid>
           <Grid size={6} sx={{ xs: 12, md: 6 }}>
               <Box component="form" onSubmit={handleSubmit} required noValidate autoComplete="off" sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
@@ -331,6 +342,14 @@ export default function Register() {
 
       </Container>
 
+      <AlertD
+        ref={alertRef}
+        titulo='Registro exitoso'
+        mensaje='Presiona aceptar para continuar'
+        imagen={alertImage}
+        boton1='Aceptar'
+        onConfirm={handleAlertOpen}
+      />
     </Box>
   );
 }
