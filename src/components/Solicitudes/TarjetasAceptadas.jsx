@@ -1,50 +1,31 @@
-import { useState } from 'react';
-import {
-  Box,
-  Typography,
-  IconButton,
-  Divider,
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-  Stack,
-} from '@mui/material';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Rating, Typography, Box, Divider, Stack, TextField } from '@mui/material';
+import React, { useState, useEffect } from 'react';
 import WorkHistoryIcon from '@mui/icons-material/WorkHistory';
-import { useEffect } from 'react';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 
-/**
- * Tarjeta para solicitudes **aceptadas**.
- *
- * @param {Object}   props
- * @param {Object}   props.data    Objeto con { id, puesto, ubicacion, tipo, inicio }
- * @param {'cliente'|'prestamista'} props.role Rol del usuario autenticado
- * @param {Function} props.onCancel  (id, motivo) => void
- * @param {Function} props.onFinish  (id, file)   => void
- */
 export default function SolicitudCardAceptada({ data, role, onCancel, onFinish }) {
   const { id, puesto, ubicacion, tipo, inicio } = data;
 
   /* ---------- estado de diálogos ---------- */
   const [openCancel, setOpenCancel] = useState(false);
   const [openFinish, setOpenFinish] = useState(false);
+  const [openRating, setOpenRating] = useState(false); // Nuevo estado para abrir el modal de calificación
   const [cancelReason, setCancelReason] = useState('');
   const [photoFile, setPhotoFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
+  const [rating, setRating] = useState(0); // Estado para la calificación
 
-    /* ---------- efecto para generar / limpiar la URL ---------- */
-    useEffect(() => {
+  /* ---------- efecto para generar / limpiar la URL ---------- */
+  useEffect(() => {
     if (!photoFile) {                       // nada seleccionado
         setPreviewUrl(null);
         return;
     }
     const objectUrl = URL.createObjectURL(photoFile);
     setPreviewUrl(objectUrl);
+     
     return () => URL.revokeObjectURL(objectUrl); // libera la memoria
-    }, [photoFile]);
+  }, [photoFile]);
 
   /* ---------- handlers ---------- */
   const handleSendCancel = () => {
@@ -54,9 +35,15 @@ export default function SolicitudCardAceptada({ data, role, onCancel, onFinish }
   };
 
   const handleSendFinish = () => {
-    onFinish?.(id, photoFile);         // comunica al padre
-    setOpenFinish(false);
-    setPhotoFile(null);
+  setOpenFinish(false);
+  setPhotoFile(null);
+  onFinish?.(id, photoFile); // Solo notifica al padre
+  };
+
+  const handleSubmitRating = () => {
+    console.log('Calificación enviada:', rating);
+    // Aquí podrías enviar la calificación al servidor o procesarla
+    setOpenRating(false); // Cierra el modal de calificación
   };
 
   /* ---------- UI ---------- */
@@ -68,7 +55,7 @@ export default function SolicitudCardAceptada({ data, role, onCancel, onFinish }
           p: 2,
           display: 'flex',
           flexDirection: { xs: 'column', sm: 'row' },
-          alignItems:{ xs: 'flex-start', sm: 'center' },
+          alignItems: { xs: 'flex-start', sm: 'center' },
           bgcolor: 'background.paper',
           borderRadius: 2,
           boxShadow: 1,
@@ -130,7 +117,7 @@ export default function SolicitudCardAceptada({ data, role, onCancel, onFinish }
             Cancelar trabajo
           </Button>
         ) : (
-          <Stack direction={{xs: 'row',sm:'row'}} spacing={1}>
+          <Stack direction={{ xs: 'row', sm: 'row' }} spacing={1}>
             <Button
               variant="contained"
               bgcolor="primary.main"
@@ -175,37 +162,35 @@ export default function SolicitudCardAceptada({ data, role, onCancel, onFinish }
       </Dialog>
 
       {/* ---------- Diálogo Finalizar ---------- */}
-        <Dialog open={openFinish} onClose={() => setOpenFinish(false)} maxWidth="xs" fullWidth>
+      <Dialog open={openFinish} onClose={() => setOpenFinish(false)} maxWidth="xs" fullWidth>
         <DialogTitle>Finalizar trabajo</DialogTitle>
 
         <DialogContent sx={{ pt: 1 }}>
-            <Typography variant="body2" mb={1}>
+          <Typography variant="body2" mb={1}>
             Sube una foto del trabajo terminado para confirmar su finalización:
-            </Typography>
+          </Typography>
 
-            {/* selector de archivo */}
-            <Button variant="outlined" component="label" fullWidth>
+          {/* selector de archivo */}
+          <Button variant="outlined" component="label" fullWidth>
             Seleccionar foto
             <input
-                hidden
-                accept="image/*"
-                type="file"
-                onChange={(e) => setPhotoFile(e.target.files?.[0] ?? null)}
+              hidden
+              accept="image/*"
+              type="file"
+              onChange={(e) => setPhotoFile(e.target.files?.[0] ?? null)}
             />
-            </Button>
+          </Button>
 
-            {/* nombre / mini-vista previa */}
-            {photoFile && (
+          {/* nombre / mini-vista previa */}
+          {photoFile && (
             <>
-                
-
-                {/* vista previa */}
-                {previewUrl && (
+              {/* vista previa */}
+              {previewUrl && (
                 <Box
-                    component="img"
-                    src={previewUrl}
-                    alt="Vista previa"
-                    sx={{
+                  component="img"
+                  src={previewUrl}
+                  alt="Vista previa"
+                  sx={{
                     mt: 2,
                     width: '100%',
                     maxHeight: 200,
@@ -213,29 +198,29 @@ export default function SolicitudCardAceptada({ data, role, onCancel, onFinish }
                     borderRadius: 1,
                     border: '1px solid',
                     borderColor: 'divider',
-                    }}
+                  }}
                 />
-                )}
+              )}
             </>
-            )}
+          )}
         </DialogContent>
 
         <DialogActions sx={{ pr: 3, pb: 2 }}>
-            <Button onClick={() => setOpenFinish(false)}>Cerrar</Button>
-            <Button
+          <Button onClick={() => setOpenFinish(false)}>Cerrar</Button>
+          <Button
             variant="contained"
             sx={{
-                bgcolor: 'primary.main',
-                color: 'common.white',
-                '&:hover': { bgcolor: 'tertiary.dark' },
+              bgcolor: 'primary.main',
+              color: 'common.white',
+              '&:hover': { bgcolor: 'tertiary.dark' },
             }}
             onClick={handleSendFinish}
             disabled={!photoFile}
-            >
+          >
             Finalizar
-            </Button>
+          </Button>
         </DialogActions>
-        </Dialog>
+      </Dialog>
     </>
   );
 }
