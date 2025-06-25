@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTheme } from '@mui/material/styles';
-import { Container, Box, Grid, TextField } from '@mui/material';
+import { Container, Box, Grid, TextField, InputAdornment, IconButton } from '@mui/material';
 import GoogleIcon from '@mui/icons-material/Google';
 import img from '../assets/images/registro/registro.webp';
 import ButtonMod from '../components/ButtonMod';
@@ -10,6 +10,7 @@ import { FormControl, InputLabel, Select, MenuItem, FormHelperText } from '@mui/
 // Backend
 import { useGoogleLogin } from '@react-oauth/google';
 import { registerUser, registerPrestamistaGoogle, errorGoogleHandler } from '../api/auth';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 export default function Register() {
   const navigate = useNavigate();
@@ -21,6 +22,25 @@ export default function Register() {
     confirmPassword: '',
     tipoUsuario: '',
   });
+
+  /* Para mostrar y ocultar contraseña */
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setConfirmShowPassword] = useState(false);
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  }
+  const handlePasswordChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+  const toggleConfirmPasswordVisibility = () => {
+    setConfirmShowPassword((prev) => !prev);
+  }
+  const handleConfirmPasswordChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
 
   const [errors, setErrors] = useState({});
 
@@ -43,8 +63,8 @@ export default function Register() {
       }
     }
   };
-  // const passwordRegex =
-  //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&+])[A-Za-z\d$@$!%*?&+]{8,15}$/;
+  const passwordRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&#+])[A-Za-z\d$@$!%*?&#+]{8,15}$/;
 
   const validate = () => {
     const newErrors = {};
@@ -57,10 +77,10 @@ export default function Register() {
     if (!formData.tipoUsuario) {
       newErrors.tipoUsuario = 'Selecciona un tipo de usuario.';
     }
-    // if (!passwordRegex.test(formData.password)) {
-    //   newErrors.password =
-    //     'Debe tener 8-15 caracteres y al menos una mayúscula, minúscula, número y símbolo.';
-    // }
+    if (!passwordRegex.test(formData.password)) {
+      newErrors.password =
+        'Debe tener 8-15 caracteres y al menos una mayúscula, minúscula, número y símbolo.';
+    }
     if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Las contraseñas no coinciden.';
     }
@@ -237,27 +257,57 @@ export default function Register() {
                   required
                   id="password"
                   name="password"
-                  label="Contraseña"
+                  label="Ingresa tu contraseña"
                   variant="outlined"
                   size="small"
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   value={formData.password}
-                  onChange={handleChange}
+                  onChange={handlePasswordChange}
                   error={!!errors.password}
                   helperText={errors.password || ' '}
+                  slotProps={{
+                    input: {
+                      endAdornment: (
+                        <InputAdornment position='end'>
+                          <IconButton
+                            onClick={togglePasswordVisibility}
+                            edge='end'
+                            aria-label='mostrar/ocultar contraseña'
+                          >
+                            {showPassword ? <VisibilityOff/> : <Visibility/>}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    },
+                  }}
                 />
                 <TextField
                   required
                   id="confirmPassword"
                   name="confirmPassword"
-                  label="Confirmar Contraseña"
+                  label="Confirmar contraseña"
                   variant="outlined"
                   size="small"
-                  type="password"
+                  type={showConfirmPassword ? 'text' : 'password'}
                   value={formData.confirmPassword}
-                  onChange={handleChange}
+                  onChange={handleConfirmPasswordChange}
                   error={!!errors.confirmPassword}
                   helperText={errors.confirmPassword || ' '}
+                  slotProps={{
+                    input: {
+                      endAdornment: (
+                        <InputAdornment position='end'>
+                          <IconButton
+                            onClick={toggleConfirmPasswordVisibility}
+                            edge='end'
+                            aria-label='mostrar/ocultar contraseña'
+                          >
+                            {showConfirmPassword ? <VisibilityOff/> : <Visibility/>}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    },
+                  }}
                 />
 
                 <p>
