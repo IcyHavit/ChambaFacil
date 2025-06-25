@@ -35,8 +35,7 @@ export default function Navbar() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
-
-const [isLoggedIn, setLogged] = useState(false);
+  const [isLoggedIn, setLogged] = useState(false);
 
   const handleClose = () => setOpen(false);
   const handleOpen = () => setOpen(true);
