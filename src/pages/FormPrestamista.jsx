@@ -316,6 +316,8 @@ export default function Prestamista() {
     setErrores({});
 
     try {
+      console.log('Experiencias ', experiencias);
+      console.log('Enviando experiencia:', JSON.stringify(experiencias));
       const data = {
         id: parseInt(localStorage.getItem('id')),
         datosCompletos: true,
@@ -329,6 +331,7 @@ export default function Prestamista() {
         preferenciasPago: JSON.stringify(formData.preferenciasPago),
         horarios: JSON.stringify(formData.horarios),
         redesSociales: JSON.stringify(formData.redesSociales),
+        experiencia: JSON.stringify(experiencias),
       };
       let role = localStorage.getItem('role');
       const response = await completarDatosUser(data, role);
