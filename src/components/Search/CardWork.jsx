@@ -38,7 +38,8 @@ export default function CardWork({ titulo, nombre, imagen, categoria, alcaldia, 
               }}
             >
               <img
-                src={imagen}
+                // src={imagen}
+                src={'http://localhost:3000/uploads/services/3842573b-2b27-44ca-9914-6896a7fbe6e3.jpeg'}
                 alt={nombre}
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />
