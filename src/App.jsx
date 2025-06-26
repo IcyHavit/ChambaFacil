@@ -19,6 +19,7 @@ import FormPrestamistaView from './components/Perfil/PerfilPrestamistaView'
 import Correo from './pages/Correo';
 import Verificar from './pages/Verificar';
 import Xd from './components/prueba'
+import Publicaciones from './pages/Publicaciones';
 
 
 function App() {
@@ -41,6 +42,7 @@ function App() {
         <Route path='/correo' element={<Correo/>}/>
         <Route path='/Verificar' element={<Verificar/>}/>
         <Route path='/xd' element={<Xd/>}/>
+        <Route path='/publicaciones' element={<Publicaciones/>}/>
         <Route path='/FormClienteView' element={<FormClienteView/>}/>
         <Route path='/FormPrestamistaView' element={<FormPrestamistaView/>}/>
 

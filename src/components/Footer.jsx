@@ -1,75 +1,86 @@
-import { Box, Grid, Typography, IconButton, Stack } from '@mui/material';
+import { Box, Typography, IconButton, Stack } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import FacebookIcon from '@mui/icons-material/Facebook';
-import TwitterIcon from '@mui/icons-material/X';
-import InstagramIcon from '@mui/icons-material/Instagram';
-import GitHubIcon from '@mui/icons-material/GitHub';
-import HomeIcon from '@mui/icons-material/Home';
-import EmailIcon from '@mui/icons-material/Email';
-import PhoneIcon from '@mui/icons-material/Phone';
+import { Facebook, X as Twitter, Instagram } from '@mui/icons-material';
+import { Home, Email, Phone } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 
 export default function Footer() {
-
   const theme = useTheme();
   const navigate = useNavigate();
 
   return (
-    <Box component="footer" sx={{ bgcolor: theme.palette.secondary.light, color: theme.palette.background.paper, pt: 1, pb: 1 }}>
-      <Box sx={{ px: { xs: 1, md: 6 }}}>
-        <Grid container spacing={10} justifyContent="space-between">
-          <Grid size={{xs:12, sm:6, md:3}} >
-            <Typography variant="h6" fontWeight="bold" gutterBottom>
-              Más de nosotros
+    <Box
+      component="footer"
+      sx={{
+        bgcolor: theme.palette.secondary.light,
+        color: theme.palette.background.paper,
+        py: 0.5
+      }}
+    >
+      <Box sx={{ px: { xs: 1, md: 3 } }}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', sm: 'row' },
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 2
+          }}
+        >
+          {/* Enlaces */}
+          <Stack direction="row" spacing={2}>
+            <Typography
+              variant="caption"
+              sx={{ cursor: 'pointer' }}
+              onClick={() => navigate('/login')}
+            >
+              Términos y Condiciones
             </Typography>
-            <Stack spacing={1}>
-
-              <Box onClick={() => navigate('/login')} sx={{ cursor: 'pointer', color: '#fff' }}>
-                Términos y Condiciones
-              </Box>
-              <Box onClick={() => navigate('/')} sx={{ cursor: 'pointer', color: '#fff' }}>
-                Sobre nosotros
-              </Box>
-            </Stack>
-          </Grid>
+            <Typography
+              variant="caption"
+              sx={{ cursor: 'pointer' }}
+              onClick={() => navigate('/')}
+            >
+              Sobre nosotros
+            </Typography>
+          </Stack>
 
           {/* Contacto */}
-          <Grid size={{xs:12, sm:6, md:3}} >
-            <Typography variant="h6" fontWeight="bold" gutterBottom>
-              Contacto
-            </Typography>
-            <Stack spacing={1}>
-              <Box display="flex" alignItems="center" gap={1}>
-                <HomeIcon fontSize="small" /> <Typography variant="body2">Ciudad de México, México</Typography>
-              </Box>
-              <Box display="flex" alignItems="center" gap={1}>
-                <EmailIcon fontSize="small" /> <Typography variant="body2">contacto@ChambaFácil.com</Typography>
-              </Box>
-              <Box display="flex" alignItems="center" gap={1}>
-                <PhoneIcon fontSize="small" /> <Typography variant="body2">+52 55 5555 5555</Typography>
-              </Box>
-            </Stack>
-          </Grid>
+          <Stack direction="row" spacing={1} alignItems="center">
+            <Home fontSize="small" />
+            <Typography variant="caption">CDMX, México</Typography>
+            <Email fontSize="small" />
+            <Typography variant="caption">contacto@ChambaFácil.com</Typography>
+            <Phone fontSize="small" />
+            <Typography variant="caption">+52 55 5555 5555</Typography>
+          </Stack>
 
           {/* Redes sociales */}
-          <Grid size = {{ xs: 12, md: 3}} >
-            <Stack direction="row" spacing={1} flexWrap="wrap">
-              <IconButton onClick={() => navigate('/')} sx={{ color: '#fff' }}>
-                <FacebookIcon />
-              </IconButton>
-              <IconButton onClick={() => navigate('/')} sx={{ color: '#fff' }}>
-                <TwitterIcon />
-              </IconButton>
-              <IconButton onClick={() => navigate('/')} sx={{ color: '#fff' }}>
-                <InstagramIcon />
-              </IconButton>
-            </Stack>
-          </Grid>
-        </Grid>
+          <Stack direction="row" spacing={1}>
+            <IconButton onClick={() => navigate('/')} sx={{ color: '#fff', p: 0.5 }}>
+              <Facebook fontSize="small" />
+            </IconButton>
+            <IconButton onClick={() => navigate('/')} sx={{ color: '#fff', p: 0.5 }}>
+              <Twitter fontSize="small" />
+            </IconButton>
+            <IconButton onClick={() => navigate('/')} sx={{ color: '#fff', p: 0.5 }}>
+              <Instagram fontSize="small" />
+            </IconButton>
+          </Stack>
+        </Box>
       </Box>
 
-      <Box mt={5} textAlign="center" sx={{ borderTop: '1px solid #fff', pt: 1 }}>
-        <Typography variant="body2">©️ {new Date().getFullYear()} ChambaFácil</Typography>
+      <Box
+        sx={{
+          borderTop: `1px solid ${theme.palette.background.paper}`,
+          mt: 1,
+          pt: 0.5,
+          textAlign: 'center'
+        }}
+      >
+        <Typography variant="caption">
+          © {new Date().getFullYear()} ChambaFácil
+        </Typography>
       </Box>
     </Box>
   );
