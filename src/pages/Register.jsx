@@ -120,6 +120,7 @@ export default function Register() {
         correo: formData.email,
         contraseña: formData.password,
         telefono: formData.phone,
+        tipoEntidad: formData.tipoUsuario,
       };
 
       const role = formData.tipoUsuario;
@@ -129,7 +130,6 @@ export default function Register() {
 
         localStorage.setItem('email', response.email);
         localStorage.setItem('id', response.id);
-        localStorage.setItem('name', response.name);
         localStorage.setItem('role', response.role);
 
         nextRoute.current = response.role === 'prestamista' ? '/FormPrestamista' : '/FormCliente';

@@ -13,10 +13,17 @@ import {
   Typography,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import PerfilPrestamistaView from '../Perfil/PerfilPrestamistaView';
+import PerfilClienteView from '../Perfil/PerfilClienteView';
 
 export default function ProfilePanel({ user, files, onClose }) {
   // 1) Estado para la imagen a previsualizar
   const [previewSrc, setPreviewSrc] = React.useState(null);
+
+
+
+  const isPrestamista = user.type === 'prestamista';
+
 
   return (
     <>
@@ -52,7 +59,21 @@ export default function ProfilePanel({ user, files, onClose }) {
           sx={{ width: 140, height: 140, mx: 'auto', mb: 2 }}
         />
 
-        <Typography variant="h6" align="center" fontWeight="bold">
+        <Typography
+          variant="h6"
+          align="center"
+          fontWeight="bold"
+          sx={{ cursor: 'pointer', textDecoration: 'underline' }}
+          onClick={() => {
+            if (isPrestamista) {
+              
+              window.location.href = `/FormPrestamistaView?user=${encodeURIComponent(JSON.stringify(user))}`;
+
+            } else {
+              window.location.href = `/FormClienteView?user=${encodeURIComponent(JSON.stringify(user))}`;
+            }
+          }}
+        >
           {user.name}
         </Typography>
         <Typography
@@ -92,11 +113,11 @@ export default function ProfilePanel({ user, files, onClose }) {
             <ImageListItem
               key={f.id || index}
               sx={{ cursor: 'pointer' }}
-              onClick={() => setPreviewSrc(f.src)}
+              onClick={() => setPreviewSrc(f)}
             >
               <img
-                src={f.src}
-                alt="archivo"
+                src={f}
+                alt={f.filename || `Archivo ${index + 1}`}
                 loading="lazy"
                 style={{ borderRadius: 4 }}
               />

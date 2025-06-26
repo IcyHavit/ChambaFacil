@@ -9,7 +9,7 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/es';
 
 import ButtonMod from '../components/ButtonMod';
-import { completarDatosPrestamista } from '../api/prestamista';
+import { completarDatosUser } from '../api/user';
 
 dayjs.locale('es');
 
@@ -321,27 +321,22 @@ export default function Prestamista() {
         datosCompletos: true,
         nombre: formData.nombre,
         telefono: formData.telefono1.replace(/\s/g, ''),
+        telefonoSecundario: formData.telefono2.replace(/\s/g, ''),
         descripcion: formData.descripcion,
-        linkFoto: preview || 'https://link-generico.com/foto.jpg' //Este está de prueba de momento
-      // telefono2: formData.telefono2.replace(/\s/g, ''),
-      // tipoCuenta: formData.tipoCuenta,
-      // fechaNacimiento: formData.fechaNacimiento ? formData.fechaNacimiento.format('DD/MM/YYYY') : null,
-      // preferenciasPago: formData.preferenciasPago,
-      // horarios: formData.horarios,
-      // fotoPerfil: foto,
-      // experiencia: experiencias,
-      // redesSociales: formData.redesSociales,
-      // imagenes: imagenes
+        linkFoto: 'https://www.facebook.com/sharer/sharer.php?u=', // Este campo aún faltas
+        tipoCuenta: formData.tipoCuenta,
+        fechaNacimiento: formData.fechaNacimiento?.toISOString(),
+        preferenciasPago: JSON.stringify(formData.preferenciasPago),
+        horarios: JSON.stringify(formData.horarios),
+        redesSociales: JSON.stringify(formData.redesSociales),
       };
-      const response = await completarDatosPrestamista(data);
+      let role = localStorage.getItem('role');
+      const response = await completarDatosUser(data, role);
       console.log('Respuesta: ', response);
       alert('Datos Completados con éxito');
-      // console.log('Respuesta: ', response);
     } catch (error) {
       alert(error.message);
     }
-
-    // console.log('Datos del prestamista:', prestamista);
   };
 
   return (
