@@ -3,7 +3,6 @@ import { Box, Typography, Chip, Dialog, IconButton } from '@mui/material';
 import StarIcon from '@mui/icons-material/Star';
 import StarHalfIcon from '@mui/icons-material/StarHalf';
 import CloseIcon from '@mui/icons-material/Close';
-import { Button } from 'bootstrap';
 import ButtonMod from '../ButtonMod';
 
 export default function Sidebar({
@@ -23,6 +22,12 @@ export default function Sidebar({
     disponibilidad,
     evidencias,
 }) {
+    const [tipoUsuario] = useState('cliente');
+
+    const handleInciarSolicitud = () => {
+        // Aquí puedes manejar la lógica para iniciar una solicitud
+        console.log('Iniciar solicitud');
+    };
     const [previewSrc, setPreviewSrc] = useState(null); // Estado para la imagen seleccionada
 
     const renderStars = () => {
@@ -82,17 +87,17 @@ export default function Sidebar({
                         </Box>
                         <Typography sx={{ fontSize: 20, fontWeight: 'bold' }}>{nombre}</Typography>
                     </Box>
-                    <Typography  sx={{ color: theme.palette.secondary.main }}>
+                    <Typography sx={{ color: theme.palette.secondary.main }}>
                         Calificación:
-                            </Typography>
-                        <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5 }}>
-                            {calificacion}
-                            {renderStars()}
-                        </Box>
+                    </Typography>
+                    <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5 }}>
+                        {calificacion}
+                        {renderStars()}
+                    </Box>
                 </Typography>
 
 
-                <Typography sx={{ color: theme.palette.primary.main, marginTop: '0.5rem',fontSize:25, fontWeight:'bold'}}>
+                <Typography sx={{ color: theme.palette.primary.main, marginTop: '0.5rem', fontSize: 25, fontWeight: 'bold' }}>
                     {titulo}
                 </Typography>
 
@@ -123,60 +128,62 @@ export default function Sidebar({
                 <Typography variant="body1" sx={{ color: theme.palette.secondary.main, marginTop: '0.5rem' }}>
                     <Typography component="span" sx={{ fontWeight: 'bold' }}>Descripción:</Typography> {descripcion}
                 </Typography>
-<Typography variant="body1" sx={{ color: theme.palette.secondary.main, marginTop: '0.5rem' }}>
-  <Typography component="span" sx={{ fontWeight: 'bold' }}>Modalidad de Cobro:</Typography>
-</Typography>
-<Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-  {modalidadesCobro.map((modalidad, index) => (
-    <Chip
-      key={index}
-      label={modalidad.costo ? `${modalidad.modalidad} - $${modalidad.costo}` : modalidad.modalidad}
-      color="success"
-      variant="outlined"
-    />
-  ))}
-</Box>
+                <Typography variant="body1" sx={{ color: theme.palette.secondary.main, marginTop: '0.5rem' }}>
+                    <Typography component="span" sx={{ fontWeight: 'bold' }}>Modalidad de Cobro:</Typography>
+                </Typography>
+                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                    {modalidadesCobro.map((modalidad, index) => (
+                        <Chip
+                            key={index}
+                            label={modalidad.costo ? `${modalidad.modalidad} - $${modalidad.costo}` : modalidad.modalidad}
+                            color="success"
+                            variant="outlined"
+                        />
+                    ))}
+                </Box>
                 <Typography variant="body1" sx={{ color: theme.palette.secondary.main, marginTop: '0.5rem' }}>
                     <Typography component="span" sx={{ fontWeight: 'bold' }}>Disponibilidad:</Typography>
                 </Typography>
-                    <Box sx={{ marginTop: '0.5rem' }}>
-                        {disponibilidad.map((dia, index) => (
-                            <Typography key={index} variant="body2" sx={{ color: theme.palette.secondary.main }}>
-                                {dia.dia}: {dia.horario}
-                            </Typography>
-                        ))}
-                    </Box>
-            
+                <Box sx={{ marginTop: '0.5rem' }}>
+                    {disponibilidad.map((dia, index) => (
+                        <Typography key={index} variant="body2" sx={{ color: theme.palette.secondary.main }}>
+                            {dia.dia}: {dia.horario}
+                        </Typography>
+                    ))}
+                </Box>
+
                 <Typography variant="body1" sx={{ color: theme.palette.secondary.main, marginTop: '0.5rem' }}>
                     <Typography component="span" sx={{ fontWeight: 'bold' }}>Evidencias:</Typography>
                 </Typography>
-                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', marginTop: '0.5rem' }}>
-                        {evidencias.slice(0, 5).map((evidencia, index) => (
-                            <img
-                                key={index}
-                                src={evidencia}
-                                alt={`Evidencia ${index + 1}`}
-                                style={{
-                                    width: '80px',
-                                    height: '80px',
-                                    objectFit: 'cover',
-                                    cursor: 'pointer',
-                                    borderRadius: '8px',
-                                    boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.3)',
-                                }}
-                                onClick={() => setPreviewSrc(evidencia)} // Actualizar la imagen seleccionada
-                            />
-                        ))}
-                    </Box>
+                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', marginTop: '0.5rem' }}>
+                    {evidencias.slice(0, 5).map((evidencia, index) => (
+                        <img
+                            key={index}
+                            src={evidencia}
+                            alt={`Evidencia ${index + 1}`}
+                            style={{
+                                width: '80px',
+                                height: '80px',
+                                objectFit: 'cover',
+                                cursor: 'pointer',
+                                borderRadius: '8px',
+                                boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.3)',
+                            }}
+                            onClick={() => setPreviewSrc(evidencia)} // Actualizar la imagen seleccionada
+                        />
+                    ))}
+                </Box>
                 <Box sx={{ display: 'flex', justifyContent: 'right', marginTop: '1rem' }}>
-                            <ButtonMod
-                variant='principal'
-                textCont='Iniciar solicitud'
-                width='auto'
-                height='2rem'
-                clickEvent={() => console.log('Solicitud iniciada')}
-                startIcon={<StarIcon />}
-                />
+                    {tipoUsuario === 'cliente' && (
+                        <ButtonMod
+                            variant='principal'
+                            textCont='Iniciar solicitud'
+                            width='auto'
+                            height='2rem'
+                            clickEvent={handleInciarSolicitud}
+                            startIcon={<StarIcon />}
+                        />
+                    )}
                 </Box>
 
             </Box>
