@@ -324,7 +324,7 @@ export default function Prestamista() {
         telefonoSecundario: formData.telefono2.replace(/\s/g, ''),
         descripcion: formData.descripcion,
         linkFoto: 'https://www.facebook.com/sharer/sharer.php?u=', // Este campo aún faltas
-        tipoEntidad: formData.tipoCuenta,
+        tipoCuenta: formData.tipoCuenta,
         fechaNacimiento: formData.fechaNacimiento?.toISOString(),
         preferenciasPago: JSON.stringify(formData.preferenciasPago),
         horarios: JSON.stringify(formData.horarios),
