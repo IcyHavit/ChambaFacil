@@ -1,19 +1,18 @@
-import { Box, Typography, Button, TextField, Divider, List, IconButton, Stack } from '@mui/material';
+import { Box, Typography, Button, TextField, Divider, List, IconButton, Stack, Avatar } from '@mui/material';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
-import React from 'react';
+import React, { act } from 'react';
 import ChatBubble from '../components/Chat/Chats';
 import ProfilePanel from '../components/Chat/Informacion';
 import MessageBubble from '../components/Chat/ChatPrincipal';
 import PerfilImg from '../assets/images/Perfil.png';
-
-// Pruebas de axios
-import axios from 'axios';
+// pruebas de la API
+import { getRecentChats, sendChatMessage, getChatMessages, getContactData } from '../api/chat';
 
 export default function Home() {
 
   // cambiar esto por el email real del localStorage
-  const actualUserEmail = 'jesushervert@correo.com';
-
+  const actualUserEmail = localStorage.getItem('email') || localStorage.getItem('correo') || '';
+  console.log("Email del usuario actual:", actualUserEmail);
 
   // Estados para manejar: los ultimos chats, el chat seleccionado, todos los chats y el estado del perfil abierto
   const [recentChats, setRecentChats] = React.useState([]);
@@ -25,17 +24,18 @@ export default function Home() {
   const [searchText, setSearchText] = React.useState("");
 
   // recuperar los chats desde un API al cargar el componente
-  const obtainRecentChats = async () => {
-    try {
-      const response = await axios.get('http://localhost:3000/api/chat/last-messages/' + actualUserEmail);
-      setRecentChats(response.data);
-      //console.log("Chats obtenidos:", response.data);
-    } catch (error) {
-      console.error("Error fetching recent chats:", error);
-    }
-  }
   React.useEffect(() => {
-    obtainRecentChats();
+    const fetchRecentChats = async () => {
+      try {
+        const chatsData = await getRecentChats(actualUserEmail);
+        setRecentChats(chatsData);
+        console.log("Chats recientes obtenidos:", chatsData);
+      } catch (error) {
+        console.error("Error fetching recent chats:", error);
+      }
+    };
+
+    fetchRecentChats();
   }, [chats]);
 
   // Filtrar chats con base en el texto de busqeuda
@@ -60,11 +60,11 @@ export default function Home() {
       };
 
       // Enviar la solicitud POST al backend
-      const response = await axios.post('http://localhost:3000/api/chat/send', messageData);
-      console.log("Mensaje enviado:", response.data);
+      const response = await sendChatMessage(messageData);
+      console.log("Mensaje enviado:", response);
 
       // Si el mensaje fue enviado correctamente, actualizar el chat
-      setChats(prevChats => [...prevChats, response.data]);
+      setChats(prevChats => [...prevChats, response]);
       setMessageContent("");
 
     } catch (error) {
@@ -72,27 +72,25 @@ export default function Home() {
     }
   };
 
-  // Funcion para obtener los mensajes de un chat especifico entre dos usuarios
-  const obtainUsersChat = async (senderEmail, receiverEmail) => {
-    try {
-      const response = await axios.get('http://localhost:3000/api/chat/messages/' + senderEmail + '/' + receiverEmail);
-      setChats(response.data);
-      console.log("Chat obtenido:", response.data);
-    } catch (error) {
-      console.error("Error fetching chat:", error);
-    }
-  }
-
   // Funcion para obtener los datos de contacto de un usuario
-  const obtainContactData = async (actualUserEmail, contactEmail) => {
+  const obtainContactData = async (senderEmail, receiverEmail) => {
     try {
-      const response = await axios.get('http://localhost:3000/api/chat/user-profile/' + actualUserEmail + '/' + contactEmail);
-      setContactData(response.data);
-      console.log("Datos de contacto obtenidos:", response.data);
+      const contactInfo = await getContactData(senderEmail, receiverEmail);
+      setContactData(contactInfo);
     } catch (error) {
       console.error("Error fetching contact data:", error);
     }
-  }
+  };
+
+  const obtainUsersChat = async (senderEmail, receiverEmail) => {
+    try {
+      const chatMessages = await getChatMessages(senderEmail, receiverEmail);
+      console.log("Mensajes obtenidos:", chatMessages);
+      setChats(chatMessages);
+    } catch (error) {
+      console.error("Error fetching chat:", error);
+    }
+  };
 
   // Manejar la seleccion de un chat
   const handleChatSelect = (chat_Id) => {
@@ -100,19 +98,30 @@ export default function Home() {
     if (chatObj) {
       setSelectedChat(chatObj);
       setOpenProfile(false);
-      obtainUsersChat(actualUserEmail, chatObj.senderEmail === actualUserEmail ? chatObj.receiverEmail : chatObj.senderEmail);
       console.log("Chat seleccionado:", chatObj);
+      obtainUsersChat(actualUserEmail, chatObj.senderEmail === actualUserEmail ? chatObj.receiverEmail : chatObj.senderEmail);
     } else {
       console.warn("Chat not found:", chat_Id);
     }
   };
 
+  // Peticiones periodicas para actualizar los chats y mensajes, corregir a futuro y cambiar a WebSockets
+  // React.useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     if (selectedChat) {
+  //       obtainUsersChat(actualUserEmail, selectedChat.senderEmail === actualUserEmail ? selectedChat.receiverEmail : selectedChat.senderEmail);
+  //     }
+  //     getRecentChats(actualUserEmail).then(chatsData => {
+  //       setRecentChats(chatsData);
+  //     }).catch(error => {
+  //       console.error("Error fetching recent chats:", error);
+  //     });
+  //   }, 1000);
+
+  //   return () => clearInterval(interval);
+  // }, [selectedChat, actualUserEmail]);
+
   const bottomRef = React.useRef(null);
-
-  React.useEffect(() => {
-
-  }, [selectedChat]);
-
 
   return (
     <Stack sx={{ height: '100vh', width: '100%' }}>
@@ -152,7 +161,7 @@ export default function Home() {
           }}>
             {filteredChats.map((chat) => {
               const destinRealName = actualUserEmail === chat.senderEmail ? chat.receiverName : chat.senderName;
-              const destinRealAvatar = actualUserEmail === chat.senderEmail ? chat.receiverAvatar : chat.senderAvatar;
+              const destinRealAvatar = actualUserEmail === chat.senderEmail ? chat.receiverPathProfilePicture : chat.senderPathProfilePicture;
               const hour24 = new Date(chat.timestamp).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', hour12: false });
 
 
@@ -175,31 +184,17 @@ export default function Home() {
           {/* Header */}
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
-              {selectedChat?.avatar ? (
-                <Box
-                  component="img"
-                  src={selectedChat.avatar || PerfilImg}
-                  alt={selectedChat.name}
-                  sx={{
-                    width: 48,
-                    height: 48,
-                    borderRadius: '50%',
-                    mr: 2,
-                  }}
-                />
-              ) : (
-                <Box
-                  component="img"
-                  src={PerfilImg}
-                  alt="default"
-                  sx={{
-                    width: 48,
-                    height: 48,
-                    borderRadius: '50%',
-                    mr: 2,
-                  }}
-                />
-              )}
+              {/* Avatar del chat */}
+              <Avatar
+                src={
+                  selectedChat
+                    ? (selectedChat.senderEmail === actualUserEmail
+                      ? selectedChat.receiverPathProfilePicture
+                      : selectedChat.senderPathProfilePicture)
+                    : PerfilImg
+                }
+                sx={{ width: 48, height: 48, mr: 2 }}
+              />
 
               <Box
                 sx={{ cursor: selectedChat ? 'pointer' : 'default' }}
@@ -254,7 +249,7 @@ export default function Home() {
                   from={isMe}
                   messageType={typeof message.content === 'string' ? 'text' : 'image'}
                   text={typeof message.content === 'string' ? message.content : undefined}
-                  src={typeof message.content === 'object' ? message.content : undefined}
+                  src={typeof message.content === 'object' ? message.content.filepath : undefined}
                   time={time}
                 />
               );
@@ -301,9 +296,9 @@ export default function Home() {
           <ProfilePanel
             user={{
               id: contactData.id,
-              name: contactData.contactName || 'Cargando...',
-              job: contactData.contactOccupation || 'Cargando...',
-              phone1: contactData.contactPhone || 'Cargando...',
+              name: contactData.contactName || 'No disponib',
+              job: contactData.contactOccupation || 'No disponible',
+              phone1: contactData.contactPhone || 'No disponible',
               rating: contactData.contactRating || 0,
               avatar: contactData.contactPathProfilePicture || PerfilImg,
             }}

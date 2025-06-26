@@ -92,11 +92,11 @@ export default function ProfilePanel({ user, files, onClose }) {
             <ImageListItem
               key={f.id || index}
               sx={{ cursor: 'pointer' }}
-              onClick={() => setPreviewSrc(f.src)}
+              onClick={() => setPreviewSrc(f)}
             >
               <img
-                src={f.src}
-                alt="archivo"
+                src={f}
+                alt={f.filename || `Archivo ${index + 1}`}
                 loading="lazy"
                 style={{ borderRadius: 4 }}
               />
