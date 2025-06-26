@@ -1,4 +1,6 @@
-import img from '../../assets/images/Home/HERO_FINAL.png'; // Importar la imagen
+// import img from 'http://localhost:3000/uploads/services/ae237ba3-4783-45e2-86c6-df825f3bb1a0.png'; // Importar la imagen
+const img = "http://localhost:3000/uploads/services/ae237ba3-4783-45e2-86c6-df825f3bb1a0.png";
+
 //arreglo para los trabajos
 export const trabajos = [
   {
