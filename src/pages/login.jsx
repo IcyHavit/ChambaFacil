@@ -8,7 +8,7 @@ import img from '../assets/images/registro/registro.webp';
 
 // Backend
 import { useGoogleLogin } from '@react-oauth/google';
-import { loginPrestamista, loginPrestamistaGoogle, errorGoogleHandler } from '../api/auth';
+import { login, loginGoogle, errorGoogleHandler } from '../api/auth';
 
 export default function Login() {
   const theme = useTheme();
@@ -79,7 +79,7 @@ export default function Login() {
       };
 
       try {
-        const response = await loginPrestamista(data);
+        const response = await login(data);
   
         localStorage.setItem('correo', response.data.email);
         localStorage.setItem('id', response.data.id);
@@ -101,7 +101,7 @@ export default function Login() {
 
   const successGoogleHandler = async (tokenResponse) => {
     try {
-      const response = await loginPrestamistaGoogle(tokenResponse.access_token);
+      const response = await loginGoogle(tokenResponse.access_token);
 
       localStorage.setItem('email', response.email);
       localStorage.setItem('id', response.id);

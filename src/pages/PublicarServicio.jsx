@@ -24,6 +24,8 @@ import { useTheme } from '@mui/material/styles';
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 import CloseIcon from '@mui/icons-material/Close';
 
+import { createService } from '../api/service';
+
 const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 const alcaldias = [
   'Mi lugar', 'Álvaro Obregón', 'Azcapotzalco', 'Benito Juárez', 'Coyoacán', 'Cuajimalpa',
@@ -82,7 +84,7 @@ export default function PublicarServicio() {
     }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async(event) => {
     event.preventDefault();
 
     const nuevosErrores = {};
@@ -147,7 +149,8 @@ export default function PublicarServicio() {
       descripcion: data.get('desc'),
       materiales: data.get('materiales'),
       garantia: data.get('garantia') === 'si' ? data.get('garantiaDesc') : null,
-      zonaTrabajo,
+      // eliminar mi lugar de la zona de trabajo
+      zonaTrabajo: zonaTrabajo.filter((zona) => zona !== 'Mi lugar'),
       direccion,
       modalidades: Object.keys(modalidades)
         .filter((modalidad) => modalidades[modalidad].checked)
@@ -164,6 +167,36 @@ export default function PublicarServicio() {
     };
 
     console.log(servicio);
+
+    if (typeof localStorage.getItem('id') === 'string')
+      servicio.prestamistaId = parseInt(localStorage.getItem('id'), 10);
+
+    const dataForCreation = {
+      prestamistaId: servicio.prestamistaId,
+      categoria: servicio.categoria,
+      titulo: servicio.titulo,
+      descripcion: servicio.descripcion,
+      materiales: servicio.materiales === 'si'? true : false,
+      direccion: servicio.direccion,
+      zona: JSON.stringify(servicio.zonaTrabajo),
+      fechaInicio: new Date().toISOString(),
+      modalidades: JSON.stringify(servicio.modalidades),
+      garantia: servicio.garantia || "No aplica",
+      disponibilidad: JSON.stringify(servicio.disponibilidad),
+    }
+
+    try {
+      const response = await createService(dataForCreation);
+      alert('Servicio publicado exitosamente');
+      console.log('Servicio creado:', response);
+      // window.location.href = '/servicios'; // Redirigir a la lista de servicios publicados
+    }
+    catch (error) {
+      const errorMessage = error.response?.data?.error || 'Error al crear servicio, por favor intenta nuevamente.';
+        // Aleta provisional sin estilo de error
+        alert(`Error al crear servicio. ${errorMessage}`);
+    }
+
   };
 
   return (
@@ -206,7 +239,7 @@ export default function PublicarServicio() {
                 label="Categoría"
                 onChange={(e) => setCategoria(e.target.value)}
               >
-                <MenuItem value="Electricista">Electricista</MenuItem>
+                <MenuItem value="Electricidad">Electricidad</MenuItem>
                 <MenuItem value="Plomero">Plomero</MenuItem>
                 <MenuItem value="Carpintero">Carpintero</MenuItem>
                 <MenuItem value="Electrodomésticos">Reparación de electrodomésticos</MenuItem>

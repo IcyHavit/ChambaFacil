@@ -13,7 +13,7 @@ createRoot(document.getElementById('root')).render(
       <CssBaseline />
         <GoogleOAuthProvider clientId="203718264011-i035nbljo1gq6bvpr531lq4fsa2bdbmg.apps.googleusercontent.com">
           <App />
-        </GoogleOAuthProvider>,
+        </GoogleOAuthProvider>
     </ThemeProvider>
-  </StrictMode>,
+  </StrictMode>
 )
