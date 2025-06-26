@@ -14,9 +14,12 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import FormCliente from './pages/FormCliente'
 import FormPrestamista from './pages/FormPrestamista'
+import FormClienteView from './components/Perfil/PerfilClienteView'
+import FormPrestamistaView from './components/Perfil/PerfilPrestamistaView'
 import Correo from './pages/Correo';
 import Verificar from './pages/Verificar';
 import Xd from './components/prueba'
+
 
 function App() {
   return (
@@ -38,6 +41,8 @@ function App() {
         <Route path='/correo' element={<Correo/>}/>
         <Route path='/Verificar' element={<Verificar/>}/>
         <Route path='/xd' element={<Xd/>}/>
+        <Route path='/FormClienteView' element={<FormClienteView/>}/>
+        <Route path='/FormPrestamistaView' element={<FormPrestamistaView/>}/>
 
       </Routes>
       <Footer/>
