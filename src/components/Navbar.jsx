@@ -7,6 +7,7 @@ import {
 import {
   Menu as MenuIcon,
   Work as WorkIcon,
+  PostAdd as PostAddIcon,
   Chat as ChatIcon,
   Description as DescriptionIcon,
   AccountCircle as AccountCircleIcon
@@ -32,72 +33,93 @@ export default function Navbar() {
   const theme = useTheme();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const [isLoggedIn, setLogged] = useState(true);
 
-  const [isLoggedIn, setLogged] = useState(false);
+  // controla la visibilidad del botón
+  const showPublishButton = true;
 
   const handleClose = () => setOpen(false);
   const handleOpen = () => setOpen(true);
 
   return (
     <>
-      <AppBar position="sticky" sx={{ bgcolor: theme.palette.background.paper, boxShadow: '0px 8px 3px rgba(0, 0, 0, 0.05)', zIndex: 1100 }}>
+      <AppBar
+        position="sticky"
+        sx={{
+          bgcolor: theme.palette.background.paper,
+          boxShadow: '0px 8px 3px rgba(0, 0, 0, 0.05)',
+          zIndex: 1100
+        }}
+      >
         <Toolbar sx={{ justifyContent: 'space-between' }}>
           {/* Logo */}
           <Typography
             variant="button"
             onClick={() => navigate('/')}
-            sx={{ ...theme.typography.bodySmall, fontWeight: 'bold', cursor: 'pointer', color: theme.palette.secondary.dark }}
+            sx={{
+              ...theme.typography.bodySmall,
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              color: theme.palette.secondary.dark
+            }}
           >
             CHAMBAFÁCIL
           </Typography>
 
-          {/* El normal de desktop */}
+          {/* Menú desktop */}
           <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 5, alignItems: 'center' }}>
-            <LightTooltip 
-              title="Buscar trabajos" 
-              slots={{
-                transition: Zoom,
-              }}
-            >
-              <IconButton sx={{ color: theme.palette.secondary.dark }} onClick={() => navigate('/search')}>
+            <LightTooltip title="Buscar trabajos" slots={{ transition: Zoom }}>
+              <IconButton
+                sx={{ color: theme.palette.secondary.dark }}
+                onClick={() => navigate('/search')}
+              >
                 <WorkIcon />
               </IconButton>
-            </LightTooltip>  
+            </LightTooltip>
 
             {isLoggedIn ? (
               <>
-              <LightTooltip 
-                title="Chat" 
-                slots={{
-                  transition: Zoom,
-                }}
-              >
-                <IconButton sx={{ color: theme.palette.secondary.dark }} onClick={() => navigate('/chat')}>
-                  <ChatIcon />
-                </IconButton>
-              </LightTooltip>
+            {showPublishButton && (
+              <LightTooltip title="Mis publicaciones" slots={{ transition: Zoom }}>
+                  <IconButton
+                    sx={{ color: theme.palette.secondary.dark }}
+                    onClick={() => navigate('/publicaciones')}
+                  >
+                    <PostAddIcon />
+                  </IconButton>
+                </LightTooltip>
+            )}
 
-              <LightTooltip 
-                title="Solicitudes" 
-                slots={{
-                  transition: Zoom,
-                }}
-              >
-                <IconButton sx={{ color: theme.palette.secondary.dark }} onClick={() => navigate('/solicitudes')}>
-                  <DescriptionIcon />
-                </IconButton>
-              </LightTooltip>
-              
-              <LightTooltip 
-                title="Mi perfil" 
-                slots={{
-                  transition: Zoom,
-                }}
-              >
-                <IconButton sx={{ color: theme.palette.secondary.dark }} onClick={() => navigate('/perfil')}>
-                  <AccountCircleIcon />
-                </IconButton>
-              </LightTooltip>
+                <LightTooltip title="Chat" slots={{ transition: Zoom }}>
+                  <IconButton
+                    sx={{ color: theme.palette.secondary.dark }}
+                    onClick={() => navigate('/chat')}
+                  >
+                    <ChatIcon />
+                  </IconButton>
+                </LightTooltip>
+
+                <LightTooltip 
+                  title="Solicitudes" 
+                  slots={{
+                    transition: Zoom,
+                  }}
+                >
+                  <IconButton sx={{ color: theme.palette.secondary.dark }} onClick={() => navigate('/solicitudes')}>
+                    <DescriptionIcon />
+                  </IconButton>
+                </LightTooltip>
+                
+                <LightTooltip 
+                  title="Mi perfil" 
+                  slots={{
+                    transition: Zoom,
+                  }}
+                >
+                  <IconButton sx={{ color: theme.palette.secondary.dark }} onClick={() => navigate('/perfil')}>
+                    <AccountCircleIcon />
+                  </IconButton>
+                </LightTooltip>
               </>
             ) : (
               <>
@@ -119,9 +141,9 @@ export default function Navbar() {
             )}
           </Box>
 
-          {/* Esta parte es para lo del menú hamburguesa */}
+          {/* Menú móvil */}
           <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-            <IconButton sx={{ color: theme.palette.secondary.dark }}  onClick={handleOpen}>
+            <IconButton sx={{ color: theme.palette.secondary.dark }} onClick={handleOpen}>
               <MenuIcon />
             </IconButton>
           </Box>
@@ -136,9 +158,21 @@ export default function Navbar() {
               <ListItemIcon sx={{ color: theme.palette.secondary.dark }} ><WorkIcon /></ListItemIcon>
               <ListItemText primary="Buscar" />
             </ListItem>
-
             {isLoggedIn ? (
               <>
+              <ListItem button onClick={() => navigate('/publicaciones')}>
+                {showPublishButton && (
+                  <LightTooltip title="Mis publicaciones" slots={{ transition: Zoom }}>
+                    <IconButton
+                      sx={{ color: theme.palette.secondary.dark }}
+                      onClick={() => navigate('/chat')}
+                    >
+                      <PostAddIcon />
+                    </IconButton>
+                  </LightTooltip>
+            )}
+            <ListItemText primary="Mis publicaciones" />
+            </ListItem>
                 <ListItem button onClick={() => navigate('/chat')}>
                   <ListItemIcon sx={{ color: theme.palette.secondary.dark }} ><ChatIcon /></ListItemIcon>
                   <ListItemText primary="Chat" />
