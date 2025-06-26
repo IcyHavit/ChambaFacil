@@ -149,7 +149,8 @@ export default function PublicarServicio() {
       descripcion: data.get('desc'),
       materiales: data.get('materiales'),
       garantia: data.get('garantia') === 'si' ? data.get('garantiaDesc') : null,
-      zonaTrabajo,
+      // eliminar mi lugar de la zona de trabajo
+      zonaTrabajo: zonaTrabajo.filter((zona) => zona !== 'Mi lugar'),
       direccion,
       modalidades: Object.keys(modalidades)
         .filter((modalidad) => modalidades[modalidad].checked)
@@ -175,12 +176,12 @@ export default function PublicarServicio() {
       categoria: servicio.categoria,
       titulo: servicio.titulo,
       descripcion: servicio.descripcion,
+      materiales: servicio.materiales === 'si'? true : false,
       direccion: servicio.direccion,
       zona: JSON.stringify(servicio.zonaTrabajo),
       fechaInicio: new Date().toISOString(),
-      // materiales: servicio.materiales,
       modalidades: JSON.stringify(servicio.modalidades),
-      garantia: servicio.garantia,
+      garantia: servicio.garantia || "No aplica",
       disponibilidad: JSON.stringify(servicio.disponibilidad),
     }
 
