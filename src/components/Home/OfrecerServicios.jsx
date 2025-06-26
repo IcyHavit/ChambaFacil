@@ -52,9 +52,6 @@ export default function Ofrecer() {
           <Typography variant="body1" mb={3}>
             Regístrate como prestador y conecta con personas que buscan justo lo que tú sabes hacer.
           </Typography>
-          <Button variant="contained" color="secondary">
-            OFRECER SERVICIOS
-          </Button>
         </Grid>
       </Grid>
     </Box>
