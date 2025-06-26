@@ -16,6 +16,8 @@ import SendIcon from '@mui/icons-material/Send';
 import { useState } from 'react';
 import { Avatar, Button } from '@mui/material';
 
+import { completarDatosUser } from '../api/user';
+
 export default function Cliente() {
   dayjs.locale('es');
   const theme = useTheme();
@@ -195,7 +197,7 @@ export default function Cliente() {
     return newErrors;
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const validationErrors = validate();
 
@@ -216,17 +218,28 @@ export default function Cliente() {
     // Limpiar todos los errores
     setErrores({});
 
-    // Procesar datos
-    const processedData = {
-      ...formData,
-      fechaNacimiento: formData.fechaNacimiento.format('DD/MM/YYYY'),
-      telefono1: formData.telefono1.replace(/\s/g, ''),
-      telefono2: formData.telefono2.replace(/\s/g, ''),
-    };
-
-    console.log('Datos del formulario:', processedData);
-
-
+    try {
+      const data = {
+        id: parseInt(localStorage.getItem('id')),
+        datosCompletos: true,
+        nombre: formData.nombre,
+        telefono: formData.telefono1.replace(/\s/g, ''),
+        telefonoSecundario: formData.telefono2.replace(/\s/g, ''),
+        linkFoto: 'https://www.facebook.com/sharer/sharer.php?u=', // Este campo aún faltas
+        tipoCuenta: formData.tipoCuenta,
+        fechaNacimiento: formData.fechaNacimiento?.toISOString(),
+        preferenciasPago: JSON.stringify(formData.preferenciasPago),
+        horarios: JSON.stringify(formData.horarios),
+      };
+      let role = localStorage.getItem('role');
+      console.log(localStorage);
+      console.log('Rol', role);
+      const response = await completarDatosUser(data, role);
+      console.log('Respuesta: ', response);
+      alert('Datos Completados con éxito');
+    } catch (error) {
+      alert(error.message);
+    }
   };
 
   return (

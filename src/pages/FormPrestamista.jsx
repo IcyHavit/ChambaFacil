@@ -9,7 +9,7 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/es';
 
 import ButtonMod from '../components/ButtonMod';
-import { completarDatosPrestamista } from '../api/prestamista';
+import { completarDatosUser } from '../api/user';
 
 dayjs.locale('es');
 
@@ -330,15 +330,13 @@ export default function Prestamista() {
         horarios: JSON.stringify(formData.horarios),
         redesSociales: JSON.stringify(formData.redesSociales),
       };
-      const response = await completarDatosPrestamista(data);
+      let role = localStorage.getItem('role');
+      const response = await completarDatosUser(data, role);
       console.log('Respuesta: ', response);
       alert('Datos Completados con éxito');
-      // console.log('Respuesta: ', response);
     } catch (error) {
       alert(error.message);
     }
-
-    // console.log('Datos del prestamista:', prestamista);
   };
 
   return (
