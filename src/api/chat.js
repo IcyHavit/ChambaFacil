@@ -42,3 +42,19 @@ export const getContactData = async (actualUserEmail, contactEmail) => {
     throw error;
   }
 };
+
+// Subir una imagen al servidor
+export const uploadChatImage = async (formData) => {
+  try {
+    const response = await axios.post('http://localhost:3000/api/upload/single/chat-uploads', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;    
+    
+  } catch (error) {
+    console.error('Error uploading image:', error);
+    throw error;
+  }
+};
