@@ -139,12 +139,6 @@ export default function Register() {
         setAlertError(error.message);
         alertErrorRef.current.handleClickOpen();
       }
-
-      // Prueba de el token en cookies
-      // const response = axios.get('http://localhost:3000/check-token', { withCredentials: true })
-      // .then(res => console.log(res.data))
-      // .catch(err => console.error('Error al obtener token:', err));
-      // console.log(response);
     }
   };
 
