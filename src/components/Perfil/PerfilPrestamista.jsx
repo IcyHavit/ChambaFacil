@@ -327,7 +327,7 @@ export default function PerfilPrestamista() {
     }
   };
 
-  const [imagenFiles, setImagenFiles] = useState([]); // Para subir
+  const [imagenFiles, setImagenFiles] = useState([]);
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files);
 
