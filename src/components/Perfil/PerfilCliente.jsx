@@ -19,11 +19,15 @@ import AlertD from '../alert';
 import alertImage from '../../assets/images/Mascota.png';
 import imgError from '../../assets/images/imgError.jpg';
 
+import { useNavigate } from 'react-router-dom';
+import { logout } from '../../api/auth';
+
 const tiposCliente = ['Personal', 'Grupo', 'Empresa'];
 const metodosPago = ['Efectivo', 'Transferencia', 'Tarjeta'];
 const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 
 export default function PerfilCliente() {  
+  const navigate = useNavigate();
   /* Para mostrar la alerta de Error y Success */
   const alertSuccessRef = useRef();
   const alertErrorRef = useRef();
@@ -77,8 +81,20 @@ export default function PerfilCliente() {
   }, []);
 
 
-  const handleCerrarSesion = () => {
-    console.log("webos pal gayro")
+  const handleCerrarSesion = async() => {
+    localStorage.removeItem('email');
+    localStorage.removeItem('id');
+    localStorage.removeItem('name');
+    localStorage.removeItem('role');
+    try {
+      await logout();
+      console.log('Sesión cerrada correctamente');
+      navigate('/login');
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+      setAlertError(error.message);
+      alertErrorRef.handleClickOpen();
+    }
   }
   const [fechaNacimiento, setFechaNacimiento] = useState(dayjs(datos.fechaNacimiento));
 

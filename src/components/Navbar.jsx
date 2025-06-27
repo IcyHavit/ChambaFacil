@@ -46,8 +46,11 @@ export default function Navbar() {
       setLogged(true);
     } else {
       setLogged(false);
+      // Si esta no esta en login o register, redirige al login
+      if (!window.location.pathname.includes('/login') && !window.location.pathname.includes('/register'))
+        navigate('/login');
     }
-  }, []);
+  }, );
 
 
 

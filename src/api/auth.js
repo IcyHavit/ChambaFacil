@@ -27,6 +27,7 @@ export const login = async (data) => {
 
 export const registerUserGoogle = async (accessToken, role) => {
     console.log('Token de Googlereg:', accessToken);
+    console.log('Role:', role);
     try {
       const response = await axios.post(`http://localhost:3000/api/${role}/register-google`, {accessToken}, {
           withCredentials: true,
