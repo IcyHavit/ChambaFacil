@@ -147,20 +147,20 @@ export default function Home() {
   }
 
   // Peticiones periodicas para actualizar los chats y mensajes, corregir a futuro y cambiar a WebSockets
-  // React.useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     if (selectedChat) {
-  //       obtainUsersChat(actualUserEmail, selectedChat.senderEmail === actualUserEmail ? selectedChat.receiverEmail : selectedChat.senderEmail);
-  //     }
-  //     getRecentChats(actualUserEmail).then(chatsData => {
-  //       setRecentChats(chatsData);
-  //     }).catch(error => {
-  //       console.error("Error fetching recent chats:", error);
-  //     });
-  //   }, 1000);
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      if (selectedChat) {
+        obtainUsersChat(actualUserEmail, selectedChat.senderEmail === actualUserEmail ? selectedChat.receiverEmail : selectedChat.senderEmail);
+      }
+      getRecentChats(actualUserEmail).then(chatsData => {
+        setRecentChats(chatsData);
+      }).catch(error => {
+        console.error("Error fetching recent chats:", error);
+      });
+    }, 1000);
 
-  //   return () => clearInterval(interval);
-  // }, [selectedChat, actualUserEmail]);
+    return () => clearInterval(interval);
+  }, [selectedChat, actualUserEmail]);
 
   const bottomRef = React.useRef(null);
 
