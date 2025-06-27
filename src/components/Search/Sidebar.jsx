@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Box, Typography, Chip, Dialog, IconButton } from '@mui/material';
 import StarIcon from '@mui/icons-material/Star';
 import StarHalfIcon from '@mui/icons-material/StarHalf';
@@ -6,6 +6,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import ButtonMod from '../ButtonMod';
 import { createSolicitud } from '../../api/solicitud'; // Importar la función para crear solicitudes
 import { sendChatMessage } from '../../api/chat'; // Importar la función para enviar mensajes
+import AlertD from '../alert';
+import alertimg from '../../assets/images/Mascota.png';
 
 export default function Sidebar({
   theme,
@@ -28,8 +30,11 @@ export default function Sidebar({
 }) {
   const [tipoUsuario] = useState('cliente');
 
+  const alertRef = useRef();
+  const [alert, setAlert] = useState('');
   const handleInciarSolicitud = async () => {
     // Aquí puedes manejar la lógica para iniciar una solicitud
+    
     console.log('Iniciar solicitud');
 
     // imprimir el id de cliente obtenido del localStorage
@@ -62,6 +67,8 @@ export default function Sidebar({
     
     try {
       // Llamar a la función para crear la solicitud
+      setAlert('Puedes ver la solicitud en chats');
+      alertRef.current.handleClickOpen();
       const response = await createSolicitud(solicitudData);
       console.log('Solicitud creada:', response);
 
@@ -273,7 +280,15 @@ export default function Sidebar({
           />
         </Box>
       </Dialog>
-
+      {/* Alerta de solicitud */}
+      <AlertD
+        ref={alertRef}
+        titulo='Solicitud iniciada'
+        mensaje={alert}
+        imagen={alertimg}
+        boton1='Cerrar'
+        onConfirm={() => setAlert('')}
+      />
     </>
   );
 }
