@@ -1,33 +1,69 @@
-// CategoriesSection.jsx
-import React from 'react';
-import { Box, Typography, Button, IconButton, Paper } from '@mui/material';
-import PlumbingIcon from '@mui/icons-material/Plumbing';
-import CleaningServicesIcon from '@mui/icons-material/CleaningServices';
-import CarpenterIcon from '@mui/icons-material/Carpenter';
-import HandymanIcon from '@mui/icons-material/Handyman';
-import ElectricalServicesIcon from '@mui/icons-material/ElectricalServices';
-import ButtonMod from '../../components/ButtonMod';
+import React, { useState } from 'react';
+import { Box, Typography, IconButton, Paper } from '@mui/material';
+import {
+  Plumbing as PlumbingIcon,
+  CleaningServices as CleaningIcon,
+  Carpenter as CarpenterIcon,
+  Handyman as HandymanIcon,
+  ElectricalServices as ElectricalIcon,
+  LocalFlorist as GardeningIcon,
+  ChildCare as ChildCareIcon,
+  Pets as PetsIcon,
+  Elderly as ElderlyIcon,
+  School as SchoolIcon,
+  LocalShipping as ShippingIcon,
+  LocalGroceryStore as GroceryIcon,
+  LaptopMac as ComputerIcon,
+  DesignServices as DesignIcon,
+  Event as EventIcon,
+  DirectionsCar as CarIcon,
+  FaceRetouchingNatural as MakeupIcon,
+  Iron as IronIcon,
+  FormatPaint as PaintIcon,
+  LocalHospital as NursingIcon,
+  AccessibilityNew as MassageIcon,
+} from '@mui/icons-material';
+import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
+import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { useTheme } from '@mui/material/styles';
-import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import ButtonMod from '../../components/ButtonMod';
 
 export default function Categorias() {
   const theme = useTheme();
+  const navigate = useNavigate();
 
   const categorias = [
-    { id: 1, name: 'Plomería', offers: 4, Icon: PlumbingIcon, color: theme.palette.secondary.dark },
-    { id: 2, name: 'Impermeabilización', offers: 6, Icon: CleaningServicesIcon, color: theme.palette.secondary.dark },
-    { id: 3, name: 'Carpintería', offers: 5, Icon: HandymanIcon, color: theme.palette.secondary.dark },
-    { id: 4, name: 'Soldadura', offers: 3, Icon: ElectricalServicesIcon, color: theme.palette.secondary.dark },
-    { id: 5, name: 'Electricista', offers: 4, Icon: PlumbingIcon, color: theme.palette.secondary.dark },
-    { id: 6, name: 'Limpieza del hogar', offers: 6, Icon: CleaningServicesIcon, color: theme.palette.secondary.dark },
-    { id: 7, name: 'Cuidado de mascotas', offers: 5, Icon: HandymanIcon, color: theme.palette.secondary.dark },
-    { id: 8, name: 'Jardinería', offers: 3, Icon: ElectricalServicesIcon, color: theme.palette.secondary.dark },
-    { id: 9, name: 'Albañilería', offers: 4, Icon: PlumbingIcon, color: theme.palette.secondary.dark },
-    { id: 10, name: 'Costura', offers: 6, Icon: CleaningServicesIcon, color: theme.palette.secondary.dark },
-    { id: 11, name: 'Cuidado de niños', offers: 5, Icon: HandymanIcon, color: theme.palette.secondary.dark },
-    { id: 12, name: 'Instalaciones', offers: 3, Icon: ElectricalServicesIcon, color: theme.palette.secondary.dark },
+    { id: 1, name: 'Albañilería', Icon: HandymanIcon },
+    { id: 2, name: 'Asesorías', Icon: SchoolIcon },
+    { id: 3, name: 'Ayuda en negocios', Icon: BusinessCenterIcon },
+    { id: 4, name: 'Carpintería', Icon: CarpenterIcon },
+    { id: 5, name: 'Chofer', Icon: CarIcon },
+    { id: 6, name: 'Clases particulares', Icon: SchoolIcon },
+    { id: 7, name: 'Cocina', Icon: RestaurantMenuIcon },
+    { id: 8, name: 'Computación y soporte técnico', Icon: ComputerIcon },
+    { id: 9, name: 'Costura', Icon: IronIcon },
+    { id: 10, name: 'Cuidado de adultos mayores', Icon: ElderlyIcon },
+    { id: 11, name: 'Cuidado de mascotas', Icon: PetsIcon },
+    { id: 12, name: 'Cuidado de niños', Icon: ChildCareIcon },
+    { id: 13, name: 'Decoración', Icon: DesignIcon },
+    { id: 14, name: 'Electricidad', Icon: ElectricalIcon },
+    { id: 15, name: 'Enfermería', Icon: NursingIcon },
+    { id: 16, name: 'Fletes', Icon: ShippingIcon },
+    { id: 17, name: 'Instalación de servicios', Icon: ElectricalIcon },
+    { id: 18, name: 'Jardinería', Icon: GardeningIcon },
+    { id: 19, name: 'Limpieza', Icon: CleaningIcon },
+    { id: 20, name: 'Masajes', Icon: MassageIcon },
+    { id: 21, name: 'Mudanzas', Icon: ShippingIcon },
+    { id: 22, name: 'Organización de eventos', Icon: EventIcon },
+    { id: 23, name: 'Paseo de perros', Icon: PetsIcon },
+    { id: 24, name: 'Peluquería', Icon: MakeupIcon },
+    { id: 25, name: 'Pintura', Icon: PaintIcon },
+    { id: 26, name: 'Plomería', Icon: PlumbingIcon },
+    { id: 27, name: 'Reparaciones', Icon: HandymanIcon },
+    { id: 28, name: 'Uñas y maquillaje', Icon: MakeupIcon },
   ];
 
   const [paginaActual, setPaginaActual] = useState(0);
@@ -35,9 +71,13 @@ export default function Categorias() {
   const totalPaginas = Math.ceil(categorias.length / itemsPorPagina);
 
   const categoriasVisibles = categorias.slice(
-  paginaActual * itemsPorPagina,
-  (paginaActual + 1) * itemsPorPagina
+    paginaActual * itemsPorPagina,
+    (paginaActual + 1) * itemsPorPagina
   );
+
+  const handleVerMas = () => {
+    navigate(`/search`);
+  };
 
   return (
     <Box
@@ -66,7 +106,8 @@ export default function Categorias() {
           textCont="Ver más"
           width="auto"
           height="2.5rem"
-          type="submit"
+          type="button"
+          clickEvent={handleVerMas}
         />
       </Box>
 
@@ -80,9 +121,10 @@ export default function Categorias() {
           flex: 1,
         }}
       >
-        {categoriasVisibles.map(({ id, name, offers, Icon, color }) => (
+        {categoriasVisibles.map(({ id, name, Icon }) => (
           <Paper
             key={id}
+            onClick={() => navigate(`/search?categoria=${encodeURIComponent(name)}`)}
             sx={{
               display: 'flex',
               alignItems: 'center',
@@ -94,11 +136,10 @@ export default function Categorias() {
             }}
             elevation={2}
           >
-            <Icon sx={{ fontSize: 40, color: color, mr: 2 }} />
+            <Icon sx={{ fontSize: 40, color: theme.palette.secondary.dark, mr: 2 }} />
             <Box>
-              <Typography sx={{ color: color, fontWeight: 'bold' }}>{name}</Typography>
-              <Typography color="text.secondary" fontSize={14}>
-                {offers} nuevas ofertas
+              <Typography sx={{ color: theme.palette.secondary.dark, fontWeight: 'bold' }}>
+                {name}
               </Typography>
             </Box>
           </Paper>
@@ -132,7 +173,10 @@ export default function Categorias() {
           />
         ))}
 
-        <IconButton onClick={() => setPaginaActual(p => Math.min(p + 1, totalPaginas - 1))} disabled={paginaActual === totalPaginas - 1}>
+        <IconButton
+          onClick={() => setPaginaActual(p => Math.min(p + 1, totalPaginas - 1))}
+          disabled={paginaActual === totalPaginas - 1}
+        >
           <ChevronRightIcon />
         </IconButton>
       </Box>
