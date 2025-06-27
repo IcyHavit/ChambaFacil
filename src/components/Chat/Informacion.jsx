@@ -13,17 +13,17 @@ import {
   Typography,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import PerfilPrestamistaView from '../Perfil/PerfilPrestamistaView';
-import PerfilClienteView from '../Perfil/PerfilClienteView';
+import pdfIcon from '../../assets/images/pdf-icon.png';
+import { Link } from 'react-router-dom';
+
 
 export default function ProfilePanel({ user, files, onClose }) {
   // 1) Estado para la imagen a previsualizar
   const [previewSrc, setPreviewSrc] = React.useState(null);
 
-
-
   const isPrestamista = user.type === 'prestamista';
 
+  console.log(files);
 
   return (
     <>
@@ -31,7 +31,7 @@ export default function ProfilePanel({ user, files, onClose }) {
       <Box
         sx={{
           width: 340,
-          height:'calc(100vh - 64px - 32px)',
+          height: 'calc(100vh - 64px - 32px)',
           bgcolor: 'background.paper',
           borderRadius: 2,
           boxShadow: 3,
@@ -66,7 +66,7 @@ export default function ProfilePanel({ user, files, onClose }) {
           sx={{ cursor: 'pointer', textDecoration: 'underline' }}
           onClick={() => {
             if (isPrestamista) {
-              
+
               window.location.href = `/FormPrestamistaView?user=${encodeURIComponent(JSON.stringify(user))}`;
 
             } else {
@@ -109,20 +109,55 @@ export default function ProfilePanel({ user, files, onClose }) {
         </Typography>
 
         <ImageList cols={3} gap={8} sx={{ overflowY: 'auto' }}>
-          {files.map((f, index) => (
-            <ImageListItem
-              key={f.id || index}
-              sx={{ cursor: 'pointer' }}
-              onClick={() => setPreviewSrc(f)}
-            >
-              <img
-                src={f}
-                alt={f.filename || `Archivo ${index + 1}`}
-                loading="lazy"
-                style={{ borderRadius: 4 }}
-              />
-            </ImageListItem>
-          ))}
+          {files.map((f, index) => {
+            const filePath = f.filepath;
+            const srcExtension = filePath ? filePath.split('.').pop().toLowerCase() : '';
+
+            // Determina si es una imagen o un archivo PDF
+            const isImage = ['jpg', 'jpeg', 'png', 'gif'].includes(srcExtension);
+            const isPdf = srcExtension === 'pdf';
+
+            const limitedFilename = f.filename && f.filename.length > 6 ? `${f.filename.slice(0, 9)}...` : f.filename;
+
+            return (
+              <ImageListItem key={f.id || index} sx={{ cursor: 'pointer' }}>
+                {/* Mostrar imagen si es tipo imagen */}
+                {isImage ? (
+                  <img
+                    src={filePath}
+                    alt={limitedFilename || `Imagen ${index + 1}`}
+                    loading="lazy"
+                    style={{ borderRadius: 4 }}
+                    onClick={() => setPreviewSrc(filePath)} // Al hacer clic en la imagen, abrir vista previa
+                  />
+                ) : (
+                  <Box
+                    component="img"
+                    src={pdfIcon}
+                    alt="PDF"
+                    loading="lazy"
+                    sx={{
+                      width: '100%',
+                      height: 120,
+                      objectFit: 'cover',
+                      cursor: 'pointer',
+                      borderRadius: 8,
+                    }}
+                    onClick={() => window.open(filePath, '_blank')}
+                  />
+                )}
+
+                {/* Mostrar nombre solo si es un PDF */}
+                {isPdf && (
+                  <Typography variant="body2" sx={{ mt: 0.5, fontWeight: 'bold' }}>
+                    <Link to={filePath} target="_blank" style={{ textDecoration: 'none', color: 'inherit' }}>
+                      {limitedFilename || `Archivo ${index + 1}`}
+                    </Link>
+                  </Typography>
+                )}
+              </ImageListItem>
+            );
+          })}
         </ImageList>
       </Box>
 

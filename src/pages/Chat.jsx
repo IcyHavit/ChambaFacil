@@ -5,9 +5,7 @@ import ChatBubble from '../components/Chat/Chats';
 import ProfilePanel from '../components/Chat/Informacion';
 import MessageBubble from '../components/Chat/ChatPrincipal';
 import PerfilImg from '../assets/images/Perfil.png';
-// pruebas de la API
 import { getRecentChats, sendChatMessage, getChatMessages, getContactData, uploadChatImage } from '../api/chat';
-import axios from 'axios';
 
 export default function Home() {
 
@@ -137,7 +135,7 @@ export default function Home() {
         content: { filepath: link, filename: file.name },
         timestamp: new Date().toISOString(),
       };
-      
+
       try {
         const response = await sendChatMessage(messageData);
         console.log("Mensaje con archivo enviado:", response);
@@ -293,6 +291,7 @@ export default function Home() {
                   messageType={typeof message.content === 'string' ? 'text' : 'image'}
                   text={typeof message.content === 'string' ? message.content : undefined}
                   src={typeof message.content === 'object' ? message.content.filepath : undefined}
+                  fileName={typeof message.content === 'object' ? message.content.filename : undefined}
                   time={time}
                 />
               );
@@ -319,7 +318,7 @@ export default function Home() {
               <input
                 type="file"
                 hidden
-                onChange= {handleSubmitFiles}
+                onChange={handleSubmitFiles}
               />
             </IconButton>
 
