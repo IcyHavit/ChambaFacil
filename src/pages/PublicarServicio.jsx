@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Container,
@@ -23,7 +24,9 @@ import {
 import { useTheme } from '@mui/material/styles';
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 import CloseIcon from '@mui/icons-material/Close';
-
+import alertImage from '../assets/images/Mascota.png';
+import imgError from '../assets/images/imgError.jpg';
+import AlertD from '../components/alert';
 import { createService } from '../api/service';
 import { uploadFile } from '../api/file';
 import { getCategories } from '../api/category';
@@ -102,6 +105,19 @@ export default function PublicarServicio() {
       [dia]: { ...prev[dia], [campo]: valor },
     }));
   };
+
+  const navigate = useNavigate();
+  /* Para mostrar la alerta de Success */
+  const alertSuccessRef = useRef();
+  const nextRoute = useRef(null);
+  const handleAlertOpen = () => {
+    if (nextRoute.current) {
+      navigate(nextRoute.current);
+    }
+  };
+  /* Para mostrar la alerta de Error */
+  const alertErrorRef = useRef();
+  const [alertError, setAlertError] = useState('');
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -218,19 +234,19 @@ export default function PublicarServicio() {
 
     try {
       const response = await createService(dataForCreation);
-      alert('Servicio publicado exitosamente');
+      nextRoute.current = '/publicaciones';
+      alertSuccessRef.current.handleClickOpen();
       console.log('Servicio creado:', response);
-      // window.location.href = '/servicios'; // Redirigir a la lista de servicios publicados
     }
     catch (error) {
-      const errorMessage = error.response?.data?.error || 'Error al crear servicio, por favor intenta nuevamente.';
-      // Aleta provisional sin estilo de error
-      alert(`Error al crear servicio. ${errorMessage}`);
+      setAlertError(error.message);
+      alertErrorRef.current.handleClickOpen();
     }
 
   };
 
   return (
+    <>
     <Box
       component="form"
       onSubmit={handleSubmit}
@@ -596,6 +612,24 @@ export default function PublicarServicio() {
         </Box>
       </Container>
     </Box>
-
+    {/* Alerta de Success */}
+    <AlertD
+      ref={alertSuccessRef}
+      titulo='Publicación exitosa'
+      mensaje='Presiona aceptar para continuar'
+      imagen={alertImage}
+      boton1='Aceptar'
+      onConfirm={handleAlertOpen}
+    />
+    {/* Alerta de Error */}
+    <AlertD
+      ref={alertErrorRef}
+      titulo='Publicación fallida'
+      mensaje={alertError}
+      imagen={imgError}
+      boton1='Cerrar'
+      onConfirm={() => setAlertError('')}
+    />
+    </>
   );
 }
