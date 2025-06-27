@@ -2,9 +2,22 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Rating, Typo
 import React, { useState, useEffect } from 'react';
 import WorkHistoryIcon from '@mui/icons-material/WorkHistory';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
+import { deleteSolicitud, updateSolicitudState } from '../../api/solicitud';
 
 export default function SolicitudCardAceptada({ data, role, onCancel, onFinish }) {
-  const { id, puesto, ubicacion, tipo, inicio } = data;
+  const { id_solicitud, id_servicio, nombreServicio, ubicacion, direccion, tipo = 'Full Time', fechaSolicitud } = data;
+  // Formatear la fecha con hora
+  const formattedDate = new Date(fechaSolicitud).toLocaleString('es-MX', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false, // Formato 24 horas
+  });
+
+  const ubicacionFinal = ubicacion || direccion || 'Ubicación no especificada';
+
 
   /* ---------- estado de diálogos ---------- */
   const [openCancel, setOpenCancel] = useState(false);
@@ -18,26 +31,50 @@ export default function SolicitudCardAceptada({ data, role, onCancel, onFinish }
   /* ---------- efecto para generar / limpiar la URL ---------- */
   useEffect(() => {
     if (!photoFile) {                       // nada seleccionado
-        setPreviewUrl(null);
-        return;
+      setPreviewUrl(null);
+      return;
     }
     const objectUrl = URL.createObjectURL(photoFile);
     setPreviewUrl(objectUrl);
-     
+
     return () => URL.revokeObjectURL(objectUrl); // libera la memoria
   }, [photoFile]);
 
   /* ---------- handlers ---------- */
-  const handleSendCancel = () => {
-    onCancel?.(id, cancelReason);      // comunica al padre
-    setOpenCancel(false);
-    setCancelReason('');
+  // Eliminar solicitud
+  const handleDeleteSolicitud = async (id_solicitud) => {
+    try {
+      await deleteSolicitud(id_solicitud);
+      console.log('Solicitud eliminada correctamente');
+    } catch (error) {
+      console.error('Error al eliminar la solicitud:', error);
+    }
   };
 
-  const handleSendFinish = () => {
-  setOpenFinish(false);
-  setPhotoFile(null);
-  onFinish?.(id, photoFile); // Solo notifica al padre
+  // Pasar a estado "archivadas" (rechazada o cancelada)
+  const handleSendArchivem = async () => {
+    try {
+      await updateSolicitudState(id_solicitud, 'archivadas');
+      console.log('Solicitud cancelada correctamente');
+      onCancel?.(id_servicio, reason); // Notifica al padre
+    } catch (error) {
+      console.error('Error al cancelar la solicitud:', error);
+    }
+  }
+
+  const handleSendCancel = async () => {
+    console.log('Id de la solicitud cancelada:', id_solicitud);
+    onCancel?.(id_servicio, cancelReason);      // comunica al padre
+    setOpenCancel(false);
+    setCancelReason('');
+    await handleDeleteSolicitud(id_solicitud); // Elimina la solicitud
+  };
+
+  const handleSendFinish = async () => {
+    setOpenFinish(false);
+    setPhotoFile(null);
+    await handleSendArchivem(); // Cambia el estado a "archivadas"
+    onFinish?.(id_servicio, photoFile); // Solo notifica al padre
   };
 
   const handleSubmitRating = () => {
@@ -81,7 +118,7 @@ export default function SolicitudCardAceptada({ data, role, onCancel, onFinish }
 
         {/* texto */}
         <Box sx={{ flexGrow: 1 }}>
-          <Typography fontWeight="bold">{puesto}</Typography>
+          <Typography fontWeight="bold">{nombreServicio}</Typography>
 
           <Box
             sx={{
@@ -95,14 +132,14 @@ export default function SolicitudCardAceptada({ data, role, onCancel, onFinish }
           >
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
               <LocationOnIcon fontSize="inherit" />
-              {ubicacion}
+              {ubicacionFinal}
             </Box>
             <Divider orientation="vertical" flexItem />
             {tipo}
           </Box>
 
           <Typography variant="body2" color="text.secondary">
-            Inicio:&nbsp;{inicio}
+            Fecha de Solicitud:&nbsp;{formattedDate}
           </Typography>
         </Box>
 

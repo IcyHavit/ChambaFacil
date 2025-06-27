@@ -20,6 +20,7 @@ import Mascota from '../assets/images/Mascota.png';
 import SolicitudCard from '../components/Solicitudes/Tarjetas';               // genérica
 import SolicitudCardAceptada from '../components/Solicitudes/TarjetasAceptadas';
 import SolicitudCardPendiente from '../components/Solicitudes/TarjetasPendientes';
+import { getSolicitudesByUser } from '../api/solicitud';
 
 /* ---------- datos mock ---------- */
 const solicitudesMock = [
@@ -52,7 +53,7 @@ const trabajosTerminados = [
 
 export default function Solicitudes() {
   /* --- rol --- */
-  const role = 'cliente';           // cambié a 'cliente' para mostrar los modales de calificación
+  const role = 'prestamista';           // cambié a 'cliente' para mostrar los modales de calificación
 
   /* --- estado principal --- */
   const [openRating, setOpenRating] = useState(false);
@@ -69,6 +70,26 @@ export default function Solicitudes() {
   const [calificacionActual, setCalificacionActual] = useState(0);
   /* --- Snackbar --- */
   const [alert, setAlert] = useState({ open: false, msg: '', sev: 'success' });
+
+  
+  // funcion para obtener las solicitudes del usuario
+  useEffect(() => {
+    const fetchSolicitudes = async () => {
+      try {
+        const idUser = localStorage.getItem('id'); // Obtener el ID del usuario actual
+        const solicitudesData = await getSolicitudesByUser(idUser);
+        setSolicitudes(solicitudesData);
+        console.log('Solicitudes obtenidas:', solicitudesData);
+      } catch (error) {
+        console.error('Error fetching solicitudes:', error);
+        setAlert({ open: true, msg: 'Error al cargar las solicitudes', sev: 'error' });
+      }
+    };
+    fetchSolicitudes();
+  }, []); // Ejecutar solo una vez al cargar el componente
+
+
+
 
   /* --- useEffect para detectar trabajos terminados al cargar la página --- */
   useEffect(() => {
