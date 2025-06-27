@@ -8,6 +8,7 @@ import CardWork from '../components/Search/CardWork';
 import Typography from '@mui/material/Typography';
 import img from '../assets/images/Home/HERO_FINAL.png'
 import Sidebar from '../components/Search/Sidebar';
+import { useSearchParams } from 'react-router-dom';
 // import { trabajos } from '../components/Search/trabajos'; // Importar el arreglo de trabajos
 
 import { searchServices } from '../api/service';
@@ -20,6 +21,16 @@ export default function Search() {
   const [trabajos, setTrabajos] = useState([]); // Estado para los trabajos, inicialmente vacío
   const trabajosPorPagina = 9; // Número máximo de trabajos por página
   const totalPaginas = Math.ceil(trabajos.length / trabajosPorPagina);
+
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    const trabajo = searchParams.get('trabajo') || '';
+    const alcaldia = searchParams.get('alcaldia') || '';
+    if (trabajo || alcaldia) {
+      handleBuscar(trabajo, alcaldia);
+    }
+  }, [searchParams]);
 
   const handlePageChange = (event, value) => {
     setPage(value); // Actualizar la página actual
