@@ -43,6 +43,7 @@ export default function Search() {
 
   const handleCardClick = (trabajo) => {
     setSelectedWork(trabajo); // Actualizar el trabajo seleccionado
+    console.log('Trabajo seleccionado:', trabajo);
   };
 
   const handleBuscar = async(trabajo, alcaldia) => {
