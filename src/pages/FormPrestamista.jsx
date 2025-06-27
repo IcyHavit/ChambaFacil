@@ -11,6 +11,7 @@ import 'dayjs/locale/es';
 
 import ButtonMod from '../components/ButtonMod';
 import { completarDatosUser } from '../api/user';
+import { uploadFile } from '../api/file';
 import AlertD from '../components/alert';
 import alertImage from '../assets/images/Mascota.png';
 import imgError from '../assets/images/imgError.jpg';
@@ -333,6 +334,22 @@ export default function Prestamista() {
 
     setErrores({});
 
+    const file = foto;
+    if (!file) {
+      alert('No se seleccionó ninguna imagen.');
+      return;
+    }
+
+    let fotoPerfil = '';
+    try {
+      const response = await uploadFile(file, 'profile-pictures');
+      fotoPerfil = response.link;
+    } catch (error) {
+      const errorMessage = error.response?.data?.error || 'Error al subir imagen. Por favor, intenta nuevamente.';
+      alert(`Error al subir imagen: ${errorMessage}`);
+      return;
+    }
+
     const data = {
       id: parseInt(localStorage.getItem('id')),
       datosCompletos: true,
@@ -340,7 +357,7 @@ export default function Prestamista() {
       telefono: formData.telefono1.replace(/\s/g, ''),
       telefonoSecundario: formData.telefono2.replace(/\s/g, ''),
       descripcion: formData.descripcion,
-      linkFoto: 'https://www.facebook.com/sharer/sharer.php?u=', // Este campo aún faltas
+      linkFoto: fotoPerfil,
       tipoCuenta: formData.tipoCuenta,
       fechaNacimiento: formData.fechaNacimiento?.toISOString(),
       preferenciasPago: JSON.stringify(formData.preferenciasPago),

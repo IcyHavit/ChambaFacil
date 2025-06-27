@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   Avatar, Typography, TextField, Button,
   Box, MenuItem, Divider, Paper, Checkbox, FormGroup, FormControlLabel,
@@ -18,12 +18,22 @@ dayjs.locale('es');
 
 import { getDataUser } from '../../api/user';
 import { completarDatosUser } from '../../api/user';
+import { uploadFile } from '../../api/file';
+import AlertD from '../alert';
+import alertImage from '../../assets/images/Mascota.png';
+import imgError from '../../assets/images/imgError.jpg';
 
 const tipoCuentaPrestamista = ['Personal', 'Grupo', 'Empresa'];
 const metodosPago = ['Efectivo', 'Transferencia', 'Tarjeta'];
 const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 
 export default function PerfilPrestamista() {
+  /* Para mostrar la alerta de Error y Success */
+  const alertSuccessRef = useRef();
+  const alertErrorRef = useRef();
+  const [alertSuccess, setAlertSuccess] = useState('');
+  const [alertError, setAlertError] = useState('');
+
   const theme = useTheme();
   const [editMode, setEditMode] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
@@ -42,6 +52,7 @@ export default function PerfilPrestamista() {
     tipoCuenta: '',
     telefono: '',
     telefonoSecundario: '',
+    linkFoto: '',
     portafolio: [],
     metodoPago: [],
     horarios: [],
@@ -52,7 +63,8 @@ export default function PerfilPrestamista() {
     const fetchData = async () => {
       try {
         const id = localStorage.getItem('id');
-        const response = await getDataUser(id);
+        const role = localStorage.getItem('role');
+        const response = await getDataUser(role, id);
         const data = response.data;
 
         setDatos({
@@ -289,7 +301,6 @@ export default function PerfilPrestamista() {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
 
-    // Validar archivo
     if (file) {
       const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
       const maxSize = 5 * 1024 * 1024; // 5MB
@@ -372,6 +383,19 @@ export default function PerfilPrestamista() {
 
     setErrores({});
 
+    let fotoPerfil = datos.linkFoto;
+
+    if (foto) {
+      try {
+        const res = await uploadFile(foto, 'profile-pictures');
+        fotoPerfil = res.link;
+      } catch (error) {
+        setAlertError(error.message);
+        alertErrorRef.handleClickOpen();
+        return;
+      }
+    }
+
     const dataSend = {
       id: parseInt(localStorage.getItem('id')),
       datosCompletos: true,
@@ -379,7 +403,7 @@ export default function PerfilPrestamista() {
       telefono: datos.telefono.replace(/\s/g, ''),
       telefonoSecundario: datos.telefonoSecundario.replace(/\s/g, ''),
       descripcion: datos.descripcion,
-      linkFoto: 'https://www.facebook.com/sharer/sharer.php?u=', // Este campo aún faltas
+      linkFoto: fotoPerfil,
       tipoCuenta: datos.tipoCuenta,
       fechaNacimiento: dayjs(datos.fechaNacimiento).toDate().toISOString(),
       preferenciasPago: JSON.stringify(datos.metodoPago),
@@ -390,13 +414,17 @@ export default function PerfilPrestamista() {
 
     try {
       let role = localStorage.getItem('role');
+      console.log('role', role);
       const response = await completarDatosUser(dataSend, role);
       console.log('Response', response);
     } catch (error) {
       console.log(error.message);
+      setAlertError(error.message);
+      alertErrorRef.handleClickOpen();
     }
 
-    alert('Perfil guardado exitosamente');
+    setAlertSuccess('Presiona aceptar para continuar');
+    alertSuccessRef.current.handleClickOpen();
     setEditMode(false);
   };
 
@@ -409,6 +437,7 @@ export default function PerfilPrestamista() {
   };
   
   return (
+    <>
     <Stack sx={{ minHeight: '100vh', backgroundColor: theme.palette.background.default }}>
 
       <Paper elevation={3} sx={{ maxWidth: 1000, mx: 'auto', mt: 5, p: 4, borderRadius: 4, mb: 4 }}>
@@ -418,7 +447,7 @@ export default function PerfilPrestamista() {
               <input accept="image/*" type="file" onChange={handleFileChange} id="fotoPerfil" style={{ display: 'none' }} />
               <label htmlFor="fotoPerfil">
                 <Avatar
-                  src={preview || undefined}
+                  src={preview || datos.linkFoto || undefined}
                   sx={{ width: 120, height: 120, border: `3px solid ${theme.palette.primary.main}`, boxShadow: 3, cursor: 'pointer' }}
                 />
               </label>
@@ -426,7 +455,7 @@ export default function PerfilPrestamista() {
             </>
           ) : (
             <Avatar
-              src={preview || undefined}
+              src={preview || datos.linkFoto ||undefined}
               sx={{ width: 120, height: 120, border: `3px solid ${theme.palette.primary.main}`, boxShadow: 3 }}
             />
           )}
@@ -770,5 +799,24 @@ export default function PerfilPrestamista() {
       </Paper>
 
     </Stack>
+    {/* Alerta de Success */}
+    <AlertD
+      ref={alertSuccessRef}
+      titulo='Datos guardados'
+      mensaje={alertSuccess}
+      imagen={alertImage}
+      boton1='Aceptar'
+      onConfirm={() => setAlertSuccess('')}
+    />
+    {/* Alerta de Error */}
+    <AlertD
+      ref={alertErrorRef}
+      titulo='Error al guardar datos'
+      mensaje={alertError}
+      imagen={imgError}
+      boton1='Cerrar'
+      onConfirm={() => setAlertError('')}
+    />
+    </>
   );
 }
