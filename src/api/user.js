@@ -12,9 +12,9 @@ export const completarDatosUser = async (data, role) => {
   }
 };
 
-export const getDataUser = async (id) => {
+export const getDataUser = async (role, id) => {
   try {
-    const response = await axios.get(`http://localhost:3000/api/prestamista/get-data/${id}`, {
+    const response = await axios.get(`http://localhost:3000/api/${role}/get-data/${id}`, {
       withCredentials: true,
     });
     return response;

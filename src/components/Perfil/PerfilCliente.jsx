@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Avatar, Typography, TextField,
   Box, MenuItem, Divider, Paper, Checkbox, FormGroup, FormControlLabel,
@@ -11,6 +11,10 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 import 'dayjs/locale/es';
 import ButtonMod from '../ButtonMod'
+
+import { getDataUser } from '../../api/user';
+import { completarDatosUser } from '../../api/user';
+import { uploadFile } from '../../api/file';
 
 const tiposCliente = ['Personal', 'Grupo', 'Empresa'];
 const metodosPago = ['Efectivo', 'Transferencia', 'Tarjeta'];
@@ -25,14 +29,41 @@ export default function PerfilCliente() {
   const [errores, setErrores] = useState({});
 
   const [datos, setDatos] = useState({
-    nombre: 'Juan Pérez',
-    fechaNacimiento: '1990-01-01',
-    tipoCliente: '',
-    telefono1: '',
-    telefono2: '',
-    horarios: [],
+    nombre: '',
+    fechaNacimiento: '',
+    tipoCuenta: '',
+    telefono: '',
+    telefonoSecundario: '',
+    linkFoto: '',
     metodoPago: [],
+    horarios: [],
   });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const id = localStorage.getItem('id');
+        console.log(id);
+        const role = localStorage.getItem('role');
+        console.log(role);
+        const response = await getDataUser(role, id);
+        const data = response.data;
+
+        setDatos({
+          ...data,
+          fechaNacimiento: data.fechaNacimiento ? dayjs(data.fechaNacimiento) : null,
+          metodoPago: data.preferenciasPago ? JSON.parse(data.preferenciasPago) : [],
+          horarios: data.horarios ? JSON.parse(data.horarios) : [],
+        });
+
+        setFechaNacimiento(data.fechaNacimiento ? dayjs(data.fechaNacimiento) : null);
+      } catch (error) {
+        console.error('Error al obtener datos del perfil:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
 
   const handleCerrarSesion = () => {
@@ -40,7 +71,6 @@ export default function PerfilCliente() {
   }
   const [fechaNacimiento, setFechaNacimiento] = useState(dayjs(datos.fechaNacimiento));
 
-  // Validaciones
   const validateField = (name, value) => {
     switch (name) {
       case 'nombre':
@@ -64,58 +94,60 @@ export default function PerfilCliente() {
   };
 
   const validateDateChange = (newValue) => {
-    if (!newValue) return 'Selecciona tu fecha de nacimiento';
+    setFechaNacimiento(newValue);
+    setDatos((prev) => ({
+      ...prev,
+      fechaNacimiento: newValue ?? '',
+    }));
 
-    const today = dayjs();
-    const age = today.diff(newValue, 'year');
-
-    if (newValue.isAfter(today)) {
-      return 'La fecha no puede ser futura';
-    } else if (age < 18) {
-      return 'Debes ser mayor de 18 años';
-    } else if (age > 120) {
-      return 'Fecha no válida';
+    if (errores.fechaNacimiento) {
+      setErrores(prev => ({ ...prev, fechaNacimiento: '' }));
     }
-    return '';
+
+    if (newValue) {
+      const today = dayjs();
+      const age = today.diff(newValue, 'year');
+
+      if (newValue.isAfter(today)) {
+        setErrores(prev => ({ ...prev, fechaNacimiento: 'La fecha no puede ser futura' }));
+      } else if (age < 18) {
+        setErrores(prev => ({ ...prev, fechaNacimiento: 'Debes ser mayor de 18 años' }));
+      } else if (age > 120) {
+        setErrores(prev => ({ ...prev, fechaNacimiento: 'Fecha no válida' }));
+      }
+    }
   };
 
   const validate = () => {
     const newErrors = {};
 
-    // Validar nombre
     const nombreError = validateField('nombre', datos.nombre);
     if (nombreError) newErrors.nombre = nombreError;
 
-    // Validar fecha de nacimiento
     const fechaError = validateDateChange(fechaNacimiento);
     if (fechaError) newErrors.fechaNacimiento = fechaError;
 
-    // Validar tipo de cliente
-    if (!datos.tipoCliente) {
-      newErrors.tipoCliente = 'Selecciona un tipo de cliente';
+    if (!datos.tipoCuenta) {
+      newErrors.tipoCuenta = 'Selecciona un tipo de cuenta';
     }
 
-    // Validar teléfonos
-    const telefono1Error = validateField('telefono1', datos.telefono1);
-    if (telefono1Error) newErrors.telefono1 = telefono1Error;
+    const telefonoError = validateField('telefono', datos.telefono);
+    if (telefonoError) newErrors.telefono = telefonoError;
 
-    if (datos.telefono2) {
-      const telefono2Error = validateField('telefono2', datos.telefono2);
-      if (telefono2Error) newErrors.telefono2 = telefono2Error;
+    if (datos.telefonoSecundario) {
+      const telefonoSecundarioError = validateField('telefonoSecundario', datos.telefonoSecundario);
+      if (telefonoSecundarioError) newErrors.telefonoSecundario = telefonoSecundarioError;
     }
 
-    // Validar teléfonos duplicados
-    if (datos.telefono1 && datos.telefono2 &&
-      datos.telefono1.replace(/\s/g, '') === datos.telefono2.replace(/\s/g, '')) {
-      newErrors.telefono2 = 'Los teléfonos no pueden ser iguales';
+    if (datos.telefono && datos.telefonoSecundario &&
+      datos.telefono.replace(/\s/g, '') === datos.telefonoSecundario.replace(/\s/g, '')) {
+      newErrors.telefonoSecundario = 'Los teléfonos no pueden ser iguales';
     }
 
-    // Validar métodos de pago
     if (datos.metodoPago.length === 0) {
       newErrors.metodoPago = 'Selecciona al menos un método de pago';
     }
 
-    // Validar horarios
     if (datos.horarios.length === 0) {
       newErrors.horarios = 'Selecciona al menos un día';
     }
@@ -185,71 +217,34 @@ export default function PerfilCliente() {
     setFechaNacimiento(newValue);
     setDatos((prev) => ({
       ...prev,
-      fechaNacimiento: newValue ? newValue.format('YYYY-MM-DD') : '',
+      fechaNacimiento: newValue ?? '',
     }));
 
-    // Limpiar error de fecha si existe
     if (errores.fechaNacimiento) {
       setErrores(prev => ({ ...prev, fechaNacimiento: '' }));
     }
 
-    // Validar fecha en tiempo real
-    const error = validateDateChange(newValue);
-    if (error) {
-      setErrores(prev => ({ ...prev, fechaNacimiento: error }));
-    }
-  };
+    if (newValue) {
+      const today = dayjs();
+      const age = today.diff(newValue, 'year');
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-
-    if (editMode) {
-      const validationErrors = validate();
-
-      if (Object.keys(validationErrors).length > 0) {
-        setErrores(validationErrors);
-
-        // Scroll al primer error
-        const firstErrorField = Object.keys(validationErrors)[0];
-        const element = document.querySelector(`[name="${firstErrorField}"]`) ||
-          document.querySelector(`#${firstErrorField}`);
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          element.focus();
-        }
-        return;
+      if (newValue.isAfter(today)) {
+        setErrores(prev => ({ ...prev, fechaNacimiento: 'La fecha no puede ser futura' }));
+      } else if (age < 18) {
+        setErrores(prev => ({ ...prev, fechaNacimiento: 'Debes ser mayor de 18 años' }));
+      } else if (age > 120) {
+        setErrores(prev => ({ ...prev, fechaNacimiento: 'Fecha no válida' }));
       }
-
-      // Limpiar todos los errores
-      setErrores({});
-
-      // Procesar datos
-      const processedData = {
-        ...datos,
-        fechaNacimiento: fechaNacimiento.format('DD/MM/YYYY'),
-        telefono1: datos.telefono1.replace(/\s/g, ''),
-        telefono2: datos.telefono2.replace(/\s/g, ''),
-        foto: foto
-      };
-
-      console.log('Datos del perfil actualizados:', processedData);
-
-      // Aquí puedes hacer la llamada a tu API
-      // await updateProfile(processedData);
-
-      setEditMode(false);
-    } else {
-      setEditMode(true);
     }
   };
 
-  const handleSave = () => {
+  const handleSubmit = async (event) => {
+    event.preventDefault();
     const validationErrors = validate();
 
     if (Object.keys(validationErrors).length > 0) {
       setErrores(validationErrors);
 
-      // Scroll al primer error
       const firstErrorField = Object.keys(validationErrors)[0];
       const element = document.querySelector(`[name="${firstErrorField}"]`) ||
         document.querySelector(`#${firstErrorField}`);
@@ -260,40 +255,68 @@ export default function PerfilCliente() {
       return;
     }
 
-    // Limpiar errores
     setErrores({});
 
-    // Procesar datos
-    const updatedData = {
-      ...datos,
-      fechaNacimiento: fechaNacimiento.format('DD/MM/YYYY'),
-      telefono1: datos.telefono1.replace(/\s/g, ''),
-      telefono2: datos.telefono2.replace(/\s/g, ''),
-      foto,
+    const file = foto;
+    if (!file) {
+      alert('No se seleccionó ninguna imagen.');
+      return;
+    }
+
+    let fotoPerfil = '';
+    try {
+      const res = await uploadFile(file, 'profile-pictures');
+      fotoPerfil = res.link;
+    } catch (error) {
+      const errorMessage = error.res?.data?.error || 'Error al subir imagen. Por favor, intenta nuevamente.';
+      alert(`Error al subir imagen: ${errorMessage}`);
+      return;
+    }
+
+    const dataSend = {
+      id: parseInt(localStorage.getItem('id')),
+      datosCompletos: true,
+      nombre: datos.nombre,
+      telefono: datos.telefono.replace(/\s/g, ''),
+      telefonoSecundario: datos.telefonoSecundario.replace(/\s/g, ''),
+      linkFoto: fotoPerfil,
+      tipoCuenta: datos.tipoCuenta,
+      fechaNacimiento: dayjs(datos.fechaNacimiento).toDate().toISOString(),
+      preferenciasPago: JSON.stringify(datos.metodoPago),
+      horarios: JSON.stringify(datos.horarios),
     };
 
-    console.log('Datos actualizados:', updatedData);
+    try {
+      let role = localStorage.getItem('role');
+      const response = await completarDatosUser(dataSend, role);
+      console.log('Response', response);
+    } catch (error) {
+      console.log(error.message);
+    }
 
-    // Salir del modo edición
+    alert('Perfil guardado exitosamente');
     setEditMode(false);
   };
 
   const toggleEdit = () => {
-    // Alternar el estado de edición
-    setEditMode((prev) => !prev);
+    if (editMode) {
+      handleSubmit(new Event('submit'));
+    } else {
+      setEditMode(true);
+    }
   };
+
   return (
     <Stack sx={{ minHeight: '100vh', backgroundColor: theme.palette.background.default }}>
 
       <Paper elevation={3} sx={{ maxWidth: 1000, mx: 'auto', mt: 5, p: 4, borderRadius: 4, mb: 4 }}>
-        <Box component="form" onSubmit={handleSubmit}>
           <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column', mb: 4 }}>
             {editMode ? (
               <>
                 <input accept="image/*" type="file" onChange={handleFileChange} id="fotoPerfil" style={{ display: 'none' }} />
                 <label htmlFor="fotoPerfil">
                   <Avatar
-                    src={preview || undefined}
+                    src={preview || datos.linkFoto || undefined}
                     sx={{ width: 120, height: 120, border: `3px solid ${theme.palette.primary.main}`, boxShadow: 3, cursor: 'pointer' }}
                   />
                 </label>
@@ -305,7 +328,7 @@ export default function PerfilCliente() {
               </>
             ) : (
               <Avatar
-                src={preview || undefined}
+                src={preview || datos.linkFoto || undefined}
                 sx={{ width: 120, height: 120, border: `3px solid ${theme.palette.primary.main}`, boxShadow: 3 }}
               />
             )}
@@ -359,54 +382,54 @@ export default function PerfilCliente() {
             </Box>
 
             <Box sx={{ flex: '1 1 300px' }}>
-              <Typography variant="subtitle2">Tipo de Cliente</Typography>
+              <Typography variant="subtitle2">Tipo de cuenta</Typography>
               {editMode ? (
                 <TextField
                   select
-                  name="tipoCliente"
-                  value={datos.tipoCliente}
+                  name="tipoCuenta"
+                  value={datos.tipoCuenta}
                   onChange={handleChange}
                   fullWidth
                   required
-                  error={!!errores.tipoCliente}
-                  helperText={errores.tipoCliente || ' '}
+                  error={!!errores.tipoCuenta}
+                  helperText={errores.tipoCuenta}
                 >
                   {tiposCliente.map((t) => <MenuItem key={t} value={t}>{t}</MenuItem>)}
                 </TextField>
               ) : (
-                <TextField fullWidth value={datos.tipoCliente} disabled />
+                <TextField fullWidth value={datos.tipoCuenta} disabled />
               )}
             </Box>
           </Box>
 
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mt: 2 }}>
             <Box sx={{ flex: '1 1 300px' }}>
-              <Typography variant="subtitle2">Teléfono 1</Typography>
+              <Typography variant="subtitle2">Teléfono</Typography>
               <TextField
                 fullWidth
                 name="telefono1"
-                value={datos.telefono1}
+                value={datos.telefono}
                 onChange={handleChange}
                 disabled={!editMode}
                 required={editMode}
                 type="tel"
-                error={!!errores.telefono1}
-                helperText={errores.telefono1 || (editMode ? 'Formato: 10 dígitos' : ' ')}
+                error={!!errores.telefono}
+                helperText={errores.telefono || (editMode ? 'Formato: 10 dígitos' : ' ')}
                 slotProps={{ input: { maxLength: 15, pattern: '[0-9]*' } }}
               />
             </Box>
 
             <Box sx={{ flex: '1 1 300px' }}>
-              <Typography variant="subtitle2">Teléfono 2</Typography>
+              <Typography variant="subtitle2">Teléfono secundario</Typography>
               <TextField
                 fullWidth
                 name="telefono2"
-                value={datos.telefono2}
+                value={datos.telefonoSecundario}
                 onChange={handleChange}
                 disabled={!editMode}
                 type="tel"
-                error={!!errores.telefono2}
-                helperText={errores.telefono2 || (editMode ? 'Opcional: 10 dígitos' : ' ')}
+                error={!!errores.telefonoSecundario}
+                helperText={errores.telefonoSecundario || (editMode ? 'Opcional: 10 dígitos' : ' ')}
                 slotProps={{ input: { maxLength: 15, pattern: '[0-9]*' } }}
               />
             </Box>
@@ -473,7 +496,7 @@ export default function PerfilCliente() {
                 variant="principal"
                 textCont={editMode ? 'Guardar cambios' : 'Editar perfil'}
                 startIcon={editMode ? <SaveIcon /> : <EditIcon />}
-                clickEvent={editMode ? handleSave : toggleEdit}
+                clickEvent={toggleEdit}
               />
               
               <ButtonMod
@@ -485,13 +508,7 @@ export default function PerfilCliente() {
               />
             </Box>
           </Box>
-
-        </Box>
-
       </Paper>
-
-
-
     </Stack>
   );
 }

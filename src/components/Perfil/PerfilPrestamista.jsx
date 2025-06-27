@@ -54,7 +54,8 @@ export default function PerfilPrestamista() {
     const fetchData = async () => {
       try {
         const id = localStorage.getItem('id');
-        const response = await getDataUser(id);
+        const role = localStorage.getItem('role');
+        const response = await getDataUser(role, id);
         const data = response.data;
 
         setDatos({
@@ -291,7 +292,6 @@ export default function PerfilPrestamista() {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
 
-    // Validar archivo
     if (file) {
       const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
       const maxSize = 5 * 1024 * 1024; // 5MB
@@ -373,6 +373,7 @@ export default function PerfilPrestamista() {
     }
 
     setErrores({});
+
     const file = foto;
     if (!file) {
       alert('No se seleccionó ninguna imagen.');
