@@ -8,7 +8,7 @@ import Ofrecer from '../components/Home/OfrecerServicios';
 
 export default function Home() {
   const theme = useTheme();
-
+  const role = localStorage.getItem('role');
 
   return (
     <>
@@ -17,7 +17,11 @@ export default function Home() {
 
       <Categorias />
       <Trabajos />
-      <Ofrecer /> <br /><br />
+      {role === 'cliente' && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: theme.spacing(4) }}>
+          <Ofrecer />
+        </Box>
+      )}
     </>
   );
 }
