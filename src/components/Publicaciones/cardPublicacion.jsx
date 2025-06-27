@@ -96,13 +96,10 @@ export default function CardPublicacion({ titulo, nombre, imagen, categoria, alc
         </CardContent>
         <Divider sx={{ backgroundColor: theme.palette.primary.main, width: '80%', margin: '0 auto' }} />
         <CardActions sx={{ p: 2 }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+          <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
             <Typography variant="body2" color="text.secondary" fontWeight={600}>
               {fecha}
             </Typography>
-            <IconButton aria-label="eliminar" onClick={onDelete}>
-              <DeleteIcon sx={{ color: theme.palette.secondary.main }} />
-            </IconButton>
           </Box>
         </CardActions>
       </Card>
