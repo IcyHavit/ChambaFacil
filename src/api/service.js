@@ -13,3 +13,19 @@ export const createService = async (data) => {
     throw new Error(errorMessage);
   }
 };
+
+export const searchServices = async (trabajo, zona) => {
+  try {
+    const response = await axios.get('http://localhost:3000/api/servicio/search', {
+      params: {
+        trabajo,
+        zona,
+      },
+      withCredentials: true,
+    });
+    return response.data.servicios;
+  } catch (error) {
+    const errorMessage = error.response?.data?.error || 'Error al buscar servicios.';
+    throw new Error(errorMessage);
+  }
+};

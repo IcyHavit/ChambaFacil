@@ -4,15 +4,16 @@ import { Box, Typography, TextField, Button, Stack } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import IMG_HERO from '../../assets/images/Home/IMG_HERO.png';
 import SearchBar from '../SearchBar';
-
+import { useNavigate } from 'react-router-dom';
 
 
 export default function Hero() {
+  const navigate = useNavigate();
   const handleBuscar = (trabajo, alcaldia) => {
-    // Aquí se maneja la lógica de búsqueda con los valores de trabajo y alcaldía
-    //trabajo de backend
-    console.log('Buscar:', trabajo, 'en', alcaldia);
-
+    const query = new URLSearchParams();
+    if (trabajo) query.set('trabajo', trabajo);
+    if (alcaldia) query.set('alcaldia', alcaldia);
+    navigate(`/search?${query.toString()}`);
   };
 
   const theme = useTheme();

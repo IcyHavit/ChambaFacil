@@ -147,10 +147,11 @@ export default function Sidebar({
                 <Box sx={{ marginTop: '0.5rem' }}>
                     {disponibilidad.map((dia, index) => (
                         <Typography key={index} variant="body2" sx={{ color: theme.palette.secondary.main }}>
-                            {dia.dia}: {dia.horario}
+                        {dia.dia}: {dia.desde} - {dia.hasta}
                         </Typography>
                     ))}
                 </Box>
+
 
                 <Typography variant="body1" sx={{ color: theme.palette.secondary.main, marginTop: '0.5rem' }}>
                     <Typography component="span" sx={{ fontWeight: 'bold' }}>Evidencias:</Typography>
