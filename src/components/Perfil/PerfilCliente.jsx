@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   Avatar, Typography, TextField,
   Box, MenuItem, Divider, Paper, Checkbox, FormGroup, FormControlLabel,
@@ -15,12 +15,21 @@ import ButtonMod from '../ButtonMod'
 import { getDataUser } from '../../api/user';
 import { completarDatosUser } from '../../api/user';
 import { uploadFile } from '../../api/file';
+import AlertD from '../alert';
+import alertImage from '../../assets/images/Mascota.png';
+import imgError from '../../assets/images/imgError.jpg';
 
 const tiposCliente = ['Personal', 'Grupo', 'Empresa'];
 const metodosPago = ['Efectivo', 'Transferencia', 'Tarjeta'];
 const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 
-export default function PerfilCliente() {
+export default function PerfilCliente() {  
+  /* Para mostrar la alerta de Error y Success */
+  const alertSuccessRef = useRef();
+  const alertErrorRef = useRef();
+  const [alertSuccess, setAlertSuccess] = useState('');
+  const [alertError, setAlertError] = useState('');
+
   dayjs.locale('es');
   const theme = useTheme();
   const [editMode, setEditMode] = useState(false);
@@ -59,6 +68,8 @@ export default function PerfilCliente() {
         setFechaNacimiento(data.fechaNacimiento ? dayjs(data.fechaNacimiento) : null);
       } catch (error) {
         console.error('Error al obtener datos del perfil:', error);
+        setAlertError(error.message);
+        alertErrorRef.handleClickOpen();
       }
     };
 
@@ -80,9 +91,9 @@ export default function PerfilCliente() {
         if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(value)) return 'El nombre solo puede contener letras';
         return '';
 
-      case 'telefono1':
-      case 'telefono2':
-        if (name === 'telefono1' && !value.trim()) return 'El teléfono es obligatorio';
+      case 'telefono':
+      case 'telefonoSecundario':
+        if (name === 'telefono' && !value.trim()) return 'El teléfono es obligatorio';
         if (value.trim() && !/^\d{10}$/.test(value.replace(/\s/g, ''))) {
           return 'El teléfono debe tener 10 dígitos';
         }
@@ -257,20 +268,17 @@ export default function PerfilCliente() {
 
     setErrores({});
 
-    const file = foto;
-    if (!file) {
-      alert('No se seleccionó ninguna imagen.');
-      return;
-    }
+    let fotoPerfil = datos.linkFoto;
 
-    let fotoPerfil = '';
-    try {
-      const res = await uploadFile(file, 'profile-pictures');
-      fotoPerfil = res.link;
-    } catch (error) {
-      const errorMessage = error.res?.data?.error || 'Error al subir imagen. Por favor, intenta nuevamente.';
-      alert(`Error al subir imagen: ${errorMessage}`);
-      return;
+    if (foto) {
+      try {
+        const res = await uploadFile(foto, 'profile-pictures');
+        fotoPerfil = res.link;
+      } catch (error) {
+        setAlertError(error.message);
+        alertErrorRef.handleClickOpen();
+        return;
+      }
     }
 
     const dataSend = {
@@ -292,9 +300,12 @@ export default function PerfilCliente() {
       console.log('Response', response);
     } catch (error) {
       console.log(error.message);
+      setAlertError(error.message);
+      alertErrorRef.handleClickOpen();
     }
 
-    alert('Perfil guardado exitosamente');
+    setAlertSuccess('Presiona aceptar para continuar');
+    alertSuccessRef.current.handleClickOpen();
     setEditMode(false);
   };
 
@@ -307,6 +318,7 @@ export default function PerfilCliente() {
   };
 
   return (
+    <>
     <Stack sx={{ minHeight: '100vh', backgroundColor: theme.palette.background.default }}>
 
       <Paper elevation={3} sx={{ maxWidth: 1000, mx: 'auto', mt: 5, p: 4, borderRadius: 4, mb: 4 }}>
@@ -407,7 +419,7 @@ export default function PerfilCliente() {
               <Typography variant="subtitle2">Teléfono</Typography>
               <TextField
                 fullWidth
-                name="telefono1"
+                name="telefono"
                 value={datos.telefono}
                 onChange={handleChange}
                 disabled={!editMode}
@@ -423,7 +435,7 @@ export default function PerfilCliente() {
               <Typography variant="subtitle2">Teléfono secundario</Typography>
               <TextField
                 fullWidth
-                name="telefono2"
+                name="telefonoSecundario"
                 value={datos.telefonoSecundario}
                 onChange={handleChange}
                 disabled={!editMode}
@@ -510,5 +522,24 @@ export default function PerfilCliente() {
           </Box>
       </Paper>
     </Stack>
+    {/* Alerta de Success */}
+    <AlertD
+      ref={alertSuccessRef}
+      titulo='Datos guardados'
+      mensaje={alertSuccess}
+      imagen={alertImage}
+      boton1='Aceptar'
+      onConfirm={() => setAlertSuccess('')}
+    />
+    {/* Alerta de Error */}
+    <AlertD
+      ref={alertErrorRef}
+      titulo='Error al guardar datos'
+      mensaje={alertError}
+      imagen={imgError}
+      boton1='Cerrar'
+      onConfirm={() => setAlertError('')}
+    />
+    </>
   );
 }
