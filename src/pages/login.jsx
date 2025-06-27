@@ -1,16 +1,46 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
-import { Container, Box, Grid, TextField } from '@mui/material';
+import { Container, Box, Grid, TextField, InputAdornment, IconButton } from '@mui/material';
 import GoogleIcon from '@mui/icons-material/Google';
+import { Visibility } from '@mui/icons-material';
+import { VisibilityOff } from '@mui/icons-material';
 import ButtonMod from '../components/ButtonMod';
-import { Link } from 'react-router-dom';
 import img from '../assets/images/registro/registro.webp';
-
+import alertImage from '../assets/images/Mascota.png';
+import imgError from '../assets/images/imgError.jpg';
 // Backend
 import { useGoogleLogin } from '@react-oauth/google';
 import { login, loginGoogle, errorGoogleHandler } from '../api/auth';
+import AlertD from '../components/alert';
 
 export default function Login() {
+  const navigate = useNavigate();
+
+  /* Para mostrar la alerta de Success */
+  const alertSuccessRef = useRef();
+  const nextRoute = useRef(null);
+  const handleAlertOpen = () => {
+    if (nextRoute.current) {
+      navigate(nextRoute.current);
+    }
+  };
+
+  /* Para mostrar la alerta de Error */
+  const alertErrorRef = useRef();
+  const [alertError, setAlertError] = useState('');
+
+  /* Para mostrar y ocultar contraseña */
+  const [showPassword, setShowPassword] = useState(false);
+  
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  }
+  const handlePasswordChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
   const theme = useTheme();
 
   // Estado para los datos del formulario
@@ -86,14 +116,12 @@ export default function Login() {
         localStorage.setItem('name', response.data.name);
         localStorage.setItem('role', response.data.role);
 
-        alert('Login exitoso (Alerta provisional).');
-        // Redirigir al usuario a la página de inicio o dashboard
-        // window.location.href = '/';
+        nextRoute.current = response.role === 'prestamista' ? '/' : '/search';
+        alertSuccessRef.current.handleClickOpen();
       }
       catch (error) {
-        const errorMessage = error.response?.data?.error || 'Error al registrar. Por favor, intenta nuevamente.';
-        // Aleta provisional sin estilo de error
-        alert(`Error en el login. ${errorMessage}`);
+        setAlertError(error.message);
+        alertErrorRef.current.handleClickOpen();
       }
   
     }
@@ -108,13 +136,11 @@ export default function Login() {
       localStorage.setItem('name', response.name);
       localStorage.setItem('role', response.role);
 
-      // Aviso provisional sin estilo de registro exitoso
-      alert('Inicio de sesion exitoso con Google (Alerta provisional).');
-      // window.location.href = '/login';
+      nextRoute.current = response.role === 'prestamista' ? '/' : '/search';
+      alertSuccessRef.current.handleClickOpen();
       } catch (error) {
-      console.error('Error al obtener información del usuario:', error);
-      // Alerta provisional sin estilo de error
-      alert(`Error al iniciar sesion con Google. ${error.message}`);
+        setAlertError(error.message);
+        alertErrorRef.current.handleClickOpen();
     }
   };
 
@@ -124,12 +150,15 @@ export default function Login() {
   });
 
   return (
+    <>
     <Box
       sx={{
         minHeight: '100vh',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
+        marginTop: '30px',
+        marginBottom: '30px',
         bgcolor: theme.palette.background.default,
         p: 2,
       }}
@@ -197,14 +226,31 @@ export default function Login() {
                 required
                 id="password"
                 name="password"
-                label="Contraseña"
+                label="Ingresa tu contraseña"
                 variant="outlined"
-                type="password"
+                size="small"
+                type={showPassword ? 'text' : 'password'}
                 value={formData.password}
-                onChange={handleChange}
+                onChange={handlePasswordChange}
                 error={!!errors.password}
                 helperText={errors.password || ' '}
+                slotProps={{
+                  input: {
+                    endAdornment: (
+                      <InputAdornment position='end'>
+                        <IconButton
+                          onClick={togglePasswordVisibility}
+                          edge='end'
+                          aria-label='mostrar/ocultar contraseña'
+                        >
+                          {showPassword ? <VisibilityOff/> : <Visibility/>}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  },
+                }}
               />
+
               <Box
                 sx={{
                   display: 'flex',
@@ -274,5 +320,24 @@ export default function Login() {
         </Grid>
       </Container>
     </Box>
+    {/* Alerta de Success */}
+    <AlertD
+      ref={alertSuccessRef}
+      titulo='Inicio de sesión exitoso'
+      mensaje='Presiona aceptar para continuar'
+      imagen={alertImage}
+      boton1='Aceptar'
+      onConfirm={handleAlertOpen}
+    />
+    {/* Alerta de Error */}
+    <AlertD
+      ref={alertErrorRef}
+      titulo='Fallo al iniciar sesión'
+      mensaje={alertError}
+      imagen={imgError}
+      boton1='Cerrar'
+      onConfirm={() => setAlertError('')}
+    />
+    </>
   );
 }

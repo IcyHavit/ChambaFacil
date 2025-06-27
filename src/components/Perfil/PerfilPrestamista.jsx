@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
-  Avatar, Typography, TextField, Grid, Button,
+  Avatar, Typography, TextField, Button,
   Box, MenuItem, Divider, Paper, Checkbox, FormGroup, FormControlLabel,
   useTheme, Modal, IconButton, Stack
 } from '@mui/material';
@@ -16,7 +16,10 @@ import ButtonMod from '../ButtonMod';
 
 dayjs.locale('es');
 
-const tiposPrestamista = ['Personal', 'Grupo', 'Empresa'];
+import { getDataUser } from '../../api/user';
+import { completarDatosUser } from '../../api/user';
+
+const tipoCuentaPrestamista = ['Personal', 'Grupo', 'Empresa'];
 const metodosPago = ['Efectivo', 'Transferencia', 'Tarjeta'];
 const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 
@@ -31,28 +34,55 @@ export default function PerfilPrestamista() {
   const [nuevaExperiencia, setNuevaExperiencia] = useState('');
   const [errores, setErrores] = useState({});
 
-
+  /* Hacer petición de datos del prestamista ----------------------- */
   const [datos, setDatos] = useState({
-    nombre: 'Carlos Martínez',
-    fechaNacimiento: '1985-05-12',
+    nombre: '',
+    fechaNacimiento: '',
     descripcion: '',
-    tipoPrestamista: '',
-    contacto1: '',
-    contacto2: '',
+    tipoCuenta: '',
+    telefono: '',
+    telefonoSecundario: '',
     portafolio: [],
     metodoPago: [],
     horarios: [],
-    redes: { facebook: '', instagram: '', youtube: '' },
+    redesSociales: { facebook: '', instagram: '', youtube: ''},
   });
 
-  const [fechaNacimiento, setFechaNacimiento] = useState(dayjs(datos.fechaNacimiento));
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const id = localStorage.getItem('id');
+        const response = await getDataUser(id);
+        const data = response.data;
 
-  // Función para manejar el cierre de sesión
+        setDatos({
+          ...data,
+          fechaNacimiento: data.fechaNacimiento ? dayjs(data.fechaNacimiento) : null,
+          portafolio: data.experiencia ? JSON.parse(data.experiencia) : [],
+          metodoPago: data.preferenciasPago ? JSON.parse(data.preferenciasPago) : [],
+          horarios: data.horarios ? JSON.parse(data.horarios) : [],
+          redesSociales: data.redesSociales ? JSON.parse(data.redesSociales) :{
+            facebook: '',
+            instagram: '',
+            youtube: ''
+          }
+        });
+
+        setFechaNacimiento(data.fechaNacimiento ? dayjs(data.fechaNacimiento) : null);
+      } catch (error) {
+        console.error('Error al obtener datos del perfil:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+  
   const handleCerrarSesion = () => {
     console.log("jairoGameplays")
   }
 
-  // Función de validación individual de campos
+  const [fechaNacimiento, setFechaNacimiento] = useState(dayjs(datos.fechaNacimiento));
+
   const validateField = (name, value) => {
     switch (name) {
       case 'nombre':
@@ -68,9 +98,9 @@ export default function PerfilPrestamista() {
         if (value.trim().length > 500) return 'La descripción no puede exceder 500 caracteres';
         return '';
 
-      case 'contacto1':
-      case 'contacto2':
-        if (name === 'contacto1' && !value.trim()) return 'El teléfono es obligatorio';
+      case 'telefono':
+      case 'telefonoSecundario':
+        if (name === 'telefono' && !value.trim()) return 'El teléfono es obligatorio';
         if (value.trim() && !/^\d{10}$/.test(value.replace(/\s/g, ''))) {
           return 'El teléfono debe tener 10 dígitos';
         }
@@ -93,7 +123,8 @@ export default function PerfilPrestamista() {
     try {
       const url = new URL(string);
       return url.protocol === 'http:' || url.protocol === 'https:';
-    } catch (_) {
+    } catch (error) {
+      console.log(error.message);
       return false;
     }
   };
@@ -102,28 +133,25 @@ export default function PerfilPrestamista() {
   const validate = () => {
     const newErrors = {};
 
-    // Validar campos básicos
     const nombreError = validateField('nombre', datos.nombre);
     if (nombreError) newErrors.nombre = nombreError;
 
     const descripcionError = validateField('descripcion', datos.descripcion);
     if (descripcionError) newErrors.descripcion = descripcionError;
 
-    const contacto1Error = validateField('contacto1', datos.contacto1);
-    if (contacto1Error) newErrors.contacto1 = contacto1Error;
+    const telefonoError = validateField('telefono', datos.telefono);
+    if (telefonoError) newErrors.telefono = telefonoError;
 
-    if (datos.contacto2) {
-      const contacto2Error = validateField('contacto2', datos.contacto2);
-      if (contacto2Error) newErrors.contacto2 = contacto2Error;
+    if (datos.telefonoSecundario) {
+      const telefonoSecundarioError = validateField('telefonoSecundario', datos.telefonoSecundario);
+      if (telefonoSecundarioError) newErrors.telefonoSecundario = telefonoSecundarioError;
     }
 
-    // Validar teléfonos duplicados
-    if (datos.contacto1 && datos.contacto2 &&
-      datos.contacto1.replace(/\s/g, '') === datos.contacto2.replace(/\s/g, '')) {
-      newErrors.contacto2 = 'Los teléfonos no pueden ser iguales';
+    if (datos.telefono && datos.telefonoSecundario &&
+      datos.telefono.replace(/\s/g, '') === datos.telefonoSecundario.replace(/\s/g, '')) {
+      newErrors.telefonoSecundario = 'Los teléfonos no pueden ser iguales';
     }
 
-    // Validar fecha de nacimiento
     if (!fechaNacimiento) {
       newErrors.fechaNacimiento = 'Selecciona tu fecha de nacimiento';
     } else {
@@ -139,20 +167,16 @@ export default function PerfilPrestamista() {
       }
     }
 
-    // Validar tipo de prestamista
-    if (!datos.tipoPrestamista) {
-      newErrors.tipoPrestamista = 'Selecciona el tipo de prestamista';
+    if (!datos.tipoCuenta) {
+      newErrors.tipoCuenta = 'Selecciona el tipo de cuenta';
     }
 
-
-    // Validar horarios
     if (datos.horarios.length === 0) {
       newErrors.horarios = 'Selecciona al menos un día';
     }
 
-    // Validar URLs de redes sociales
-    Object.keys(datos.redes).forEach(red => {
-      const urlError = validateField(red, datos.redes[red]);
+    Object.keys(datos.redesSociales).forEach(red => {
+      const urlError = validateField(red, datos.redesSociales[red]);
       if (urlError) newErrors[red] = urlError;
     });
 
@@ -162,14 +186,12 @@ export default function PerfilPrestamista() {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // Limpiar errores del campo actual
     if (errores[name]) {
       setErrores(prev => ({ ...prev, [name]: '' }));
     }
 
     setDatos({ ...datos, [name]: value });
 
-    // Validación en tiempo real
     const error = validateField(name, value);
     if (error) {
       setErrores(prev => ({ ...prev, [name]: error }));
@@ -179,14 +201,12 @@ export default function PerfilPrestamista() {
   const handleRedChange = (e) => {
     const { name, value } = e.target;
 
-    // Limpiar errores del campo actual
     if (errores[name]) {
       setErrores(prev => ({ ...prev, [name]: '' }));
     }
 
     setDatos({ ...datos, redes: { ...datos.redes, [name]: value } });
 
-    // Validación en tiempo real
     const error = validateField(name, value);
     if (error) {
       setErrores(prev => ({ ...prev, [name]: error }));
@@ -211,15 +231,13 @@ export default function PerfilPrestamista() {
     setFechaNacimiento(newValue);
     setDatos((prev) => ({
       ...prev,
-      fechaNacimiento: newValue ? newValue.format('YYYY-MM-DD') : '',
+      fechaNacimiento: newValue ?? '',
     }));
 
-    // Limpiar error de fecha si existe
     if (errores.fechaNacimiento) {
       setErrores(prev => ({ ...prev, fechaNacimiento: '' }));
     }
 
-    // Validar fecha
     if (newValue) {
       const today = dayjs();
       const age = today.diff(newValue, 'year');
@@ -335,14 +353,13 @@ export default function PerfilPrestamista() {
     setModalOpen(true);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const validationErrors = validate();
 
     if (Object.keys(validationErrors).length > 0) {
       setErrores(validationErrors);
 
-      // Scroll al primer error
       const firstErrorField = Object.keys(validationErrors)[0];
       const element = document.querySelector(`[name="${firstErrorField}"]`) ||
         document.querySelector(`#${firstErrorField}`);
@@ -353,40 +370,44 @@ export default function PerfilPrestamista() {
       return;
     }
 
-    // Limpiar todos los errores
     setErrores({});
 
-    const prestamista = {
+    const dataSend = {
+      id: parseInt(localStorage.getItem('id')),
+      datosCompletos: true,
       nombre: datos.nombre,
+      telefono: datos.telefono.replace(/\s/g, ''),
+      telefonoSecundario: datos.telefonoSecundario.replace(/\s/g, ''),
       descripcion: datos.descripcion,
-      telefono1: datos.contacto1.replace(/\s/g, ''),
-      telefono2: datos.contacto2.replace(/\s/g, ''),
-      tipoPrestamista: datos.tipoPrestamista,
-      fechaNacimiento: fechaNacimiento ? fechaNacimiento.format('DD/MM/YYYY') : null,
-      metodoPago: datos.metodoPago,
-      horarios: datos.horarios,
-      fotoPerfil: foto,
-      portafolio: datos.portafolio,
-      redesSociales: datos.redes,
-      imagenes: imagenes
+      linkFoto: 'https://www.facebook.com/sharer/sharer.php?u=', // Este campo aún faltas
+      tipoCuenta: datos.tipoCuenta,
+      fechaNacimiento: dayjs(datos.fechaNacimiento).toDate().toISOString(),
+      preferenciasPago: JSON.stringify(datos.metodoPago),
+      horarios: JSON.stringify(datos.horarios),
+      redesSociales: JSON.stringify(datos.redesSociales),
+      experiencia: JSON.stringify(datos.portafolio),
     };
 
-    console.log('Datos del prestamista:', prestamista);
+    try {
+      let role = localStorage.getItem('role');
+      const response = await completarDatosUser(dataSend, role);
+      console.log('Response', response);
+    } catch (error) {
+      console.log(error.message);
+    }
 
-    // Aquí puedes agregar la lógica para enviar los datos
     alert('Perfil guardado exitosamente');
     setEditMode(false);
   };
 
   const toggleEdit = () => {
     if (editMode) {
-      // Si está saliendo del modo edición, realizar validación
       handleSubmit(new Event('submit'));
     } else {
       setEditMode(true);
     }
   };
-
+  
   return (
     <Stack sx={{ minHeight: '100vh', backgroundColor: theme.palette.background.default }}>
 
@@ -433,6 +454,7 @@ export default function PerfilPrestamista() {
         <Divider sx={{ mb: 3 }} />
         <Typography variant="h6" color="primary" sx={{ mb: 2 }}>Información Personal</Typography>
 
+        {/* Fecha de nacimiento ----------------------------- */}
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
           <Box sx={{ flex: '1 1 300px' }}>
             <Typography variant="subtitle2">Fecha de Nacimiento</Typography>
@@ -455,63 +477,64 @@ export default function PerfilPrestamista() {
               />
             </LocalizationProvider>
           </Box>
-
+          
+          {/* Tipo de cuenta --------------------------------- */}
           <Box sx={{ flex: '1 1 300px' }}>
-            <Typography variant="subtitle2">Tipo de Prestamista</Typography>
+            <Typography variant="subtitle2">Tipo de cuenta</Typography>
 
             {editMode ? (
               <TextField
                 select
-                name="tipoPrestamista"
-                value={datos.tipoPrestamista}
+                name="tipoCuenta"
+                value={datos.tipoCuenta}
                 onChange={handleChange}
                 fullWidth
-                error={!!errores.tipoPrestamista}
-                helperText={errores.tipoPrestamista}
+                error={!!errores.tipoCuenta}
+                helperText={errores.tipoCuenta}
               >
-                {tiposPrestamista.map((t) => (
+                {tipoCuentaPrestamista.map((t) => (
                   <MenuItem key={t} value={t}>{t}</MenuItem>
                 ))}
               </TextField>
             ) : (
-              <TextField fullWidth value={datos.tipoPrestamista} disabled />
+              <TextField fullWidth value={datos.tipoCuenta} disabled />
             )}
           </Box>
         </Box>
 
-        {/* Fila 2: Contacto 1 + Contacto 2 */}
+        {/* Teléfono + teléfono secundario ---------------------- */}
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mt: 2 }}>
           <Box sx={{ flex: '1 1 300px' }}>
-            <Typography variant="subtitle2">Contacto 1</Typography>
+            <Typography variant="subtitle2">Teléfono</Typography>
             <TextField
               fullWidth
-              name="contacto1"
-              value={datos.contacto1}
+              name="telefono"
+              value={datos.telefono}
               onChange={handleChange}
               disabled={!editMode}
-              error={!!errores.contacto1}
-              helperText={errores.contacto1 || (editMode ? 'Formato: 10 dígitos' : '')}
+              error={!!errores.telefono}
+              sx={{ color: 'black' }}
+              helperText={errores.telefono || (editMode ? 'Formato: 10 dígitos' : '')}
               slotProps={{ input: { maxLength: 15, pattern: '[0-9]*' } }}
-
             />
           </Box>
 
           <Box sx={{ flex: '1 1 300px' }}>
-            <Typography variant="subtitle2">Contacto 2</Typography>
+            <Typography variant="subtitle2">Teléfono secundario</Typography>
             <TextField
               fullWidth
-              name="contacto2"
-              value={datos.contacto2}
+              name="telefonoSecundario"
+              value={datos.telefonoSecundario}
               onChange={handleChange}
               disabled={!editMode}
-              error={!!errores.contacto2}
-              helperText={errores.contacto2 || (editMode ? 'Opcional: 10 dígitos' : '')}
+              error={!!errores.telefonoSecundario}
+              helperText={errores.telefonoSecundario || (editMode ? 'Opcional: 10 dígitos' : '')}
               slotProps={{ input: { maxLength: 15, pattern: '[0-9]*' } }}
             />
           </Box>
         </Box>
 
-        {/* Campo descripción separado */}
+        {/* Descripción ---------------------------------------- */}
         <Box sx={{ mt: 3 }}>
           <Typography variant="subtitle2">Descripción</Typography>
           <TextField
@@ -528,7 +551,7 @@ export default function PerfilPrestamista() {
           />
         </Box>
 
-        {/* Redes sociales */}
+        {/* Redes sociales -------------------------------------- */}
         <Box sx={{ mt: 3 }}>
           <Typography variant="h6" color="primary" sx={{ mb: 2 }}>Redes Sociales</Typography>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
@@ -536,7 +559,7 @@ export default function PerfilPrestamista() {
               name="facebook"
               label="Facebook"
               placeholder="https://facebook.com/..."
-              value={datos.redes.facebook}
+              value={datos.redesSociales.facebook}
               onChange={handleRedChange}
               disabled={!editMode}
               error={!!errores.facebook}
@@ -547,7 +570,7 @@ export default function PerfilPrestamista() {
               name="instagram"
               label="Instagram"
               placeholder="https://instagram.com/..."
-              value={datos.redes.instagram}
+              value={datos.redesSociales.instagram}
               onChange={handleRedChange}
               disabled={!editMode}
               error={!!errores.instagram}
@@ -558,7 +581,7 @@ export default function PerfilPrestamista() {
               name="youtube"
               label="Youtube"
               placeholder="https://youtube.com/..."
-              value={datos.redes.youtube}
+              value={datos.redesSociales.youtube}
               onChange={handleRedChange}
               disabled={!editMode}
               error={!!errores.youtube}
@@ -568,6 +591,7 @@ export default function PerfilPrestamista() {
           </Box>
         </Box>
 
+        {/* Experiencia --------------------------------------------------- */}
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mt: 3 }}>
           <Box sx={{ width: '100%' }}>
             <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: theme.palette.secondary.main, mb: 1 }}>
@@ -628,6 +652,7 @@ export default function PerfilPrestamista() {
             {errores.portafolio && <Typography variant="caption" color="error">{errores.portafolio}</Typography>}
           </Box>
 
+          {/* Métodos de pago -----------------------------------------------------  */}
           <Box>
             <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1 }}>
               Métodos de Pago
@@ -651,6 +676,7 @@ export default function PerfilPrestamista() {
             {errores.metodoPago && <Typography variant="caption" color="error">{errores.metodoPago}</Typography>}
           </Box>
 
+          {/* Horarios --------------------------------------------------------------- */}
           <Box>
             <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1 }}>
               Horarios Preferidos
