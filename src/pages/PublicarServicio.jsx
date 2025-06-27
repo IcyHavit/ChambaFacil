@@ -201,18 +201,18 @@ export default function PublicarServicio() {
 
     console.log(imagenes);
 
-    // mandar solo archivo al servidor en imagenes en http://localhost:3000/api/upload/single:users
     const formData = new FormData();
-    formData.append('file', imagenes[0]); // Solo una imagen
+    formData.append('file', imagenes[0]);
 
     try {
       const response = await axios.post(`http://localhost:3000/api/upload/single/services`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
-        }
+        },
+        withCredentials: true,
       });
 
-      console.log(response.data); // <- Aquí puedes obtener el nombre del archivo
+      console.log(response.data);
     } catch (error) {
       console.error(error);
     }
