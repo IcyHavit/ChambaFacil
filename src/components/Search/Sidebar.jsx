@@ -4,6 +4,8 @@ import StarIcon from '@mui/icons-material/Star';
 import StarHalfIcon from '@mui/icons-material/StarHalf';
 import CloseIcon from '@mui/icons-material/Close';
 import ButtonMod from '../ButtonMod';
+import { createSolicitud } from '../../api/solicitud'; // Importar la función para crear solicitudes
+import { sendChatMessage } from '../../api/chat'; // Importar la función para enviar mensajes
 
 export default function Sidebar({
   theme,
@@ -21,22 +23,58 @@ export default function Sidebar({
   modalidadesCobro,
   disponibilidad,
   evidencias,
+  idServicio,
+  correoPrestamista,
 }) {
   const [tipoUsuario] = useState('cliente');
 
-  const handleInciarSolicitud = () => {
+  const handleInciarSolicitud = async () => {
     // Aquí puedes manejar la lógica para iniciar una solicitud
     console.log('Iniciar solicitud');
 
     // imprimir el id de cliente obtenido del localStorage
-    const clienteId = localStorage.getItem('id');
+    const clienteId = parseInt(localStorage.getItem('id'), 10);
     console.log('ID del cliente:', clienteId);
 
+    const clientEmail = localStorage.getItem('email') || localStorage.getItem('correo'); 
+    console.log('Correo del cliente:', clientEmail);
 
-    // Obtener el id del servicio seleccionado
-    const servicioId = localStorage.getItem('servicioId');
+    const idServicioData = idServicio;
+    console.log('ID del servicio:', idServicioData);
 
+    const correoPrestamistaData = correoPrestamista;
+    console.log('Correo del prestamista:', correoPrestamistaData);
+
+
+    // Crear el objeto de solicitud con los id de cliente y servicio solamente
+    const solicitudData = {
+      id_servicio: idServicioData,
+      id_cliente: clienteId
+    }
+
+    const mensaje = `Hola, he iniciado una solicitud para el servicio "${titulo}".`;
+    const mensajeData = {
+      senderEmail: clientEmail, // Correo del cliente
+      receiverEmail: correoPrestamistaData, // Correo del prestamista
+      content: mensaje, // Contenido del mensaje
+      timestamp: new Date().toISOString(),
+    }
+    
+    try {
+      // Llamar a la función para crear la solicitud
+      const response = await createSolicitud(solicitudData);
+      console.log('Solicitud creada:', response);
+
+      // Enviar un mensaje al prestamista
+      const mensajeResponse = await sendChatMessage(mensajeData);
+      console.log('Mensaje enviado:', mensajeResponse);
+
+
+    } catch (error) {
+      console.error('Error al crear la solicitud:', error);
+    }
   };
+
   const [previewSrc, setPreviewSrc] = useState(null); // Estado para la imagen seleccionada
 
   const renderStars = () => {
