@@ -5,6 +5,7 @@ import { Visibility, VisibilityOff, Google as GoogleIcon } from '@mui/icons-mate
 import { useTheme } from '@mui/material/styles';
 import img from '../assets/images/registro/registro.webp';
 import alertImage from '../assets/images/Mascota.png';
+import imgError from '../assets/images/imgError.jpg';
 // Componentes
 import ButtonMod from '../components/ButtonMod';
 import AlertD from '../components/alert';
@@ -353,7 +354,7 @@ export default function Register() {
       ref={alertErrorRef}
       titulo='Registro fallido'
       mensaje={alertError}
-      imagen={alertImage}
+      imagen={imgError}
       boton1='Cerrar'
       onConfirm={() => setAlertError('')}
     />
