@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   AppBar, Toolbar, Typography, IconButton, Box, Drawer,
   List, ListItem, ListItemIcon, ListItemText, Button,
@@ -33,13 +33,23 @@ export default function Navbar() {
   const theme = useTheme();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
-  const [isLoggedIn, setLogged] = useState(true);
+  const [isLoggedIn, setLogged] = useState(false);
 
   // controla la visibilidad del botón
   const showPublishButton = true;
 
   const handleClose = () => setOpen(false);
   const handleOpen = () => setOpen(true);
+
+  useEffect(() => {
+    if(localStorage.getItem('role') === 'prestamista' || localStorage.getItem('role') === 'cliente') {
+      setLogged(true);
+    } else {
+      setLogged(false);
+    }
+  }, []);
+
+
 
   return (
     <>

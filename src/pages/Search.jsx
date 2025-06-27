@@ -44,7 +44,6 @@ export default function Search() {
   const handleCardClick = (trabajo) => {
     setSelectedWork(trabajo); // Actualizar el trabajo seleccionado
     console.log('Trabajo seleccionado:', trabajo);
-    console.log('Datos Prestamista Seleccionado:', trabajo.prestamistaData);
   };
 
   const handleBuscar = async(trabajo, alcaldia) => {
@@ -73,6 +72,7 @@ export default function Search() {
       fotoPrestamista: s.prestamistaData.linkFoto || '', // Agregar foto por defecto
       nombrePrestamista: s.prestamistaData.nombre || 'Desconocido',
       correoPrestamista: s.prestamistaData.correo || 'No disponible',
+      idServico: s.id,
     }));
     setTrabajos(transformados);
     setPage(1);
