@@ -309,7 +309,7 @@ export default function Prestamista() {
     }
   };
 
-  // /* Para mostrar alerta de Error ------------------------------ */
+  /* Para mostrar alerta de Error ------------------------------ */
   const alertErrorRef = useRef();
   const [alertError, setAlertError] = useState('');
   
@@ -352,7 +352,7 @@ export default function Prestamista() {
     try {
       let role = localStorage.getItem('role');
       const response = await completarDatosUser(data, role);
-      console.log('Respuesta: ', response);
+      console.log('Response: ', response);
       
       nextRoute.current = '/';
       alertSuccessRef.current.handleClickOpen();

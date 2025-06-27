@@ -1,5 +1,7 @@
-import { Box, FormGroup, Grid, TextField, Typography } from '@mui/material';
+import { useState, useRef } from 'react';
 import { useTheme } from '@emotion/react';
+import { useNavigate } from 'react-router-dom';
+import { Box, FormGroup, Grid, TextField, Typography, Avatar, Button, Checkbox } from '@mui/material';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
@@ -10,13 +12,13 @@ import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import dayjs from 'dayjs';
 import 'dayjs/locale/es';
-import Checkbox from '@mui/material/Checkbox';
 import ButtonMod from '../components/ButtonMod'
 import SendIcon from '@mui/icons-material/Send';
-import { useState } from 'react';
-import { Avatar, Button } from '@mui/material';
 
 import { completarDatosUser } from '../api/user';
+import AlertD from '../components/alert';
+import alertImage from '../assets/images/Mascota.png';
+import imgError from '../assets/images/imgError.jpg';
 
 export default function Cliente() {
   dayjs.locale('es');
@@ -197,6 +199,22 @@ export default function Cliente() {
     return newErrors;
   };
 
+  /* Para mostrar alerta de Success ----------------------------- */
+  const navigate = useNavigate();
+
+  const alertSuccessRef = useRef();
+  const nextRoute = useRef(null);
+  const handleAlertOpen = () => {
+    if (nextRoute.current) {
+      navigate(nextRoute.current);
+    }
+  };
+
+  /* Para mostrar alerta de Error ------------------------------ */
+  const alertErrorRef = useRef();
+  const [alertError, setAlertError] = useState('');
+  
+  /* handleSubmit ---------------------------------------------- */
   const handleSubmit = async (event) => {
     event.preventDefault();
     const validationErrors = validate();
@@ -204,7 +222,6 @@ export default function Cliente() {
     if (Object.keys(validationErrors).length > 0) {
       setErrores(validationErrors);
 
-      // Scroll al primer error
       const firstErrorField = Object.keys(validationErrors)[0];
       const element = document.querySelector(`[name="${firstErrorField}"]`) ||
         document.querySelector(`#${firstErrorField}`);
@@ -215,45 +232,50 @@ export default function Cliente() {
       return;
     }
 
-    // Limpiar todos los errores
     setErrores({});
 
+    const data = {
+      id: parseInt(localStorage.getItem('id')),
+      datosCompletos: true,
+      nombre: formData.nombre,
+      telefono: formData.telefono1.replace(/\s/g, ''),
+      telefonoSecundario: formData.telefono2.replace(/\s/g, ''),
+      linkFoto: 'https://www.facebook.com/sharer/sharer.php?u=', // Este campo aún faltas
+      tipoCuenta: formData.tipoCuenta,
+      fechaNacimiento: formData.fechaNacimiento?.toISOString(),
+      preferenciasPago: JSON.stringify(formData.preferenciasPago),
+      horarios: JSON.stringify(formData.horarios),
+    };
+
     try {
-      const data = {
-        id: parseInt(localStorage.getItem('id')),
-        datosCompletos: true,
-        nombre: formData.nombre,
-        telefono: formData.telefono1.replace(/\s/g, ''),
-        telefonoSecundario: formData.telefono2.replace(/\s/g, ''),
-        linkFoto: 'https://www.facebook.com/sharer/sharer.php?u=', // Este campo aún faltas
-        tipoCuenta: formData.tipoCuenta,
-        fechaNacimiento: formData.fechaNacimiento?.toISOString(),
-        preferenciasPago: JSON.stringify(formData.preferenciasPago),
-        horarios: JSON.stringify(formData.horarios),
-      };
+      console.log('data ', data);
       let role = localStorage.getItem('role');
-      console.log(localStorage);
-      console.log('Rol', role);
       const response = await completarDatosUser(data, role);
-      console.log('Respuesta: ', response);
-      alert('Datos Completados con éxito');
+      console.log('Response: ', response);
+
+      nextRoute.current = '/';
+      alertSuccessRef.current.handleClickOpen();
     } catch (error) {
-      alert(error.message);
+      setAlertError(error.message);
+      alertErrorRef.current.handleClickOpen();
     }
   };
 
   return (
+    <>
     <Box
       sx={{
         borderColor: theme.palette.primary.main,
         borderStyle: 'solid',
-        width: 1100,
+        width: '70%',
         height: 'auto',
         borderRadius: theme.shape.borderRadius,
         mx: 'auto',        // left-right margin “auto” ⇒ centra horizontalmente
         my: 2,              // (opcional) separa un poco arriba/abajo
         pt:2,
-        pb:2
+        pb:2,
+        marginTop: '50px',
+        marginBottom: '50px'
       }}
     >      <Typography sx={{ textAlign: 'center', fontFamily: theme.typography.bodyLarge, color: theme.palette.secondary.main, fontSize: 45, fontWeight: 'bold' }}>
         Cliente
@@ -399,5 +421,24 @@ export default function Cliente() {
         </Box>
       </Box>
     </Box>
+    {/* Alerta de Success */}
+    <AlertD
+      ref={alertSuccessRef}
+      titulo='Datos completados exitosamente'
+      mensaje='Presiona aceptar para continuar'
+      imagen={alertImage}
+      boton1='Aceptar'
+      onConfirm={handleAlertOpen}
+    />
+    {/* Alerta de Error */}
+    <AlertD
+      ref={alertErrorRef}
+      titulo='Algo falló al completar los datos'
+      mensaje={alertError}
+      imagen={imgError}
+      boton1='Cerrar'
+      onConfirm={() => setAlertError('')}
+    />
+    </>
   );
 }
