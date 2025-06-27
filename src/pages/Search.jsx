@@ -27,10 +27,14 @@ export default function Search() {
   useEffect(() => {
     const trabajo = searchParams.get('trabajo') || '';
     const alcaldia = searchParams.get('alcaldia') || '';
-    if (trabajo || alcaldia) {
-      handleBuscar(trabajo, alcaldia);
+    const categoria = searchParams.get('categoria') || '';
+
+    if (trabajo || alcaldia || categoria) {
+      handleBuscar(trabajo, alcaldia, categoria);
     }
   }, [searchParams]);
+
+
 
   const handlePageChange = (event, value) => {
     setPage(value); // Actualizar la página actual
@@ -46,14 +50,13 @@ export default function Search() {
     console.log('Trabajo seleccionado:', trabajo);
   };
 
-  const handleBuscar = async(trabajo, alcaldia) => {
-    // Aquí se maneja la lógica de búsqueda con los valores de trabajo y alcaldía
-    //trabajo de backend
-    console.log('Buscar:', trabajo, 'en', alcaldia);
+  const handleBuscar = async (trabajo, alcaldia, categoria = '') => {
+  console.log('Buscar:', trabajo, 'en', alcaldia, 'categoría:', categoria);
 
-    try {
-      const servicios = await searchServices(trabajo, alcaldia);
-      const transformados = servicios.map(s => ({
+  try {
+    const servicios = await searchServices(trabajo, alcaldia);
+
+    let transformados = servicios.map(s => ({
       titulo: s.titulo,
       prestamista: s.prestamistaData.nombre || 'Desconocido',
       imagen: JSON.parse(s.imagenes)[0],
@@ -69,23 +72,31 @@ export default function Search() {
       evidencias: JSON.parse(s.imagenes),
       prestamistaId: s.prestamistaId,
       calificacionPrestamista: s.prestamistaData.calificacion ? s.prestamistaData.calificacion.toFixed(1) : 0,
-      fotoPrestamista: s.prestamistaData.linkFoto || '', // Agregar foto por defecto
+      fotoPrestamista: s.prestamistaData.linkFoto || '',
       nombrePrestamista: s.prestamistaData.nombre || 'Desconocido',
       correoPrestamista: s.prestamistaData.correo || 'No disponible',
       idServico: s.id,
     }));
+
+    if (categoria.trim()) {
+      console.log('Filtrando por categoría:', categoria);
+      transformados = transformados.filter(
+        s => s.categoria.toLowerCase().includes(categoria.toLowerCase())
+      );
+    }
+
     setTrabajos(transformados);
     setPage(1);
     setSelectedWork(null);
-    }
-    catch (error) {
-      const errorMessage = error.response?.data?.error || 'Error al buscar servicio, por favor intenta nuevamente.';
-      console.error('Error al buscar servicios:', errorMessage);
-      console.error(error);
-      setTrabajos([]); // Limpiar trabajos en caso de error
-      setSelectedWork(null); // Limpiar trabajo seleccionado en caso de error
-    }
-  };
+  } catch (error) {
+    const errorMessage = error.response?.data?.error || 'Error al buscar servicio, por favor intenta nuevamente.';
+    console.error('Error al buscar servicios:', errorMessage);
+    console.error(error);
+    setTrabajos([]);
+    setSelectedWork(null);
+  }
+};
+
 
   const handleApplyFilters = (filters) => {
 
@@ -127,9 +138,9 @@ export default function Search() {
         <SearchBar handleBuscar={handleBuscar} />
 
         {/* Botón para abrir el drawer de filtros */}
-        <IconButton color="secondary" onClick={() => handleFilter(true)}>
+        {/* <IconButton color="secondary" onClick={() => handleFilter(true)}>
           <FilterAltIcon sx={{ fontSize: '2rem', color: theme.palette.tertiary.main }} />
-        </IconButton>
+        </IconButton> */}
         </Box>
 
         {/* Drawer de filtros */}

@@ -34,6 +34,7 @@ export default function Navbar() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [isLoggedIn, setLogged] = useState(false);
+  const [userRole, setUserRole] = useState(null);
 
   // controla la visibilidad del botón
   const showPublishButton = true;
@@ -42,10 +43,13 @@ export default function Navbar() {
   const handleOpen = () => setOpen(true);
 
   useEffect(() => {
-    if(localStorage.getItem('role') === 'prestamista' || localStorage.getItem('role') === 'cliente') {
+    const role = localStorage.getItem('role');
+    if(role === 'prestamista' || role === 'cliente') {
       setLogged(true);
+      setUserRole(role);
     } else {
       setLogged(false);
+      setUserRole(null);
       // Si esta no esta en login o register, redirige al login
       if (!window.location.pathname.includes('/login') && !window.location.pathname.includes('/register'))
         navigate('/login');
@@ -90,9 +94,7 @@ export default function Navbar() {
               </IconButton>
             </LightTooltip>
 
-            {isLoggedIn ? (
-              <>
-            {showPublishButton && (
+           {isLoggedIn && userRole === 'prestamista' && (
               <LightTooltip title="Mis publicaciones" slots={{ transition: Zoom }}>
                   <IconButton
                     sx={{ color: theme.palette.secondary.dark }}
@@ -103,6 +105,8 @@ export default function Navbar() {
                 </LightTooltip>
             )}
 
+            {isLoggedIn ? (
+              <>
                 <LightTooltip title="Chat" slots={{ transition: Zoom }}>
                   <IconButton
                     sx={{ color: theme.palette.secondary.dark }}
@@ -184,6 +188,7 @@ export default function Navbar() {
                     </IconButton>
                   </LightTooltip>
             )}
+
             <ListItemText primary="Mis publicaciones" />
             </ListItem>
                 <ListItem button onClick={() => navigate('/chat')}>
