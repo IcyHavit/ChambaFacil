@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useTheme } from '@emotion/react';
+import { useNavigate } from 'react-router-dom';
 import { Box, FormGroup, Grid, TextField, Typography, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel, Checkbox, Avatar, Button, IconButton } from '@mui/material';
 import { AddAPhoto as AddAPhotoIcon, Close as CloseIcon, Send as SendIcon } from '@mui/icons-material';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
@@ -10,6 +11,9 @@ import 'dayjs/locale/es';
 
 import ButtonMod from '../components/ButtonMod';
 import { completarDatosUser } from '../api/user';
+import AlertD from '../components/alert';
+import alertImage from '../assets/images/Mascota.png';
+import imgError from '../assets/images/imgError.jpg';
 
 dayjs.locale('es');
 
@@ -294,6 +298,22 @@ export default function Prestamista() {
     return newErrors;
   };
 
+  /* Para mostrar alerta de Success ----------------------------- */
+  const navigate = useNavigate();
+
+  const alertSuccessRef = useRef();
+  const nextRoute = useRef(null);
+  const handleAlertOpen = () => {
+    if (nextRoute.current) {
+      navigate(nextRoute.current);
+    }
+  };
+
+  // /* Para mostrar alerta de Error ------------------------------ */
+  const alertErrorRef = useRef();
+  const [alertError, setAlertError] = useState('');
+  
+  /* handleSubmit ---------------------------------------------- */
   const handleSubmit = async (event) => {
     event.preventDefault();
     const validationErrors = validate();
@@ -301,7 +321,6 @@ export default function Prestamista() {
     if (Object.keys(validationErrors).length > 0) {
       setErrores(validationErrors);
 
-      // Scroll al primer error
       const firstErrorField = Object.keys(validationErrors)[0];
       const element = document.querySelector(`[name="${firstErrorField}"]`) ||
         document.querySelector(`#${firstErrorField}`);
@@ -312,47 +331,40 @@ export default function Prestamista() {
       return;
     }
 
-    // Limpiar todos los errores
     setErrores({});
 
+    const data = {
+      id: parseInt(localStorage.getItem('id')),
+      datosCompletos: true,
+      nombre: formData.nombre,
+      telefono: formData.telefono1.replace(/\s/g, ''),
+      telefonoSecundario: formData.telefono2.replace(/\s/g, ''),
+      descripcion: formData.descripcion,
+      linkFoto: 'https://www.facebook.com/sharer/sharer.php?u=', // Este campo aún faltas
+      tipoCuenta: formData.tipoCuenta,
+      fechaNacimiento: formData.fechaNacimiento?.toISOString(),
+      preferenciasPago: JSON.stringify(formData.preferenciasPago),
+      horarios: JSON.stringify(formData.horarios),
+      redesSociales: JSON.stringify(formData.redesSociales),
+      experiencia: JSON.stringify(experiencias),
+    };
+
     try {
-      const data = {
-        id: parseInt(localStorage.getItem('id')),
-        datosCompletos: true,
-        nombre: formData.nombre,
-        telefono: formData.telefono1.replace(/\s/g, ''),
-        telefonoSecundario: formData.telefono2.replace(/\s/g, ''),
-        descripcion: formData.descripcion,
-        linkFoto: 'https://www.facebook.com/sharer/sharer.php?u=', // Este campo aún faltas
-        tipoCuenta: formData.tipoCuenta,
-        fechaNacimiento: formData.fechaNacimiento?.toISOString(),
-        preferenciasPago: JSON.stringify(formData.preferenciasPago),
-        horarios: JSON.stringify(formData.horarios),
-        redesSociales: JSON.stringify(formData.redesSociales),
-      };
       let role = localStorage.getItem('role');
       const response = await completarDatosUser(data, role);
       console.log('Respuesta: ', response);
-      alert('Datos Completados con éxito');
+      
+      nextRoute.current = '/';
+      alertSuccessRef.current.handleClickOpen();
     } catch (error) {
-      alert(error.message);
+      setAlertError(error.message);
+      alertErrorRef.current.handleClickOpen();
     }
   };
 
   return (
-    <Box
-      sx={{
-        borderColor: theme.palette.primary.main,
-        borderStyle: 'solid',
-        width: 1100,
-        height: 'auto',
-        borderRadius: theme.shape.borderRadius,
-        mx: 'auto',        
-        my: 2,              
-        pt:2,
-        pb:2
-      }}
-    >
+    <>
+    <Box sx={{ borderColor: theme.palette.primary.main, borderStyle: 'solid', width: '70%', height: 'auto', borderRadius: theme.shape.borderRadius, mx: 'auto', my: 2, pt:2, pb:2, marginTop: '50px', marginBottom: '50px' }}>
       <Typography sx={{ textAlign: 'center', fontFamily: theme.typography.bodyLarge, color: theme.palette.secondary.main, fontSize: 45, fontWeight: 'bold' }}>
         Prestamista
       </Typography>
@@ -698,16 +710,7 @@ export default function Prestamista() {
                   style={{ display: 'none' }}
                 />
                 <label htmlFor="evidencias">
-                  <Box
-                    sx={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      width: 100,
-                      height: 100,
-                      cursor: 'pointer',
-                    }}
-                  />
+                  <Box sx={{ position: 'absolute', top: 0, left: 0, width: 100, height: 100, cursor: 'pointer' }} />
                 </label>
               </Box>
             )}
@@ -725,8 +728,26 @@ export default function Prestamista() {
             type='submit'
           />
         </Box>
-
       </Box>
     </Box>
+    {/* Alerta de Success */}
+    <AlertD
+      ref={alertSuccessRef}
+      titulo='Datos completados exitosamente'
+      mensaje='Presiona aceptar para continuar'
+      imagen={alertImage}
+      boton1='Aceptar'
+      onConfirm={handleAlertOpen}
+    />
+    {/* Alerta de Error */}
+    <AlertD
+      ref={alertErrorRef}
+      titulo='Algo falló al completar los datos'
+      mensaje={alertError}
+      imagen={imgError}
+      boton1='Cerrar'
+      onConfirm={() => setAlertError('')}
+    />
+    </>
   );
 };

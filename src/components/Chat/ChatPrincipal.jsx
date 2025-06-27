@@ -59,7 +59,7 @@ export default function MessageBubble({
             component="img"
             src={src}
             alt={text || 'imagen enviada'}
-            sx={{ width: 140, borderRadius: 1 }}
+            sx={{ width: 300, borderRadius: 1 }}
           />
 
           <Typography

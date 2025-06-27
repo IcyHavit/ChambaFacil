@@ -6,7 +6,8 @@ import ProfilePanel from '../components/Chat/Informacion';
 import MessageBubble from '../components/Chat/ChatPrincipal';
 import PerfilImg from '../assets/images/Perfil.png';
 // pruebas de la API
-import { getRecentChats, sendChatMessage, getChatMessages, getContactData } from '../api/chat';
+import { getRecentChats, sendChatMessage, getChatMessages, getContactData, uploadChatImage } from '../api/chat';
+import axios from 'axios';
 
 export default function Home() {
 
@@ -104,6 +105,48 @@ export default function Home() {
       console.warn("Chat not found:", chat_Id);
     }
   };
+
+  // Subir archivos enviados como mensaje al server
+  const handleSubmitFiles = async (event) => {
+    // no hacer nada si no hay un chat seleccionado
+    if (!selectedChat) {
+      console.error("No hay un chat seleccionado para enviar archivos.");
+      return;
+    }
+
+    event.preventDefault();
+
+    const file = event.target.files[0];
+    console.log("Archivo seleccionado:", file);
+
+    if (!file) {
+      console.error("No se seleccionó ningún archivo.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await uploadChatImage(formData);
+    const link = response.link;
+
+    if (link) {
+      const messageData = {
+        senderEmail: actualUserEmail,
+        receiverEmail: selectedChat.senderEmail === actualUserEmail ? selectedChat.receiverEmail : selectedChat.senderEmail,
+        content: { filepath: link, filename: file.name },
+        timestamp: new Date().toISOString(),
+      };
+      
+      try {
+        const response = await sendChatMessage(messageData);
+        console.log("Mensaje con archivo enviado:", response);
+        setChats(prevChats => [...prevChats, response]);
+      } catch (error) {
+        console.error("Error al enviar el mensaje con archivo:", error);
+      }
+    }
+  }
 
   // Peticiones periodicas para actualizar los chats y mensajes, corregir a futuro y cambiar a WebSockets
   // React.useEffect(() => {
@@ -260,14 +303,14 @@ export default function Home() {
 
           {/* Input mensaje */}
           <Box sx={{ mt: 2, display: 'flex', gap: 1, alignItems: 'center' }}>
-              <TextField
-                fullWidth
-                placeholder="Escribe un mensaje..."
-                size="small"
-                variant="outlined"
-                value={messageContent}
-                onChange={(e) => setMessageContent(e.target.value)}
-              />
+            <TextField
+              fullWidth
+              placeholder="Escribe un mensaje..."
+              size="small"
+              variant="outlined"
+              value={messageContent}
+              onChange={(e) => setMessageContent(e.target.value)}
+            />
 
 
             {/* Botón para adjuntar archivo */}
@@ -276,13 +319,7 @@ export default function Home() {
               <input
                 type="file"
                 hidden
-                onChange={(e) => {
-                  const file = e.target.files[0];
-                  if (file) {
-                    console.log("Archivo seleccionado:", file);
-                    // Aquí agregas lógica para subir o manejar el archivo
-                  }
-                }}
+                onChange= {handleSubmitFiles}
               />
             </IconButton>
 
@@ -292,7 +329,7 @@ export default function Home() {
 
         {/* 3. Panel de Perfil como barra lateral */}
         {openProfile && selectedChat && (
-          
+
           <ProfilePanel
             user={{
               id: contactData.id,
