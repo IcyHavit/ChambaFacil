@@ -18,6 +18,7 @@ dayjs.locale('es');
 
 import { getDataUser } from '../../api/user';
 import { completarDatosUser } from '../../api/user';
+import { uploadFile } from '../../api/file';
 
 const tipoCuentaPrestamista = ['Personal', 'Grupo', 'Empresa'];
 const metodosPago = ['Efectivo', 'Transferencia', 'Tarjeta'];
@@ -42,6 +43,7 @@ export default function PerfilPrestamista() {
     tipoCuenta: '',
     telefono: '',
     telefonoSecundario: '',
+    linkFoto: '',
     portafolio: [],
     metodoPago: [],
     horarios: [],
@@ -371,6 +373,21 @@ export default function PerfilPrestamista() {
     }
 
     setErrores({});
+    const file = foto;
+    if (!file) {
+      alert('No se seleccionó ninguna imagen.');
+      return;
+    }
+
+    let fotoPerfil = '';
+    try {
+      const res = await uploadFile(file, 'profile-pictures');
+      fotoPerfil = res.link;
+    } catch (error) {
+      const errorMessage = error.res?.data?.error || 'Error al subir imagen. Por favor, intenta nuevamente.';
+      alert(`Error al subir imagen: ${errorMessage}`);
+      return;
+    }
 
     const dataSend = {
       id: parseInt(localStorage.getItem('id')),
@@ -379,7 +396,7 @@ export default function PerfilPrestamista() {
       telefono: datos.telefono.replace(/\s/g, ''),
       telefonoSecundario: datos.telefonoSecundario.replace(/\s/g, ''),
       descripcion: datos.descripcion,
-      linkFoto: 'https://www.facebook.com/sharer/sharer.php?u=', // Este campo aún faltas
+      linkFoto: fotoPerfil,
       tipoCuenta: datos.tipoCuenta,
       fechaNacimiento: dayjs(datos.fechaNacimiento).toDate().toISOString(),
       preferenciasPago: JSON.stringify(datos.metodoPago),
@@ -418,7 +435,7 @@ export default function PerfilPrestamista() {
               <input accept="image/*" type="file" onChange={handleFileChange} id="fotoPerfil" style={{ display: 'none' }} />
               <label htmlFor="fotoPerfil">
                 <Avatar
-                  src={preview || undefined}
+                  src={preview || datos.linkFoto || undefined}
                   sx={{ width: 120, height: 120, border: `3px solid ${theme.palette.primary.main}`, boxShadow: 3, cursor: 'pointer' }}
                 />
               </label>
@@ -426,7 +443,7 @@ export default function PerfilPrestamista() {
             </>
           ) : (
             <Avatar
-              src={preview || undefined}
+              src={preview || datos.linkFoto ||undefined}
               sx={{ width: 120, height: 120, border: `3px solid ${theme.palette.primary.main}`, boxShadow: 3 }}
             />
           )}
