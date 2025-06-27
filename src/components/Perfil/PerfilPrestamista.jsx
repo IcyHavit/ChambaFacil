@@ -57,6 +57,7 @@ export default function PerfilPrestamista() {
     metodoPago: [],
     horarios: [],
     redesSociales: { facebook: '', instagram: '', youtube: ''},
+    imagenes: [],
   });
 
   useEffect(() => {
@@ -77,9 +78,10 @@ export default function PerfilPrestamista() {
             facebook: '',
             instagram: '',
             youtube: ''
-          }
+          },
+          imagenes: data.imgTrabajo ? JSON.parse(data.imgTrabajo) : []
         });
-
+        setImagenes(data.imgTrabajo ? JSON.parse(data.imgTrabajo) : []);
         setFechaNacimiento(data.fechaNacimiento ? dayjs(data.fechaNacimiento) : null);
       } catch (error) {
         console.error('Error al obtener datos del perfil:', error);
@@ -325,6 +327,7 @@ export default function PerfilPrestamista() {
     }
   };
 
+  const [imagenFiles, setImagenFiles] = useState([]); // Para subir
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files);
 
@@ -345,10 +348,11 @@ export default function PerfilPrestamista() {
       validFiles.push(file);
     }
 
-    const urls = [...imagenes, ...validFiles].slice(0, 5).map((file) =>
-      typeof file === 'string' ? file : URL.createObjectURL(file)
-    );
+    const urls = [...imagenFiles, ...validFiles].slice(0, 5).map((file) =>
+      URL.createObjectURL(file));
     setImagenes(urls);
+
+    setImagenFiles(prev => [...prev, ...validFiles].slice(0, 5));
 
     if (validFiles.length > 0 && errores.imagenes) {
       setErrores(prev => ({ ...prev, imagenes: '' }));
@@ -356,7 +360,8 @@ export default function PerfilPrestamista() {
   };
 
   const eliminarImagen = (index) => {
-    setImagenes((prev) => prev.filter((_, i) => i !== index));
+    setImagenes(prev => prev.filter((_, i) => i !== index));
+    setImagenFiles(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleImageClick = (src) => {
@@ -396,6 +401,27 @@ export default function PerfilPrestamista() {
       }
     }
 
+    // lógica para subir las dem´sa fotos
+    const nuevasUrls = [];
+    const urlsExistentes = [];
+
+    for (const img of imagenes) {
+      if (img instanceof File) {
+        try {
+          const res = await uploadFile(img, 'profile-pictures');
+          nuevasUrls.push(res.link);
+        } catch (error) {
+          alert(`Error al subir imagen: ${error.message}`);
+          return;
+        }
+      } else if (typeof img === 'string') {
+        urlsExistentes.push(img); // Ya estaban subidas
+      }
+    }
+
+    const imagenesUrls = [...urlsExistentes, ...nuevasUrls];
+
+
     const dataSend = {
       id: parseInt(localStorage.getItem('id')),
       datosCompletos: true,
@@ -410,6 +436,7 @@ export default function PerfilPrestamista() {
       horarios: JSON.stringify(datos.horarios),
       redesSociales: JSON.stringify(datos.redesSociales),
       experiencia: JSON.stringify(datos.portafolio),
+      imgTrabajo: JSON.stringify(imagenesUrls),
     };
 
     try {
@@ -751,6 +778,7 @@ export default function PerfilPrestamista() {
           </Box>
         )}
 
+        {/* Imágenes de trabajo -------------------------------------------- */}
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mt: 2 }}>
           {imagenes.map((src, idx) => (
             <Box key={idx} sx={{ position: 'relative' }}>
