@@ -25,7 +25,7 @@ import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 import CloseIcon from '@mui/icons-material/Close';
 
 import { createService } from '../api/service';
-import axios from 'axios';
+import { uploadFile } from '../api/file';
 
 const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 const alcaldias = [
@@ -88,135 +88,127 @@ export default function PublicarServicio() {
   const handleSubmit = async(event) => {
     event.preventDefault();
 
-    // const nuevosErrores = {};
+    const nuevosErrores = {};
 
-    // if (!titulo.trim()) {
-    //   nuevosErrores.titulo = "El título es obligatorio";
-    // }
-
-    // if (!categoria) {
-    //   nuevosErrores.categoria = "Selecciona una categoría";
-    // }
-
-    // if (!descripcion.trim()) {
-    //   nuevosErrores.descripcion = "La descripción es obligatoria";
-    // }
-
-    // if (!materiales) {
-    //   nuevosErrores.materiales = "Selecciona si incluye materiales";
-    // }
-
-    // if (!garantia) {
-    //   nuevosErrores.garantia = "Selecciona si ofreces garantía";
-    // }
-
-    // if (garantia === 'si' && !garantiaDesc.trim()) {
-    //   nuevosErrores.garantiaDesc = "Debes especificar la garantía ofrecida";
-    // }
-
-    // if (!zonaTrabajo) {
-    //   nuevosErrores.zonaTrabajo = "Selecciona una zona de trabajo";
-    // }
-
-    // if (zonaTrabajo === "Mi lugar" && !direccion.trim()) {
-    //   nuevosErrores.direccion = "La dirección es obligatoria";
-    // }
-
-    // const alMenosUnaModalidad = Object.values(modalidades).some(m => m.checked);
-    // if (!alMenosUnaModalidad) {
-    //   nuevosErrores.modalidades = "Selecciona al menos una modalidad de cobro";
-    // }
-
-    // const alMenosUnDia = Object.keys(diasDisponibles).length > 0;
-    // if (!alMenosUnDia) {
-    //   nuevosErrores.dias = "Selecciona al menos un día";
-    // }
-
-    // if (imagenes.length === 0) {
-    //   nuevosErrores.imagenes = "Debes subir al menos una imagen";
-    // }
-
-    // if (Object.keys(nuevosErrores).length > 0) {
-    //   console.log("Errores encontrados:", nuevosErrores);
-    //   setErrores(nuevosErrores);
-    //   return;
-    // }
-
-    // const data = new FormData(event.currentTarget);
-    
-
-    // const servicio = {
-    //   titulo: data.get('titulo'),
-    //   categoria: data.get('categoria'),
-    //   descripcion: data.get('desc'),
-    //   materiales: data.get('materiales'),
-    //   garantia: data.get('garantia') === 'si' ? data.get('garantiaDesc') : null,
-    //   // eliminar mi lugar de la zona de trabajo
-    //   zonaTrabajo: zonaTrabajo.filter((zona) => zona !== 'Mi lugar'),
-    //   direccion,
-    //   modalidades: Object.keys(modalidades)
-    //     .filter((modalidad) => modalidades[modalidad].checked)
-    //     .map((modalidad) => ({
-    //       modalidad,
-    //       precio: modalidades[modalidad].precio,
-    //     })),
-    //   disponibilidad: Object.keys(diasDisponibles).map((dia) => ({
-    //     dia,
-    //     desde: diasDisponibles[dia]?.desde,
-    //     hasta: diasDisponibles[dia]?.hasta,
-    //   })),
-    //   imagenes,
-    // };
-
-    // console.log(servicio);
-
-    // if (typeof localStorage.getItem('id') === 'string')
-    //   servicio.prestamistaId = parseInt(localStorage.getItem('id'), 10);
-
-    // const dataForCreation = {
-    //   prestamistaId: servicio.prestamistaId,
-    //   categoria: servicio.categoria,
-    //   titulo: servicio.titulo,
-    //   descripcion: servicio.descripcion,
-    //   materiales: servicio.materiales === 'si'? true : false,
-    //   direccion: servicio.direccion,
-    //   zona: JSON.stringify(servicio.zonaTrabajo),
-    //   fechaInicio: new Date().toISOString(),
-    //   modalidades: JSON.stringify(servicio.modalidades),
-    //   garantia: servicio.garantia || "No aplica",
-    //   disponibilidad: JSON.stringify(servicio.disponibilidad),
-    // }
-
-    // try {
-    //   const response = await createService(dataForCreation);
-    //   alert('Servicio publicado exitosamente');
-    //   console.log('Servicio creado:', response);
-    //   // window.location.href = '/servicios'; // Redirigir a la lista de servicios publicados
-    // }
-    // catch (error) {
-    //   const errorMessage = error.response?.data?.error || 'Error al crear servicio, por favor intenta nuevamente.';
-    //     // Aleta provisional sin estilo de error
-    //     alert(`Error al crear servicio. ${errorMessage}`);
-    // }
-
-    console.log(imagenes);
-
-    // mandar solo archivo al servidor en imagenes en http://localhost:3000/api/upload/single:users
-    const formData = new FormData();
-    formData.append('file', imagenes[0]); // Solo una imagen
-
-    try {
-      const response = await axios.post(`http://localhost:3000/api/upload/single/services`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-
-      console.log(response.data); // <- Aquí puedes obtener el nombre del archivo
-    } catch (error) {
-      console.error(error);
+    if (!titulo.trim()) {
+      nuevosErrores.titulo = "El título es obligatorio";
     }
 
+    if (!categoria) {
+      nuevosErrores.categoria = "Selecciona una categoría";
+    }
+
+    if (!descripcion.trim()) {
+      nuevosErrores.descripcion = "La descripción es obligatoria";
+    }
+
+    if (!materiales) {
+      nuevosErrores.materiales = "Selecciona si incluye materiales";
+    }
+
+    if (!garantia) {
+      nuevosErrores.garantia = "Selecciona si ofreces garantía";
+    }
+
+    if (garantia === 'si' && !garantiaDesc.trim()) {
+      nuevosErrores.garantiaDesc = "Debes especificar la garantía ofrecida";
+    }
+
+    if (!zonaTrabajo) {
+      nuevosErrores.zonaTrabajo = "Selecciona una zona de trabajo";
+    }
+
+    if (zonaTrabajo === "Mi lugar" && !direccion.trim()) {
+      nuevosErrores.direccion = "La dirección es obligatoria";
+    }
+
+    const alMenosUnaModalidad = Object.values(modalidades).some(m => m.checked);
+    if (!alMenosUnaModalidad) {
+      nuevosErrores.modalidades = "Selecciona al menos una modalidad de cobro";
+    }
+
+    const alMenosUnDia = Object.keys(diasDisponibles).length > 0;
+    if (!alMenosUnDia) {
+      nuevosErrores.dias = "Selecciona al menos un día";
+    }
+
+    if (imagenes.length === 0) {
+      nuevosErrores.imagenes = "Debes subir al menos una imagen";
+    }
+
+    if (Object.keys(nuevosErrores).length > 0) {
+      console.log("Errores encontrados:", nuevosErrores);
+      setErrores(nuevosErrores);
+      return;
+    }
+
+    const data = new FormData(event.currentTarget);
+
+    const servicio = {
+      titulo: data.get('titulo'),
+      categoria: data.get('categoria'),
+      descripcion: data.get('desc'),
+      materiales: data.get('materiales'),
+      garantia: data.get('garantia') === 'si' ? data.get('garantiaDesc') : null,
+      // eliminar mi lugar de la zona de trabajo
+      zonaTrabajo: zonaTrabajo.filter((zona) => zona !== 'Mi lugar'),
+      direccion,
+      modalidades: Object.keys(modalidades)
+        .filter((modalidad) => modalidades[modalidad].checked)
+        .map((modalidad) => ({
+          modalidad,
+          precio: modalidades[modalidad].precio,
+        })),
+      disponibilidad: Object.keys(diasDisponibles).map((dia) => ({
+        dia,
+        desde: diasDisponibles[dia]?.desde,
+        hasta: diasDisponibles[dia]?.hasta,
+      }))
+    };
+
+    if (typeof localStorage.getItem('id') === 'string')
+      servicio.prestamistaId = parseInt(localStorage.getItem('id'), 10);
+
+    // Subir imagenes y obtener URLs
+    const imagenesUrls = [];
+    for (const file of imagenes) {
+      try {
+        const response = await uploadFile(file, 'services');
+        imagenesUrls.push(response.link);
+      }
+      catch (error) {
+        const errorMessage = error.response?.data?.error || 'Error al subir imagen. Por favor, intenta nuevamente.';
+        alert(`Error al subir imagen: ${errorMessage}`);
+        return;
+      }
+    }
+
+    const dataForCreation = {
+      prestamistaId: servicio.prestamistaId,
+      categoria: servicio.categoria,
+      titulo: servicio.titulo,
+      descripcion: servicio.descripcion,
+      materiales: servicio.materiales === 'si'? true : false,
+      direccion: servicio.direccion,
+      zona: JSON.stringify(servicio.zonaTrabajo),
+      fechaInicio: new Date().toISOString(),
+      modalidades: JSON.stringify(servicio.modalidades),
+      garantia: servicio.garantia || "No aplica",
+      imagenes: JSON.stringify(imagenesUrls),
+      disponibilidad: JSON.stringify(servicio.disponibilidad),
+    }
+
+    try {
+      const response = await createService(dataForCreation);
+      alert('Servicio publicado exitosamente');
+      console.log('Servicio creado:', response);
+      // window.location.href = '/servicios'; // Redirigir a la lista de servicios publicados
+    }
+    catch (error) {
+      const errorMessage = error.response?.data?.error || 'Error al crear servicio, por favor intenta nuevamente.';
+        // Aleta provisional sin estilo de error
+        alert(`Error al crear servicio. ${errorMessage}`);
+    }
 
   };
 
