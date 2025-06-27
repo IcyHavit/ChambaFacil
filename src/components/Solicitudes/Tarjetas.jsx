@@ -15,7 +15,16 @@ import WorkHistoryIcon from '@mui/icons-material/WorkHistory';
  * @param {Object} props.data  Objeto con { puesto, ubicacion, tipo, inicio }
  */
 export default function SolicitudCard({ data }) {
-  const { puesto, ubicacion, tipo, inicio } = data;
+  const { id_servicio, nombreServicio, ubicacion, direccion, tipo = 'Full Time', fechaSolicitud } = data;
+  const formattedDate = new Date(fechaSolicitud).toLocaleString('es-MX', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false, // Formato 24 horas
+  });
+  const ubicacionFinal = ubicacion || direccion || 'Ubicación no especificada';
 
   return (
     <Box
@@ -48,7 +57,7 @@ export default function SolicitudCard({ data }) {
 
       {/* texto */}
       <Box sx={{ flexGrow: 1 }}>
-        <Typography fontWeight="bold">{puesto}</Typography>
+        <Typography fontWeight="bold">{nombreServicio}</Typography>
 
         <Box
           sx={{
@@ -62,14 +71,14 @@ export default function SolicitudCard({ data }) {
         >
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
             <LocationOnIcon fontSize="inherit" />
-            {ubicacion}
+            {ubicacionFinal}
           </Box>
           <Divider orientation="vertical" flexItem />
           {tipo}
         </Box>
 
         <Typography variant="body2" color="text.secondary">
-          Inicio:&nbsp;{inicio}
+          Fecha de Solicitud:&nbsp;{formattedDate}
         </Typography>
       </Box>
     </Box>

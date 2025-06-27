@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import WorkHistoryIcon from '@mui/icons-material/WorkHistory';
+import { deleteSolicitud, updateSolicitudState } from '../../api/solicitud';
 
 /**
  * Tarjeta para solicitudes **pendientes**.
@@ -32,16 +33,50 @@ export default function SolicitudCardPendiente({
   onReject,
   onCancel,
 }) {
-  const { id, puesto, ubicacion, tipo, inicio } = data;
+  const { id_solicitud, id_servicio, nombreServicio, ubicacion, direccion, tipo = 'Full Time', fechaSolicitud } = data;
+  // Formatear la fecha con hora
+  const formattedDate = new Date(fechaSolicitud).toLocaleString('es-MX', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false, // Formato 24 horas
+  });
+
+  const ubicacionFinal = ubicacion || direccion || 'Ubicación no especificada';
+
+  // Eliminar solicitud
+  const handleDeleteSolicitud = async (id_solicitud) => {
+    try {
+      await deleteSolicitud(id_solicitud);
+      console.log('Solicitud eliminada correctamente');
+    } catch (error) {
+      console.error('Error al eliminar la solicitud:', error);
+    }
+  };
+
+  // Pasar a estado "aceptadas"
+  const handleAcceptSolicitud = async (id_servicio) => {
+    try {
+      await updateSolicitudState(id_solicitud, 'aceptadas');
+      console.log('Solicitud aceptada correctamente');
+      onAccept?.(id_servicio); // Notifica al padre
+    } catch (error) {
+      console.error('Error al aceptar la solicitud:', error);
+    }
+  }
+
 
   /* ---------- diálogo rechazo / cancelación ---------- */
   const [openReject, setOpenReject] = useState(false);
   const [reason, setReason] = useState('');
 
-  const handleSendReject = () => {
-    onReject?.(id, reason);
+  const handleSendReject = async () => {
+    onReject?.(id_servicio, reason);
     setOpenReject(false);
     setReason('');
+    await handleDeleteSolicitud(id_solicitud); // Elimina la solicitud
   };
 
   /* ---------- UI ---------- */
@@ -80,7 +115,7 @@ export default function SolicitudCardPendiente({
 
         {/* texto */}
         <Box sx={{ flexGrow: 1 }}>
-          <Typography fontWeight="bold">{puesto}</Typography>
+          <Typography fontWeight="bold">{nombreServicio}</Typography>
 
           <Box
             sx={{
@@ -94,14 +129,14 @@ export default function SolicitudCardPendiente({
           >
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
               <LocationOnIcon fontSize="inherit" />
-              {ubicacion}
+              {ubicacionFinal}
             </Box>
             <Divider orientation="vertical" flexItem />
             {tipo}
           </Box>
 
           <Typography variant="body2" color="text.secondary">
-            Inicio:&nbsp;{inicio}
+            Fecha de Solicitud:&nbsp;{formattedDate}
           </Typography>
         </Box>
 
@@ -116,7 +151,7 @@ export default function SolicitudCardPendiente({
                 color: 'common.white',
                 '&:hover': { bgcolor: 'primary.dark' },
               }}
-              onClick={() => onAccept?.(id)}
+              onClick={() => handleAcceptSolicitud(id_solicitud)}
             >
               Aceptar
             </Button>
