@@ -67,6 +67,7 @@ export default function Search() {
       modalidadesCobro: JSON.parse(s.modalidades),
       disponibilidad: s.disponibilidad ? JSON.parse(s.disponibilidad) : [],
       evidencias: JSON.parse(s.imagenes),
+      prestamistaId: s.prestamistaId,
     }));
     setTrabajos(transformados);
     setPage(1);
