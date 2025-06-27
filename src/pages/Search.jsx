@@ -163,6 +163,9 @@ export default function Search() {
               costo={selectedWork.costo}
               disponibilidad={selectedWork.disponibilidad}
               evidencias={selectedWork.evidencias}
+              prestamistaId={selectedWork.prestamistaId}
+              idServicio={selectedWork.idServico}
+              correoPrestamista={selectedWork.correoPrestamista}
             />
           ) : (
             <Box
