@@ -29,3 +29,16 @@ export const searchServices = async (trabajo, zona) => {
     throw new Error(errorMessage);
   }
 };
+
+export const getService = async (id) => {
+  try {
+    const response = await axios.get(`http://localhost:3000/api/servicio/get-service/${id}`, {
+      withCredentials: true,
+    });
+    console.log(response);
+    return response.data;
+  } catch (error) {
+    const errorMessage = error.response?.data?.error || 'Error al registrar. Por favor, intenta nuevamente.';
+    throw new Error(errorMessage);
+  }
+}

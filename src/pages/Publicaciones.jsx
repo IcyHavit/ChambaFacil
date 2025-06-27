@@ -4,17 +4,23 @@ import { useNavigate } from 'react-router-dom';
 // Importa ButtonMod
 import ButtonMod from '../components/ButtonMod';
 import CardPublicacion from '../components/Publicaciones/cardPublicacion';
-import {trabajos} from '../components/Search/trabajos';
+
+import { useEffect, useState } from 'react';
+import { getService } from '../api/service';
 
 export default function Publicaciones() {
+  const [publicaciones, setPublicaciones] = useState([]);
   const theme = useTheme();
   const navigate = useNavigate();
 
-  // Simula la función de eliminación de una publicación
-  const handleDelete = (id) => {  
-    // Aquí iría la lógica para eliminar la publicación
-    console.log(`Publicación con ID ${id} eliminada`);
-  }
+  useEffect(() => {
+    const id = localStorage.getItem('id'); // o 'userId' dependiendo cómo lo guardas
+    if (id) {
+      getService(id)
+        .then(data => setPublicaciones(data))
+        .catch(error => console.error('Error al obtener publicaciones:', error));
+    }
+  }, []);
 
   return (
     <Box
@@ -79,17 +85,16 @@ export default function Publicaciones() {
             mt: 6,
           }}
         >
-          {trabajos.map((trabajo, index) => (
+          {publicaciones.map((trabajo, index) => (
             <CardPublicacion
               key={index}
               titulo={trabajo.titulo}
-              nombre={trabajo.nombre}
-              imagen={trabajo.imagen}
+              nombre="Tú o el nombre del prestamista"
+              imagen={JSON.parse(trabajo.imagenes)[0] ?? ''}
               categoria={trabajo.categoria}
-              alcaldia={trabajo.alcaldia}
+              alcaldia={JSON.parse(trabajo.zona)?.[0] ?? 'N/A'}
               descripcion={trabajo.descripcion}
-              fecha={trabajo.fecha}
-              onDelete={() => {handleDelete(trabajo.id)}}
+              fecha={new Date(trabajo.createdAt).toLocaleDateString()}
             />
           ))}
         </Box>

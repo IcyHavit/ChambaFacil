@@ -1,12 +1,9 @@
-import React from 'react';
-import { Box, Card, CardHeader, Divider, CardContent, Typography, CardActions, IconButton } from '@mui/material';
+import { Box, Card, CardHeader, Divider, CardContent, Typography, CardActions } from '@mui/material';
 import { useTheme } from '@emotion/react';
 import LocationPinIcon from '@mui/icons-material/LocationPin';
 import WorkIcon from '@mui/icons-material/Work';
-import DeleteIcon from '@mui/icons-material/Delete';
-import ButtonMod from '../ButtonMod';
 
-export default function CardPublicacion({ titulo, nombre, imagen, categoria, alcaldia, descripcion, fecha, onDelete }) {
+export default function CardPublicacion({ titulo, nombre, imagen, categoria, alcaldia, descripcion, fecha }) {
   const theme = useTheme();
 
   return (
