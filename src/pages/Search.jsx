@@ -43,6 +43,7 @@ export default function Search() {
 
   const handleCardClick = (trabajo) => {
     setSelectedWork(trabajo); // Actualizar el trabajo seleccionado
+    console.log('Trabajo seleccionado:', trabajo);
   };
 
   const handleBuscar = async(trabajo, alcaldia) => {
@@ -54,7 +55,7 @@ export default function Search() {
       const servicios = await searchServices(trabajo, alcaldia);
       const transformados = servicios.map(s => ({
       titulo: s.titulo,
-      prestamista: 'Prestamista', // Reemplaza cuando tengas ese dato
+      prestamista: s.prestamistaData.nombre || 'Desconocido',
       imagen: JSON.parse(s.imagenes)[0],
       categoria: s.categoria || 'Sin categoría',
       alcaldia: s.zona ? JSON.parse(s.zona)[0] : '',
@@ -66,6 +67,12 @@ export default function Search() {
       modalidadesCobro: JSON.parse(s.modalidades),
       disponibilidad: s.disponibilidad ? JSON.parse(s.disponibilidad) : [],
       evidencias: JSON.parse(s.imagenes),
+      prestamistaId: s.prestamistaId,
+      calificacionPrestamista: s.prestamistaData.calificacion ? s.prestamistaData.calificacion.toFixed(1) : 0,
+      fotoPrestamista: s.prestamistaData.linkFoto || '', // Agregar foto por defecto
+      nombrePrestamista: s.prestamistaData.nombre || 'Desconocido',
+      correoPrestamista: s.prestamistaData.correo || 'No disponible',
+      idServico: s.id,
     }));
     setTrabajos(transformados);
     setPage(1);
@@ -74,6 +81,7 @@ export default function Search() {
     catch (error) {
       const errorMessage = error.response?.data?.error || 'Error al buscar servicio, por favor intenta nuevamente.';
       console.error('Error al buscar servicios:', errorMessage);
+      console.error(error);
       setTrabajos([]); // Limpiar trabajos en caso de error
       setSelectedWork(null); // Limpiar trabajo seleccionado en caso de error
     }
@@ -141,9 +149,9 @@ export default function Search() {
             <Sidebar
               theme={theme}
               titulo={selectedWork.titulo}
-              img={selectedWork.imagen}
-              nombre={selectedWork.prestamista}
-              calificacion={4.5} // Puedes ajustar esto según los datos disponibles
+              img={selectedWork.fotoPrestamista}
+              nombre={selectedWork.nombrePrestamista}
+              calificacion={selectedWork.calificacionPrestamista}
               fechaPublicacion={selectedWork.fecha}
               alcaldia={selectedWork.alcaldia}
               categoria={selectedWork.categoria}

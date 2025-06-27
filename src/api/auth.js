@@ -55,3 +55,15 @@ export const loginGoogle = async (accessToken) => {
 export const errorGoogleHandler = () => {
   console.log('Error al autenticar con Google');
 };
+
+export const logout = async () => {
+  try {
+    const response = await axios.post('http://localhost:3000/api/user/logout', {}, {
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error) {
+    const errorMessage = error.response?.data?.error || 'Error al cerrar sesión. Por favor, intenta nuevamente.';
+    throw new Error(errorMessage);
+  }
+};
