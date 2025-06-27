@@ -350,6 +350,19 @@ export default function Prestamista() {
       return;
     }
 
+    const imagenesUrls = [];
+    for (const file of imagenes) {
+      try {
+        const response = await uploadFile(file, 'services');
+        imagenesUrls.push(response.link);
+      }
+      catch (error) {
+        const errorMessage = error.response?.data?.error || 'Error al subir imagen. Por favor, intenta nuevamente.';
+        alert(`Error al subir imagen: ${errorMessage}`);
+        return;
+      }
+    }
+
     const data = {
       id: parseInt(localStorage.getItem('id')),
       datosCompletos: true,
@@ -364,6 +377,7 @@ export default function Prestamista() {
       horarios: JSON.stringify(formData.horarios),
       redesSociales: JSON.stringify(formData.redesSociales),
       experiencia: JSON.stringify(experiencias),
+      imgTrabajo: JSON.stringify(imagenesUrls),
     };
 
     try {
