@@ -43,6 +43,7 @@ export default function Search() {
 
   const handleCardClick = (trabajo) => {
     setSelectedWork(trabajo); // Actualizar el trabajo seleccionado
+    console.log('Trabajo seleccionado:', trabajo);
   };
 
   const handleBuscar = async(trabajo, alcaldia) => {
@@ -66,6 +67,7 @@ export default function Search() {
       modalidadesCobro: JSON.parse(s.modalidades),
       disponibilidad: s.disponibilidad ? JSON.parse(s.disponibilidad) : [],
       evidencias: JSON.parse(s.imagenes),
+      prestamistaId: s.prestamistaId,
     }));
     setTrabajos(transformados);
     setPage(1);
