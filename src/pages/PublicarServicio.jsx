@@ -26,6 +26,7 @@ import CloseIcon from '@mui/icons-material/Close';
 
 import { createService } from '../api/service';
 import { uploadFile } from '../api/file';
+import { getCategories } from '../api/category';
 
 const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 const alcaldias = [
@@ -37,6 +38,7 @@ const alcaldias = [
 export default function PublicarServicio() {
   const theme = useTheme();
   const [titulo, setTitulo] = useState('');
+  const [listaCategorias, setlistaCategorias] = useState([]);
   const [categoria, setCategoria] = useState('');
   const [descripcion, setDescripcion] = useState('');
   const [materiales, setMateriales] = useState('');
@@ -56,6 +58,22 @@ export default function PublicarServicio() {
   const [diasDisponibles, setDiasDisponibles] = useState({});
   const [imagenes, setImagenes] = useState([]);
   const [errores, setErrores] = useState({});
+
+  // Función para cargar las categorías desde la API
+  const loadCategories = async () => {
+    try {
+      const data = await getCategories();
+      setlistaCategorias(data);
+      console.log('Categorías cargadas:', data);
+    } catch (error) {
+      console.error('Error al cargar las categorías:', error);
+    }
+  };
+
+  // cargar las categorías al cargar el componente
+  React.useEffect(() => {
+    loadCategories();
+  }, []);
 
   const handleCheckboxChangeM = (modalidad) => {
     setModalidades((prev) => ({
@@ -85,7 +103,7 @@ export default function PublicarServicio() {
     }));
   };
 
-  const handleSubmit = async(event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     const nuevosErrores = {};
@@ -188,7 +206,7 @@ export default function PublicarServicio() {
       categoria: servicio.categoria,
       titulo: servicio.titulo,
       descripcion: servicio.descripcion,
-      materiales: servicio.materiales === 'si'? true : false,
+      materiales: servicio.materiales === 'si' ? true : false,
       direccion: servicio.direccion,
       zona: JSON.stringify(servicio.zonaTrabajo),
       fechaInicio: new Date().toISOString(),
@@ -206,8 +224,8 @@ export default function PublicarServicio() {
     }
     catch (error) {
       const errorMessage = error.response?.data?.error || 'Error al crear servicio, por favor intenta nuevamente.';
-        // Aleta provisional sin estilo de error
-        alert(`Error al crear servicio. ${errorMessage}`);
+      // Aleta provisional sin estilo de error
+      alert(`Error al crear servicio. ${errorMessage}`);
     }
 
   };
@@ -252,7 +270,19 @@ export default function PublicarServicio() {
                 label="Categoría"
                 onChange={(e) => setCategoria(e.target.value)}
               >
-                <MenuItem value="Electricidad">Electricidad</MenuItem>
+                {listaCategorias.map((cat) => (
+                  <MenuItem key={cat.id} value={cat}>
+                    {cat}
+                  </MenuItem>
+                ))}
+              </Select>
+              {errores.categoria && (
+                <Typography variant="caption" color="error">
+                  {errores.categoria}
+                </Typography>
+              )}
+
+                {/* <MenuItem value="Electricidad">Electricidad</MenuItem>
                 <MenuItem value="Plomero">Plomero</MenuItem>
                 <MenuItem value="Carpintero">Carpintero</MenuItem>
                 <MenuItem value="Electrodomésticos">Reparación de electrodomésticos</MenuItem>
@@ -263,7 +293,7 @@ export default function PublicarServicio() {
                 <Typography variant="caption" color="error">
                   {errores.categoria}
                 </Typography>
-              )}
+              )} */}
             </FormControl>
           </Box>
         </Paper>
