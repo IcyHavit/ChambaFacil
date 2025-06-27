@@ -1,8 +1,10 @@
 import { useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
-import { Container, Box, Grid, TextField } from '@mui/material';
+import { Container, Box, Grid, TextField, InputAdornment, IconButton } from '@mui/material';
 import GoogleIcon from '@mui/icons-material/Google';
+import { Visibility } from '@mui/icons-material';
+import { VisibilityOff } from '@mui/icons-material';
 import ButtonMod from '../components/ButtonMod';
 import img from '../assets/images/registro/registro.webp';
 import alertImage from '../assets/images/Mascota.png';
@@ -23,9 +25,21 @@ export default function Login() {
       navigate(nextRoute.current);
     }
   };
+
   /* Para mostrar la alerta de Error */
   const alertErrorRef = useRef();
   const [alertError, setAlertError] = useState('');
+
+  /* Para mostrar y ocultar contraseña */
+  const [showPassword, setShowPassword] = useState(false);
+  
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  }
+  const handlePasswordChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
   const theme = useTheme();
 
@@ -143,6 +157,8 @@ export default function Login() {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
+        marginTop: '30px',
+        marginBottom: '30px',
         bgcolor: theme.palette.background.default,
         p: 2,
       }}
@@ -210,14 +226,31 @@ export default function Login() {
                 required
                 id="password"
                 name="password"
-                label="Contraseña"
+                label="Ingresa tu contraseña"
                 variant="outlined"
-                type="password"
+                size="small"
+                type={showPassword ? 'text' : 'password'}
                 value={formData.password}
-                onChange={handleChange}
+                onChange={handlePasswordChange}
                 error={!!errors.password}
                 helperText={errors.password || ' '}
+                slotProps={{
+                  input: {
+                    endAdornment: (
+                      <InputAdornment position='end'>
+                        <IconButton
+                          onClick={togglePasswordVisibility}
+                          edge='end'
+                          aria-label='mostrar/ocultar contraseña'
+                        >
+                          {showPassword ? <VisibilityOff/> : <Visibility/>}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  },
+                }}
               />
+
               <Box
                 sx={{
                   display: 'flex',
