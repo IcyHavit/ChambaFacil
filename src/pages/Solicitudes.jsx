@@ -73,18 +73,31 @@ export default function Solicitudes() {
 
   
   // funcion para obtener las solicitudes del usuario
+
+  const fetchSolicitudes = async () => {
+    try {
+      const idUser = localStorage.getItem('id'); // Obtener el ID del usuario actual
+      const solicitudesData = await getSolicitudesByUser(idUser);
+      setSolicitudes(solicitudesData);
+      console.log('Solicitudes obtenidas:', solicitudesData);
+    } catch (error) {
+      console.error('Error fetching solicitudes:', error);
+      setAlert({ open: true, msg: 'Error al cargar las solicitudes', sev: 'error' });
+    }
+  };
+
   useEffect(() => {
-    const fetchSolicitudes = async () => {
-      try {
-        const idUser = localStorage.getItem('id'); // Obtener el ID del usuario actual
-        const solicitudesData = await getSolicitudesByUser(idUser);
-        setSolicitudes(solicitudesData);
-        console.log('Solicitudes obtenidas:', solicitudesData);
-      } catch (error) {
-        console.error('Error fetching solicitudes:', error);
-        setAlert({ open: true, msg: 'Error al cargar las solicitudes', sev: 'error' });
-      }
-    };
+    // const fetchSolicitudes = async () => {
+    //   try {
+    //     const idUser = localStorage.getItem('id'); // Obtener el ID del usuario actual
+    //     const solicitudesData = await getSolicitudesByUser(idUser);
+    //     setSolicitudes(solicitudesData);
+    //     console.log('Solicitudes obtenidas:', solicitudesData);
+    //   } catch (error) {
+    //     console.error('Error fetching solicitudes:', error);
+    //     setAlert({ open: true, msg: 'Error al cargar las solicitudes', sev: 'error' });
+    //   }
+    // };
     fetchSolicitudes();
   }, []); // Ejecutar solo una vez al cargar el componente
 
@@ -120,12 +133,14 @@ export default function Solicitudes() {
     console.log(`Cancelar ${id}. Motivo:`, motivo);
 
     setSolicitudes((prev) => prev.filter((s) => s.id !== id));
+    fetchSolicitudes();
     setAlert({ open: true, msg: 'Solicitud cancelada', sev: 'warning' });
   };
 
   const handleFinish = (id, foto) => {
   setSolicitudParaCalificar({ id, foto });
   setOpenRating(true);
+  fetchSolicitudes();
 };
 
   const handleAccept = (id) => {
@@ -133,11 +148,13 @@ export default function Solicitudes() {
     setSolicitudes((prev) =>
       prev.map((s) => (s.id === id ? { ...s, estado: 'aceptadas' } : s)),
     );
+    fetchSolicitudes();
     setAlert({ open: true, msg: 'Solicitud aceptada', sev: 'success' });
   };
   const handleReject = (id, motivo) => {
     setSolicitudes((prev) => prev.filter((s) => s.id !== id));
     setAlert({ open: true, msg: 'Solicitud rechazada', sev: 'warning' });
+    fetchSolicitudes();
   };
 
   /* --- handler para calificar trabajo terminado --- */
@@ -166,6 +183,7 @@ export default function Solicitudes() {
       msg: `Trabajo calificado. ${trabajosRestantes.length > 0 ? 'Califica el siguiente trabajo.' : 'Todas las calificaciones completadas.'}`, 
       sev: 'success' 
     });
+    fetchSolicitudes();
   };
 
 
