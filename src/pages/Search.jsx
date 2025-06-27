@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, IconButton, Grid, Chip, Pagination, Stack } from '@mui/material';
 import { useTheme } from '@emotion/react';
 import FilterAltIcon from '@mui/icons-material/Tune';
@@ -8,13 +8,16 @@ import CardWork from '../components/Search/CardWork';
 import Typography from '@mui/material/Typography';
 import img from '../assets/images/Home/HERO_FINAL.png'
 import Sidebar from '../components/Search/Sidebar';
-import { trabajos } from '../components/Search/trabajos'; // Importar el arreglo de trabajos
+// import { trabajos } from '../components/Search/trabajos'; // Importar el arreglo de trabajos
+
+import { searchServices } from '../api/service';
 
 export default function Search() {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
   const [selectedWork, setSelectedWork] = useState(null); // Estado para el trabajo seleccionado
   const [page, setPage] = useState(1); // Estado para la página actual
+  const [trabajos, setTrabajos] = useState([]); // Estado para los trabajos, inicialmente vacío
   const trabajosPorPagina = 9; // Número máximo de trabajos por página
   const totalPaginas = Math.ceil(trabajos.length / trabajosPorPagina);
 
@@ -31,11 +34,38 @@ export default function Search() {
     setSelectedWork(trabajo); // Actualizar el trabajo seleccionado
   };
 
-  const handleBuscar = (trabajo, alcaldia) => {
+  const handleBuscar = async(trabajo, alcaldia) => {
     // Aquí se maneja la lógica de búsqueda con los valores de trabajo y alcaldía
     //trabajo de backend
     console.log('Buscar:', trabajo, 'en', alcaldia);
 
+    try {
+      const servicios = await searchServices(trabajo, alcaldia);
+      const transformados = servicios.map(s => ({
+      titulo: s.titulo,
+      prestamista: 'Prestamista', // Reemplaza cuando tengas ese dato
+      imagen: JSON.parse(s.imagenes)[0],
+      categoria: s.categoria || 'Sin categoría',
+      alcaldia: s.zona ? JSON.parse(s.zona)[0] : '',
+      descripcion: s.descripcion,
+      fecha: new Date(s.createdAt).toLocaleDateString(),
+      incluyeMateriales: s.materiales,
+      garantia: s.garantia,
+      direccionReferencia: s.direccion,
+      modalidadesCobro: JSON.parse(s.modalidades),
+      disponibilidad: s.disponibilidad ? JSON.parse(s.disponibilidad) : [],
+      evidencias: JSON.parse(s.imagenes),
+    }));
+    setTrabajos(transformados);
+    setPage(1);
+    setSelectedWork(null);
+    }
+    catch (error) {
+      const errorMessage = error.response?.data?.error || 'Error al buscar servicio, por favor intenta nuevamente.';
+      console.error('Error al buscar servicios:', errorMessage);
+      setTrabajos([]); // Limpiar trabajos en caso de error
+      setSelectedWork(null); // Limpiar trabajo seleccionado en caso de error
+    }
   };
 
   const handleApplyFilters = (filters) => {

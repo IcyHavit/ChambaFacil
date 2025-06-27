@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  Autocomplete,
   TextField,
   Stack,
   InputAdornment,
@@ -12,28 +11,10 @@ import BusinessIcon from '@mui/icons-material/Business';
 import SearchIcon from '@mui/icons-material/Search';
 import ButtonMod from './ButtonMod';
 
-const trabajos = [
-  { label: 'Desarrollador Frontend' },
-  { label: 'Diseñador Gráfico' },
-  { label: 'Gerente de Proyectos' },
-  { label: 'Analista de Datos' },
-  { label: 'Especialista en Marketing Digital' },
-];
-
-const alcaldias = [
-  { label: 'Gustavo A. Madero' },
-  { label: 'Iztapalapa' },
-  { label: 'Coyoacán' },
-  { label: 'Cuauhtémoc' },
-  { label: 'Benito Juárez' },
-];
-
 const SearchBar = ({ handleBuscar }) => {
   const theme = useTheme();
-  const [open, setOpen] = useState(false);
-  const [inputValue, setInputValue] = useState('');
-  const [value, setValue] = useState(null);
-  const [selectedAlcaldia, setSelectedAlcaldia] = useState(null);
+  const [trabajo, setTrabajo] = useState('');
+  const [alcaldia, setAlcaldia] = useState('');
 
   return (
     <Box
@@ -53,79 +34,38 @@ const SearchBar = ({ handleBuscar }) => {
           borderRadius: 2,
         }}
       >
-        {/* Autocompletado para trabajos */}
-        <Autocomplete
-          options={trabajos}
-          getOptionLabel={(option) => option.label || ''}
-          freeSolo
-          disableClearable
-          open={open}
-          onOpen={() => setOpen(inputValue.length > 0)}
-          onClose={() => setOpen(false)}
-          inputValue={inputValue}
-          onInputChange={(event, newInputValue) => {
-            setInputValue(newInputValue);
-            setOpen(newInputValue.length > 0);
-          }}
-          value={value}
-          onChange={(event, newValue) => {
-            if (typeof newValue === 'string') {
-              setValue({ label: newValue });
-            } else if (newValue && newValue.inputValue) {
-              setValue({ label: newValue.inputValue });
-            } else {
-              setValue(newValue);
-            }
-          }}
+        {/* Campo de texto para trabajo */}
+        <TextField
+          label="Trabajo a buscar"
+          variant="standard"
+          size="small"
+          value={trabajo}
+          onChange={(e) => setTrabajo(e.target.value)}
           sx={{ flex: 0.7 }}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              label="Trabajo a buscar"
-              variant="standard"
-              size="small"
-              slotProps={{
-                input: {
-                  ...params.InputProps,
-                  type: 'search',
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <BusinessIcon sx={{ color: 'text.secondary' }} />
-                    </InputAdornment>
-                  ),
-                },
-              }}
-            />
-          )}
+          slotProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <BusinessIcon sx={{ color: 'text.secondary' }} />
+              </InputAdornment>
+            ),
+          }}
         />
 
-        {/* Autocompletado para alcaldías */}
-        <Autocomplete
-          disablePortal
-          options={alcaldias}
-          disableClearable
-          getOptionLabel={(option) => option.label || ''}
-          value={selectedAlcaldia}
-          onChange={(event, newValue) => setSelectedAlcaldia(newValue)}
+        {/* Campo de texto para alcaldía */}
+        <TextField
+          label="Alcaldía"
+          variant="standard"
+          size="small"
+          value={alcaldia}
+          onChange={(e) => setAlcaldia(e.target.value)}
           sx={{ flex: 0.7 }}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              label="Selecciona una alcaldía"
-              variant="standard"
-              size="small"
-              slotProps={{
-                input: {
-                  ...params.InputProps,
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <LocationOnIcon sx={{ color: 'text.secondary' }} />
-                    </InputAdornment>
-                  ),
-                },
-              }}
-            />
-          )}
+          slotProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <LocationOnIcon sx={{ color: 'text.secondary' }} />
+              </InputAdornment>
+            ),
+          }}
         />
 
         {/* Botón para buscar */}
@@ -134,7 +74,7 @@ const SearchBar = ({ handleBuscar }) => {
           textCont="Buscar"
           width="auto"
           height="2.4rem"
-          clickEvent={() => handleBuscar(value?.label || '', selectedAlcaldia?.label || '')}
+          clickEvent={() => handleBuscar(trabajo, alcaldia)}
           startIcon={<SearchIcon />}
         />
       </Stack>
